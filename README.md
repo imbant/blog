@@ -1,4 +1,4 @@
-![](https://travis-ci.com/imbant/blog.svg?token=u25TgLUmY3UyEG4ibWaE&branch=master)
+[![Build Status](https://travis-ci.com/imbant/blog.svg?token=u25TgLUmY3UyEG4ibWaE&branch=master)](https://travis-ci.com/imbant/blog)
 
 个人博客，记录所思所想。
 
