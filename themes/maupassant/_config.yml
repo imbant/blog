@@ -69,35 +69,35 @@ menu:
   - page: about
     directory: about/
     icon: fa-user
-  - page: rss
-    directory: atom.xml
-    icon: fa-rss
+  # - page: rss
+  #   directory: atom.xml
+  #   icon: fa-rss
 
 widgets: ## Six widgets in sidebar provided: search, category, tag, recent_posts, rencent_comments and links.
   - search
-  - category
+  # - category
   - tag
   - recent_posts
   - recent_comments
-  - links
+  # - links
 
-links:
-  - title: site-name1
-    url: http://www.example1.com/
-  - title: site-name2
-    url: http://www.example2.com/
-  - title: site-name3
-    url: http://www.example3.com/
+# links:
+#   - title: site-name1
+#     url: http://www.example1.com/
+#   - title: site-name2
+#     url: http://www.example2.com/
+#   - title: site-name3
+#     url: http://www.example3.com/
 
-timeline:
-  - num: 1
-    word: 2014/06/12-Start
-  - num: 2
-    word: 2014/11/29-XXX
-  - num: 3
-    word: 2015/02/18-DDD
-  - num: 4
-    word: More
+# timeline:
+#   - num: 1
+#     word: 2014/06/12-Start
+#   - num: 2
+#     word: 2014/11/29-XXX
+#   - num: 3
+#     word: 2015/02/18-DDD
+#   - num: 4
+#     word: More
 
 # Static files
 js: js
