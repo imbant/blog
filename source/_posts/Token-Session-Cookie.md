@@ -26,7 +26,7 @@ token、session 两者经常出现在同样的场景下。他们都是为了解�
 # 优劣势
 
 session 需要储存在服务器数据库中。这一点在单个服务器场景中 session 或许并无缺陷，但是在集群服务器中，则涉及到 session 同步的问题：如果用户通过机器 A 登录，A 中有了 session id，但下次登录请求被转发到机器 B 上，B 上没有 session id，因此需要做 session 的集群管理：
-![](/images/Token-Session-Cookie1.jpg)
+![](/blog/images/Token-Session-Cookie1.jpg)
 麻烦的一批。这样限制了集群的可扩展性，限制了机器的横向（数量）扩展。
 而 token 式避免了在服务器数据库中储存 session 的问题。实现了无状态，规避了服务器端 session 管理的问题。
 
@@ -47,7 +47,7 @@ token 的**缺点**： 服务器不管理和维护 token，无法宣布一个 to
 然后再在这个结构前加一个 Header，也是一个 JSON 对象，里边写好采用的加密算法等内容。
 整体格式如下：
 Header.Payload.Signature。将 Header Payload 做一个 base64 编码，将其从 JSON 字符串转换为 base64 格式的字符串。最后就得到如下格式的一串字符：
-![](/images/Token-Session-Cookie2.jpg)
+![](/blog/images/Token-Session-Cookie2.jpg)
 前两者都是 base64 的字符串，最后的蓝色字符串则是 hash 后的摘要（签名）。
 
 # 误区

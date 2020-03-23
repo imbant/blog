@@ -21,13 +21,13 @@ body:before {
 }
 ```
 
-| <img src='/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑1_meitu_1.jpg' style='width: 70%'/> | 加上 body::before 后 -> | <img src='/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑2_meitu_2.jpg' style='width: 76%'/> |
+| <img src='/blog/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑1_meitu_1.jpg' style='width: 70%'/> | 加上 body::before 后 -> | <img src='/blog/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑2_meitu_2.jpg' style='width: 76%'/> |
 | -------------------------------------------------------------------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
 
 
 ## Android 中的表现
 
-<img src="/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑3_meitu_3.jpg" style="width: 50%"/>
+<img src="/blog/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑3_meitu_3.jpg" style="width: 50%"/>
 
 Android 微信中 fixed 的元素表现正常，**出乎意料，出乎意料**。
 
@@ -40,7 +40,7 @@ Android 微信中 fixed 的元素表现正常，**出乎意料，出乎意料**�
 
 ::first-line 是描述选择器中的第一行样式，注意这里只有第一行，但选择器的内容可能不止一行，伪元素只描述**其中一部分**：
 
-![](/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑4.png)
+![](/blog/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑4.png)
 
 ### 伪类
 
@@ -56,4 +56,4 @@ https://www.w3.org/TR/CSS2/generate.html#before-after-content
 ```
 
 注意，这里只是说渲染的效果一样，但实际在 dom 树(dom 从数据结构角度讲就是棵树嘛)中，伪元素和 span 依然是两个属性不同的节点
-![](/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑5.png)
+![](/blog/images/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑5.png)

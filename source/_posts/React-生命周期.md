@@ -6,11 +6,11 @@ tags: React
 
 # React 16.3 之前（不包括 16.3）已弃用
 
-![](/images/React-生命周期1.png)
+![](/blog/images/React-生命周期1.png)
 
 # React ^16.4
 
-![](/images/React-生命周期2.png)
+![](/blog/images/React-生命周期2.png)
 分三个阶段，mount、update 和 unmount
 注意点：
 
@@ -23,7 +23,7 @@ tags: React
 
 # with hooks
 
-![](/images/React-生命周期3.png)
+![](/blog/images/React-生命周期3.png)
 注意点：
 
 - **每次**重新渲染，前一个 Effect 都要被清除（cleanup），return 的函数都要被执行。但由于 useEffect 第二个参数的存在，我们可以在第二个参数不变的情况下**跳过** Effect，Effect 不被执行，其 return 返回的函数也就不会被执行了。

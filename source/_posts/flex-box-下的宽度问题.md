@@ -26,7 +26,7 @@ https://www.jianshu.com/p/17b1b445ecd4
 
 在定义元素宽度时，flex-basis 值比 width 优先级更高。
 当然这种说法是有局限性的，flex-basis 值决定的其实是元素在主轴方向上的长度，默认情况下就是横向，也就和 width 值起同一个作用，但优先级比 width 高。
-![](/images/flex-box-下的宽度问题1.png)
+![](/blog/images/flex-box-下的宽度问题1.png)
 
 ### 2. flex-grow
 
@@ -36,7 +36,7 @@ a、b、c 三个元素 width 之和为 10 + 20 + 40 = 70 px。容器宽度为 15
 a 的最终宽度：10 + (80 \* 2/3) = 63.3333px
 b 的最终宽度：20 + (80 \* 1/3) = 46.6667px
 **可见虽然设置了 width，元素的真实宽度却与其值不同**
-![](/images/flex-box-下的宽度问题2.png)
+![](/blog/images/flex-box-下的宽度问题2.png)
 
 ### 3. flex-shrink
 
@@ -49,7 +49,7 @@ b 最终宽度：90 - (50 \* 5/7) = 54.2857px
 
 可见虽然设置了 width，元素的真实宽度却与其值不同
 
-![](/images/flex-box-下的宽度问题3.png)
+![](/blog/images/flex-box-下的宽度问题3.png)
 
 ### 4. 解决 flex box 中元素宽度与 width 不同
 
