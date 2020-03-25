@@ -4,6 +4,12 @@ date: 2020-03-24 15:55:08
 tags: [TCP]
 ---
 
+## 参考资料
+https://www.zhihu.com/question/24853633/answer/115173386
+https://www.zhihu.com/question/271701044/answer/398114686
+https://blog.csdn.net/qzcsu/article/details/72861891
+https://zh.wikipedia.org/wiki/%E4%BC%A0%E8%BE%93%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE#%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8
+
 谈一谈 TCP 解决了什么问题，以及三次握手、四次挥手的细节，包括正确流程以及每个环节出错的情况
 
 ## 数据传输过程
@@ -106,6 +112,13 @@ TCP 是可以可靠传输数据的，也就是说，建立 TCP 连接的双方�
 - 在第三次握手中，SN = ISN + **1**，这里的 **1** 就是第一次握手时 SYN 占用的 Byte，
 - 在四次挥手的第二次，服务端发送 ACK，这个 ACK 不带数据，也就不需要超时重传
 
+### 如果没有第三次握手就建立连接，会怎么样？
+
+## 成功建立连接后客户端故障怎么办？
+
 ## 四次挥手
+
+### 为什么客户端需要等 2MSL？
+
 
 RST 是什么
