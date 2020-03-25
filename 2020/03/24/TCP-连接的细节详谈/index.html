@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><meta name="google-site-verification" content="_s8zp9HC5xK3I7RCh_8RJrSUgYtyNgc09bZvTV11nFI"><title>TCP 连接的细节详谈 | imbAnt's blog</title><link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/normalize/8.0.1/normalize.min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.1/pure-min.css"><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/pure/1.0.1/grids-responsive-min.css"><link rel="stylesheet" href="//lib.baomitu.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//lib.baomitu.com/jquery/3.4.1/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/blog/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/blog/favicon.ico"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/blog/apple-touch-icon.png"><script type="text/javascript" src="//lib.baomitu.com/clipboard.js/2.0.4/clipboard.min.js"></script><script type="text/javascript" src="//lib.baomitu.com/toastr.js/2.1.4/toastr.min.js"></script><link rel="stylesheet" href="//lib.baomitu.com/toastr.js/2.1.4/toastr.min.css"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">TCP 连接的细节详谈</h1><a id="logo" href="/blog/.">imbAnt's blog</a><p class="description">Be The Person You Want To Meet</p></div><div id="nav-menu"><a class="current" href="/blog/."><i class="fa fa-home"> 首页</i></a><a href="/blog/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/blog/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">TCP 连接的细节详谈</h1><div class="post-meta">2020-03-24</div><div class="post-content"><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://www.zhihu.com/question/24853633/answer/115173386" target="_blank" rel="noopener">https://www.zhihu.com/question/24853633/answer/115173386</a><br><a href="https://www.zhihu.com/question/271701044/answer/398114686" target="_blank" rel="noopener">https://www.zhihu.com/question/271701044/answer/398114686</a><br><a href="https://blog.csdn.net/qzcsu/article/details/72861891" target="_blank" rel="noopener">https://blog.csdn.net/qzcsu/article/details/72861891</a><br><a href="https://zh.wikipedia.org/wiki/%E4%BC%A0%E8%BE%93%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE#%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/%E4%BC%A0%E8%BE%93%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE#%E8%B5%84%E6%BA%90%E4%BD%BF%E7%94%A8</a></p>
+<p>谈一谈 TCP 解决了什么问题，以及三次握手、四次挥手的细节，包括正确流程以及每个环节出错的情况</p>
+<h2 id="数据传输过程"><a href="#数据传输过程" class="headerlink" title="数据传输过程"></a>数据传输过程</h2><p>在 TCP/IP 四层模型里，TCP 接收来自应用层的数据流，将其分割并封装为适当长度的 TCP 「报文」，通过 IP 层（网际层）传输数据。</p>
+<p>TCP 是可以可靠传输数据的，也就是说，建立 TCP 连接的双方，能保证发出的信息一定被接收到。如何实现这一点呢？</p>
+<p>首先，TCP 的报文是按顺序发送的，且 TCP 会对报文中包含的数据的<strong>每个 Byte</strong>做编号。假设报文的数据序号从 1 开始（实际上起始序号可变，原因见下文 ），第 ① 段报文包含 1460 Byte 字节，其中每个 Byte 的编号就是 1，2，3，…，1460。<br>发送给接收端，接收端收到报文后，用一段不携带数据的 TCP 报文（相当于只有报文头）确认，同时用确认号 1461（1460 + 1）来表示，自己受到了前 1460 Byte 的数据。<br>接着，发送端发送第 ② 段报文，数据长度也为 1460 Byte，这样数据编号就变成 1461，1462，1463，…，2920.<br>接收端收到报文后，确认的报文确认号就为 2921（2920 + 1）。<br>如此往复…显然，接收端无需每次都回复，比如他收到 ①~⑤ 条报文段，由于报文段按顺序发送的缘故，只需要确认第 ⑤ 段即可。<br>如果一共发送了五段报文，第 ③ 段接收端还没有收到，就收到了 ④、⑤ 段，说明第 ③ 段传输失败了。因此接收端只能确认收到第 ② 段。<br>发送端需要重发第 ③ 段，成功接收后，接收端就可以直接确认 ⑤ 段，因为 ④ ⑤ 已经收到。<br><img src="/blog/images/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%881.gif" alt=""></p>
+<p>由于 TCP 标识了报文数据的顺序，从而接收端接受数据时可以重建顺序。关于上文说到的，报文接收端为了确保可靠性，在接收到一定量的连续字节流后才发送确认。这是一种 TCP 的扩展，被称为选择确认（Selective Acknowledgement）。选择确认使得接收端可以对乱序到达的数据块进行确认。乱序到达可能是因为包的乱序交付，或者丢包。</p>
+<h3 id="可见，序号是保证可靠性的核心"><a href="#可见，序号是保证可靠性的核心" class="headerlink" title="可见，序号是保证可靠性的核心"></a>可见，序号是保证可靠性的核心</h3><p>然而上面的流程中，用 1 作为起始序号有安全隐患：第三方如果猜到序号，可以伪造一个 RST 报文（见下文），恶意使某一方重建连接。<br>因此，序号需要动态随机生成，实际上它是由操作系统随机生成的 32 位长的序号。那么自然的，TCP 通信双方就需要在建立连接时，创建好初始序号，并同步给对方。</p>
+<p>现在概念比较多了，我们用一些缩写来代指专有名词，并看看 TCP 报文的数据包接口是否符合需求：<br><code>SN</code>(sequence number)：序号，序列号，指 TCP 报文携带的数据中每个 Byte 的编号<br><code>ISN</code>（Initial Sequence Number）：初始的 SN，SN 的起点，在三次握手中同步<br><code>ACK</code>（Acknowledge）：确认，指接收端收到报文段后根据 SN 回复的行为<br><code>SYN</code>（synchronization  <code>/ˌsɪŋkrənaɪˈzeɪʃən/</code>）：同步，指一端告诉另一端自己的 ISN<br><code>FIN</code>（finish）：指断开连接</p>
+<p><img src="/blog/images/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%882.jpg" alt=""></p>
+<p>可见：</p>
+<ul>
+<li><strong>每个</strong>报文段都带有序列号码，也就是 SN，用于标识报文的序号。注意，虽然说 SN 标识的是报文数据中<em>连续</em>的 Byte（1000，1001，1002…），但连个连续报文段的 SN 是<em>不连续</em>的，前一段可能是 1000，下一段可能就是 1500，也就是说前一段有 500 Byte 的数据。</li>
+<li><strong>每个</strong>报文段还会带上 ACK number。除了第一次握手的 SYN 报文，其他报文都需要有 ACK。</li>
+<li>报文头中有 9 个标志符，每个占 1 Byte。<ul>
+<li>上述的 ACK、SYN、FIN 三种操作都是通过对应的标识符置 1 来实现的。</li>
+<li><code>RST</code> = reset，当该位置 1 时，说明有严重差错，需要重新创建 TCP 连接。还可以用于拒绝非法的报文段和拒绝连接请求。</li>
+<li>另外 5 种不太懂…</li>
+</ul>
+</li>
+</ul>
+<h2 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h2><p>下文表述中的发送端和接收端变成了客户端和服务端，更形象一些。实际上客户端不一定是发送端，比如建立连接后服务端也可以向客户端发送 TCP 报文</p>
+<ol>
+<li>建立 TCP 连接，首先要做的是客户端和服务端让对方知道自己的 ISN。这就涉及到两个过程：a.客户端向服务端同步，b.服务端向客户端同步。</li>
+<li>理论上两端同时初始化它们之间的连接是可能的，不过大多数情况下都是有先后顺序的：服务端先打开一个 socket 来监听另一端的链接。服务端被被动打开后，客户端就能创建主动打开。</li>
+<li>因此，客户端生成 ISN，放在报文头的 SN 中。先向服务端发送自己的 ISN（不妨记为 <code>x</code>），同时在报文头中把 SYN 位给置 1，向服务端表明这段报文是连接请求。</li>
+<li>服务端正确收到报文，在本地保存客户端的 ISN。同时为了保证可靠传输，要向客户端发送 ACK 报文，其 ACK number 为 <code>x + 1</code>，以表明自己收到了客户端的 ISN，且值为 x</li>
+<li>这样过程 a 就完工了，还有过程 b。</li>
+<li>服务端向客户端发送自己的 ISN（不妨记为 <code>y</code>），同时在报文头中把 SYN 位 置 1，向客户端表明这段报文是连接接受请求。</li>
+<li>客户端正确收到报文，在本地保存服务端的 ISN。同样是保证可靠传输的原因，向服务端发送 ACK 报文，其 ACK number 为 <code>y + 1</code>。<strong>注意</strong>这是客户端发送的第二个报文，这段报文的 SN 被设为 ISN + 1，也就是 <code>x + 1</code>。</li>
+</ol>
+<p>每次发送报文的过程就成为一次「握手」。可见，服务端向客户端<em>连续</em>发送了两次报文，这是没有必要的，降低了传输效率。<br>上述过程称为「四次握手」，将服务端连续两次的握手合并，就得到了三次握手：</p>
+<blockquote>
+<ol>
+<li>客户端发送 SYN 报文，SN = ISN</li>
+<li>服务端收到客户端的 SYN 后，向客户端发送 SYN/ACK 报文，带上 ACK number，SN = ISN</li>
+<li>客户端收到服务端的 SYN/ACK 后，向服务端发送 ACK 报文，带上 ACK number, SN = (ISN + 1)</li>
+</ol>
+</blockquote>
+<h3 id="容错机制"><a href="#容错机制" class="headerlink" title="容错机制"></a>容错机制</h3><p>三次握手如何确保双方稳定获取了彼此的 ISN 呢？考虑每次握手的发送端：</p>
+<ul>
+<li>第一次握手如果失败：服务端是被动打开的，还在静静等待客户端的消息。</li>
+<li>第二次握手如果失败：客户端没收到自己 ISN 的 ACK，两种可能：<ul>
+<li>服务端收到 SYN 了，但 ACK 报文发送失败了：信息似乎同步成功了，只是客户端不知情。</li>
+<li>服务端根本没收到 SYN：很严重，可靠性受到威胁。<br>客户端没法判断究竟是哪种情况，必须处理最坏的情况，也就是服务端没收到 ISN。没收到咋办呢？周期性超时重传 SYN。</li>
+</ul>
+</li>
+<li><strong>第三次握手如果失败</strong>：服务端没收到自己的 ISN 的 ACK，还是两种可能：<ul>
+<li>客户端收到 SYN，ACK 报文发送失败</li>
+<li>客户端没收到 SYN<br>服务端必须周期性超时重传 SYN/ACK 报文</li>
+</ul>
+</li>
+</ul>
+<p>换句话说，如何感知前两次握手成功？服务端收到第三次握手，得知第二次握手成功；客户端收到第二次握手，得知第一次握手成功。第三次握手就特殊了：</p>
+<blockquote>
+<p>第三次握手成功与否，或者说服务端是否接收到这次 ACK 报文，客户端是<strong>无感知</strong>的。</p>
+</blockquote>
+<p>客户端发送完 ACK 报文后，就转为 <code>established</code> 状态，单方面认为三次握手成功，要发数据了。此时：</p>
+<ul>
+<li>服务端会周期性超时重传 SYN/ACK，直到正确收到客户端的 ACK，或者超过最大时限</li>
+<li>如果客户端有数据发送：除了第一次握手的 SYN 报文，其他报文都需要有 ACK。因此服务端会正常收到数据 + 正确的 ACK，相当于还是成功接收到 ACK 了，第三次握手成功，服务端也转为 <code>established</code> 状态。</li>
+</ul>
+<p>可见，第三次握手的 ACK 是“不可靠的”。<br>这次发送 ACK 的一方没能保证自己的信息稳定传输。不过由于 ACK number 存在于第一次 SYN 之外的全部报文中，规避了不稳定的隐患。</p>
+<h3 id="那么需要对第三次握手的-ACK-再做-ACK-吗？"><a href="#那么需要对第三次握手的-ACK-再做-ACK-吗？" class="headerlink" title="那么需要对第三次握手的 ACK 再做 ACK 吗？"></a>那么需要对第三次握手的 ACK 再做 ACK 吗？</h3><p>不需要。否则会进入互相 ACK 的死循环：<br>服务端收到 ACK，如果为了让客户端知道自己收到了 ACK，再次 ACK，客户端又收到 ACK，如果要保证 ACK 稳定，需要再次 ACK，服务端又 ACK…就没个头了。<br>所有 ACK 的发送方都不保证 ACK 的可靠性，由对方保证超时重传</p>
+<p><strong>TCP 对有数据的 TCP segment 必须确认；不会为没有数据的 ACK 超时重传。</strong><br>第三次握手的 ACK 报文就没有携带数据。发送出去之后不要求接收方返回 ACK。<br>此时有个问题，第二次握手的 SYN/ACK 也没数据啊？按照这个规定，客户端收到 AYN/ACK 报文也不应该 ACK。<br>于是 TCP 设计者将 SYN 这个同步标志位 SYN 设计成占用一个字节的编号（FIN 标志位也是），也就是说 SYN 报文会携带一个 Byte 的数据。因此，客户端会对第二次握手 ACK（服务端也会对第一次握手 ACK，不过本来也要再传一次 SYN 的）。<br>体现这个原则的地方还有：</p>
+<ul>
+<li>在第三次握手中，SN = ISN + <strong>1</strong>，这里的 <strong>1</strong> 就是第一次握手时 SYN 占用的 Byte，</li>
+<li>在四次挥手的第二次，服务端发送 ACK，这个 ACK 不带数据，也就不需要超时重传</li>
+</ul>
+<h3 id="如果没有第三次握手就建立连接，会怎么样？"><a href="#如果没有第三次握手就建立连接，会怎么样？" class="headerlink" title="如果没有第三次握手就建立连接，会怎么样？"></a>如果没有第三次握手就建立连接，会怎么样？</h3><h2 id="成功建立连接后客户端故障怎么办？"><a href="#成功建立连接后客户端故障怎么办？" class="headerlink" title="成功建立连接后客户端故障怎么办？"></a>成功建立连接后客户端故障怎么办？</h2><h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h2><h3 id="为什么客户端需要等-2MSL？"><a href="#为什么客户端需要等-2MSL？" class="headerlink" title="为什么客户端需要等 2MSL？"></a>为什么客户端需要等 2MSL？</h3><p>RST 是什么</p>
+</div><div class="tags"><a href="/blog/tags/TCP/"><i class="fa fa-tag"></i>TCP</a></div><div class="post-nav"><a class="next" href="/blog/2020/03/13/React-Diffing-%E7%AE%97%E6%B3%95/">React Diffing 算法</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://imbant.github.io/blog"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/blog/tags/Node/" style="font-size: 15px;">Node</a> <a href="/blog/tags/React-Router/" style="font-size: 15px;">React Router</a> <a href="/blog/tags/%E7%A7%BB%E5%8A%A8-Web-%E5%BC%80%E5%8F%91/" style="font-size: 15px;">移动 Web 开发</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1/" style="font-size: 15px;">微信</a> <a href="/blog/tags/ES6/" style="font-size: 15px;">ES6</a> <a href="/blog/tags/JS/" style="font-size: 15px;">JS</a> <a href="/blog/tags/CSS/" style="font-size: 15px;">CSS</a> <a href="/blog/tags/React/" style="font-size: 15px;">React</a> <a href="/blog/tags/HTTP/" style="font-size: 15px;">HTTP</a> <a href="/blog/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%A7%86%E9%A2%91/" style="font-size: 15px;">移动端视频</a> <a href="/blog/tags/Devops/" style="font-size: 15px;">Devops</a> <a href="/blog/tags/TCP/" style="font-size: 15px;">TCP</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/blog/2020/03/24/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%88/">TCP 连接的细节详谈</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/03/13/React-Diffing-%E7%AE%97%E6%B3%95/">React Diffing 算法</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/03/09/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">React 生命周期</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2020/02/25/BrowserRouter-vs-HashRouter/">BrowserRouter vs HashRouter</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/12/20/CSS-%E6%96%B9%E5%BC%8F%E8%A7%A3%E5%86%B3-iOS-%E5%BE%AE%E4%BF%A1%E6%A9%A1%E7%9A%AE%E7%AD%8B%E6%95%88%E6%9E%9C%E4%B8%8E-position-fixed-%E8%81%94%E5%8A%A8%E7%9A%84%E5%9D%91/">CSS 方式解决 iOS 微信橡皮筋效果与 position: fixed 联动的坑</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/12/11/%E5%AE%89%E5%8D%93%E5%BE%AE%E4%BF%A1-%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE-%E7%9B%B8%E5%85%B3%E8%B8%A9%E5%9D%91/">安卓微信 视频播放 相关踩坑</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/11/19/flex-box-%E4%B8%8B%E7%9A%84%E5%AE%BD%E5%BA%A6%E9%97%AE%E9%A2%98/">flex box 下的宽度问题</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/10/10/%E5%85%B3%E4%BA%8E-js-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">关于 js 文件上传</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/09/11/Token-Session-Cookie/">Token Session Cookie</a></li><li class="post-list-item"><a class="post-list-link" href="/blog/2019/08/13/ES6-%E5%AF%B9%E8%B1%A1%E5%B1%9E%E6%80%A7%E7%9A%84%E7%AE%80%E5%86%99%E4%B8%8E%E8%A7%A3%E6%9E%84%E8%B5%8B%E5%80%BC/">ES6 对象属性的简写与解构赋值</a></li></ul></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2020 <a href="/blog/." rel="nofollow">imbAnt's blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/blog/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/blog/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/blog/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/blog/js/smartresize.js?v=0.0.0"></script></div></body></html>
