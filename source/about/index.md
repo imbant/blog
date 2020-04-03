@@ -16,4 +16,6 @@ LeetCode: [@imbant](https://leetcode.com/imbant/)
 
 Email: <13634731015@sina.cn>
 
+灰机 Wiki：[@Imbant](https://warcraft.huijiwiki.com/wiki/用户:Imbant)
+
 <!-- LinkedIn: [查看](https://www.linkedin.com/in/%E6%98%8E%E5%AE%87-%E8%AE%B8-7b2181194/) -->
