@@ -170,6 +170,14 @@ div {
 
 .post {
   padding: 25px 0 15px; }
+  .post h1,
+  .post h2,
+  .post h3,
+  .post h4 {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 0.3em 0; }
   .post .post-title {
     margin: 0;
     color: #555;
