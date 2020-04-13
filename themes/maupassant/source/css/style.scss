@@ -203,6 +203,16 @@ div {
 
 .post {
   padding: 25px 0 15px;
+  h1,
+  h2,
+  h3,
+  h4 {
+    position: sticky;
+    // 这样写有 bug，有过高的标题时超出部分不会被遮挡
+    top: 0;
+    background-color: white;
+    padding: 0.3em 0;
+  }
   .post-title {
     margin: 0;
     color: #555;
