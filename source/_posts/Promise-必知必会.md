@@ -224,8 +224,7 @@ new Promise((res) => res(1))
   .then((v) => console.log(v)); // 3
 ```
 
-- 返回一个值，那么 then 的返回值会作为接受状态（后一个 then）的回调函数的参数值。then 返回的 promise 为*fulfilled*状态。
-  `return value`等价于`return Promise.resolve(value)`，返回了一个 fulfilled 的 promise 对象。
+- 返回一个值，那么 then 的返回值会作为`fulfilled`状态的回调函数（后一个 then）的参数值。`return value`等价于`return Promise.resolve(value)`，返回了一个 fulfilled 的 promise 对象。
 - 没有返回值，undefined 会作为下一个 then 参数值。then 返回的 promise 为*fulfilled*状态。
 
 ```js
@@ -252,12 +251,46 @@ new Promise((res) => res(1))
 
 ### then 的参数不为函数
 
-then 的第一个参数会在 promise 变为`fulfilled`时调用，如果这个参数不是函数，它会在内部被替换为`x => x`，也就是一个原样返回 promise 最终结果的函数。
+then 的第一个参数会在 promise 变为`fulfilled`时调用，如果这个参数不是函数，它会在内部被替换为`x => x`，也就是一个原样返回 promise 最终结果的函数。这种行为称为参数穿透。
 
 ```js
 new Promise.resolve(3).then(4).then(console.log);
 // 3，中间的 then(4) 被内部替换为 then(x => x)
+// 3 从 promise 穿透第一个 then，直接传给了第二个 then
 ```
+
+### Promise.prototype.finally
+
+想要在 Promise 执行完毕后无论结果怎么样都做一些处理，可以用`finally`。
+虽然与`then`类似，但用`finally`更适用于那些用`then`时两个参数有相同代码的情况，避免写冗余的代码。
+`finally`同样为 Promise 对象绑定一个事件回调，待 Promise 状态转换后调用，不论结果是`fulfilled`或者`rejected`，然后返回一个 Promise 对象。
+`finally`内必定发生参数穿透，回调本身的返回值不会作为 promise 链的一环，而是把上个 promise 的值原样传递下来。
+
+由于不知道 Promise 状态，所以`finally`的回调是没有参数的。
+
+```js
+Promise.resolve(1)
+  .finally(() => 2)
+  .then(console.log);
+// 1，从 resolve 穿透 finally 传递给了 then
+```
+
+如果`finally`回调也返回一个 Promise，则等其状态转换后，`finally`返回的 Promise 才会改变状态，但回调返回的 Promise 状态不影响后续的调用链。后续的调用链依然由`finally`前的 Promise 决定。
+
+```js
+Promise.reject(2)
+  .finally(() => new Promise((res) => setTimeout(() => res(1), 1000)))
+  .then((v) => console.log(v))
+  // 不会被调用，和 finally 回调的 promise 无关，和 finally 前一个 promise 有关
+  .catch((err) => console.log(err)); // 一秒后输出2
+
+Promise.reject(3)
+  .finally(() => 2)
+  .then(console.log) // 不会被调用
+  .catch(console.log); // 3
+```
+
+一句话，用了`finally`一定会值穿透，前一个 Promise 的状态和值，会原封不动的传给`finally`返回的 Promise。
 
 ### 面试题分析
 
