@@ -452,3 +452,6 @@ const getProgressData = async (url) => {
 注意 async 函数的返回值没有显式的被 promise 包裹，因为 async 函数会隐式地将它传递给 Promise.resolve，这样非原生 Promise 也能正常用了。
 当 await 某个 Promise 时，函数*暂停*执行，直至该 Promise 产生结果，并且暂停并不会阻塞主线程，这涉及到协程的概念。
 有关 async 函数、协程、Generator 函数，有空再聊。
+
+## 扩展阅读
+[异步函数 - 提高 Promise 的易用性](https://developers.google.com/web/fundamentals/primers/async-functions)
