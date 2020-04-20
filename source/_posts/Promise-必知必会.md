@@ -68,7 +68,7 @@ createAudioFileAsync()
   });
 ```
 
-这种写法下后续还需要调用异步函数怎么办？链式调用就好了：
+这种写法下后续还需要调用异步函数怎么办？用 promise 重写每个异步函数（例如`syncFunc = () => new Promise(/* 异步操作 */)`），然后链式调用就好了：
 
 ```js
 createAudioFileAsync()
@@ -248,6 +248,15 @@ new Promise((res) => res(1))
   })
   .then((value) => console.log(value)) // 不会被调用
   .catch((err) => console.error(err)); // TypeError: Assignment to constant variable.
+```
+
+### then 的参数不为函数
+
+then 的第一个参数会在 promise 变为`fulfilled`时调用，如果这个参数不是函数，它会在内部被替换为`x => x`，也就是一个原样返回 promise 最终结果的函数。
+
+```js
+new Promise.resolve(3).then(4).then(console.log);
+// 3，中间的 then(4) 被内部替换为 then(x => x)
 ```
 
 ### 面试题分析
