@@ -454,4 +454,5 @@ const getProgressData = async (url) => {
 有关 async 函数、协程、Generator 函数，有空再聊。
 
 ## 扩展阅读
+
 [异步函数 - 提高 Promise 的易用性](https://developers.google.com/web/fundamentals/primers/async-functions)

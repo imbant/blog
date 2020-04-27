@@ -2,6 +2,7 @@
 title: JS 原型链、this 与 class
 date: 2020-04-20 17:13:43
 tags: [JS]
+categories: [面试基础]
 ---
 
 # 原型链
@@ -145,8 +146,10 @@ Object.prototype.__proto__; // null
 
 # this
 
-`this`是一个大坑，在各个语境下的值都可能不同，因此会分情况讨论。
-总的来说`this`都出现在函数内部，*通常*指向调用这个函数的对象
+`this`是一个大坑，在各个语境下的值都可能不同，在浏览器环境或者 Node 运行时中也不一样，因此会分情况讨论。
+总的来说`this`大都出现在函数内部，
+
+> 通常，在普通函数中指向被*调用*时的对象，在箭头函数中取决于被*定义*时的上下文
 
 ## 全局环境
 
@@ -176,15 +179,15 @@ f.a; // 1
 形如`a.b()`，this 指向这个方法的对象。
 
 ```js
-let F = function () {
-  this.a = 1;
-  this.getA = function () {
-    return this.a;
-  };
+let a = {
+  b: function () {
+    // 这里用箭头函数 this 就为全局对象了
+    return this.c;
+  },
+  c: 3,
 };
 
-let f = new F();
-f.getA(); //1
+a.b(); // 3
 ```
 
 ### 非箭头函数的简单调用
@@ -247,9 +250,26 @@ a(); // 浏览器中为 window
 
 ### 箭头函数和其中的 this
 
-箭头函数*不会*创建 this，而是从作用域链上层继承 this。
-// TODO 这里完全搞求不懂...
-因此**箭头函数不适合作为对象的方法**，因为其 this 为 undefined
+箭头函数*不会*创建 this，而是从作用域链上层继承 this。箭头函数和普通的声明`function`的函数区别之一是，箭头函数的 this 在其被**定义**时就确定了。
+
+```js
+let that = this;
+let a = {
+  b: 10,
+  logB: () => console.log(this.b, this === that),
+  logB2: function () {
+    console.log(this.b, this);
+  },
+};
+
+a.logB(); // undefined, true
+a.logB2(); // 10, a 自己
+```
+
+`logB`是一个箭头函数，由于对象*字面量*内部不会开辟新的作用域，所以`logB`所在作用域就是全局作用域，箭头函数里的 this 指向全局对象。
+`logB2`是一个普通函数，在调用时才会决定 this 值，所以执行`a.logB2()`时，`logB2()`里的 this 指向 a
+
+可见，在对象*字面量*里用箭头函数定义方法，可能会有预期之外的错误。如果是在构造函数里用箭头函数定义方法，则不会有这个问题：
 
 ```js
 function F(name) {
@@ -259,18 +279,29 @@ function F(name) {
   };
 }
 
-F.prototype.loeNameP = () => console.log(this.b);
-
 let f = new F("lbw");
 f.logName(); // lbw
-f.loeNameP();
+```
 
-let a = {
-  b: 10,
-  logB: () => console.log(this.b),
-};
+构造函数还是函数，会开辟自己的作用域，在里边 this 指向被新构造的对象，因此用箭头函数内的 this 也会指向这个新对象。
 
-a.logB(); // undefined
+#### 箭头函数不可以作为构造函数
+
+和`new`一起用会报错
+
+#### 箭头函数没有 prototype 属性
+
+```js
+let F = () => {};
+
+F.prototype; // undefined
+
+F.prototype.a = 1; // TypeError: Cannot set property 'a' of undefined
+```
+
+```js
+let F = () => {};
+new F(); // TypeError: F is not a constructor
 ```
 
 ### DOM 事件处理函数、HTML 内联事件处理函数
@@ -300,4 +331,42 @@ root.onclick = (e) => {
 };
 ```
 
-这些新的关键字包括 class, constructor，static，extends 和 super。
+### 面试题解析
+
+```js
+let obj = {
+  bar: function () {
+    let x = () => this;
+    return x;
+  },
+};
+
+let fn = obj.bar();
+
+console.log(fn());
+
+let fn2 = obj.bar;
+
+console.log(fn2()());
+```
+
+用字面量创建一个对象，其中 bar 方法是用 function 关键字定义的普通函数，所以 bar 内部的 this 会在其被调用时决定。
+
+fn 是 obj.bar() 的返回值，也就是说调用 bar 的是 obj，this 指向 obj
+而 bar() 本身返回一个箭头函数，箭头函数内的 this 是继承自外部作用域的，所以指向 bar 内部的 this，根据前边的分析，指向 obj
+
+fn2 则是单纯的做了一个引用赋值操作，将 fn2 指向一个函数对象所在的内存。上边的写法和直接定义 fn2 为函数没区别。
+
+```js
+// 另一种写法
+let fn2 = function () {
+  let x = () => this;
+  return x;
+};
+```
+
+所以 fn2()() 指向全局对象。
+
+## 额外阅读
+
+<https://github.com/mqyqingfeng/Blog/issues/4>
