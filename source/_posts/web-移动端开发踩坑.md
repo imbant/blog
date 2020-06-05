@@ -18,10 +18,12 @@ tags: [移动 Web 开发]
 
 - `Webkit`（Safari），Google（Chrome） 后来 Fork 它做出了 `Blink`，Opera 也在用这个引擎。
 - `Gecko`（Firefox），Netscape 做的，现在由 Mozilla 维护。
-- `Trident`（or whatever），微软做的，IE 在用，360“安全”浏览器也在用。现在（2020 年）Edge 已经在用 Chromium（Chrome 的开源先行版） 开发啦！
+- `Trident`（or whatever），微软做的，IE 在用，360安全浏览器也在用。现在（2020 年）Edge 已经在用 Chromium（Chrome 的开源先行版） 开发啦！
+
+根据360浏览器的[一份文档](https://browser.360.cn/se/help/kernel.html)，国产的主流浏览器都是双核浏览器：基于`Webkit`的内核用于常用网站的高速浏览，基于`IE`的内核主要用于部分网银、政府、办公系统等网站的正常使用。
 
 因此，移动端进行兼容性测试时可以这样分类浏览器了：
-iOS 随便哪个浏览器，问题都不大
+iOS 随便哪个浏览器，问题都不大；
 安卓要测好 Chrome、Firefox，以及其他诡异的浏览器。个人遇到的较具代表性的是红米自带浏览器和 UC 浏览器。
 
 ### 微信
