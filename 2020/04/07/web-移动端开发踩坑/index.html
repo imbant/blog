@@ -4,9 +4,10 @@
 <ul>
 <li><code>Webkit</code>（Safari），Google（Chrome） 后来 Fork 它做出了 <code>Blink</code>，Opera 也在用这个引擎。</li>
 <li><code>Gecko</code>（Firefox），Netscape 做的，现在由 Mozilla 维护。</li>
-<li><code>Trident</code>（or whatever），微软做的，IE 在用，360“安全”浏览器也在用。现在（2020 年）Edge 已经在用 Chromium（Chrome 的开源先行版） 开发啦！</li>
+<li><code>Trident</code>（or whatever），微软做的，IE 在用，360安全浏览器也在用。现在（2020 年）Edge 已经在用 Chromium（Chrome 的开源先行版） 开发啦！</li>
 </ul>
-<p>因此，移动端进行兼容性测试时可以这样分类浏览器了：<br>iOS 随便哪个浏览器，问题都不大<br>安卓要测好 Chrome、Firefox，以及其他诡异的浏览器。个人遇到的较具代表性的是红米自带浏览器和 UC 浏览器。</p>
+<p>根据360浏览器的<a href="https://browser.360.cn/se/help/kernel.html" target="_blank" rel="noopener">一份文档</a>，国产的主流浏览器都是双核浏览器：基于<code>Webkit</code>的内核用于常用网站的高速浏览，基于<code>IE</code>的内核主要用于部分网银、政府、办公系统等网站的正常使用。</p>
+<p>因此，移动端进行兼容性测试时可以这样分类浏览器了：<br>iOS 随便哪个浏览器，问题都不大；<br>安卓要测好 Chrome、Firefox，以及其他诡异的浏览器。个人遇到的较具代表性的是红米自带浏览器和 UC 浏览器。</p>
 <h3 id="微信"><a href="#微信" class="headerlink" title="微信"></a>微信</h3><p>中国特色，微信浏览器。每个做移动端 web 开发都要吃的 💩。</p>
 <p>iOS 下虽然也是 WebKit 内核，但偶尔还是会出一些小坑，兼容性测试单独拎出来测一下就好。<br>安卓下腾讯出了一个 X5 内核，作为应对千变万化的安卓设备与特性的兼容性解决方案。似乎是基于 Chromium 做的。总之也需要单独拎出来测一下。</p>
 <h2 id="通用样式解决方案"><a href="#通用样式解决方案" class="headerlink" title="通用样式解决方案"></a>通用样式解决方案</h2><h3 id="rem"><a href="#rem" class="headerlink" title="rem"></a>rem</h3><p>rem 单位的原理是读取<code>HTML</code>元素的<code>font-size</code>属性，与其值相乘得到一个 px 为单位的值。</p>
