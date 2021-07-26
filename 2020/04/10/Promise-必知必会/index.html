@@ -39,6 +39,9 @@
 
 <p>promise 还有一种 <em>pending</em> 状态，作为其初始状态。</p>
 <h3 id="promise-对象是一个状态机"><a href="#promise-对象是一个状态机" class="headerlink" title="promise 对象是一个状态机"></a>promise 对象是一个状态机</h3><p>从 <em>pending</em> 状态单项转换为 <em>fulfilled</em> 或者 <em>rejected</em> 状态。<br><strong>只要</strong>发生了状态转变，<strong>就</strong>会调用 Promise.prototype.<code>then</code> 方法。<br>为什么有时候会调用 Promise.prototype.<code>catch</code>方法呢？其实<code>catch</code>是<code>then</code>的一种简写。</p>
+<blockquote>
+<p><code>then(a, b)</code> 和 <code>then(a).catch(b)</code> 还是有区别的，区别在于 <code>a</code> 抛出的错误，只有后者才能 <code>catch</code> 住</p>
+</blockquote>
 <h2 id="传值"><a href="#传值" class="headerlink" title="传值"></a>传值</h2><p>通常，两个异步函数要按顺序执行，肯定是后一个要用到前一个处理过的值。</p>
 <p>再重复一下概念，「promise 构造函数」指<code>new Promise()</code>括号中传入的函数。「then 回调」指<code>.then()</code>括号中传入的函数。</p>
 <h3 id="从-promise-构造函数到-then-回调"><a href="#从-promise-构造函数到-then-回调" class="headerlink" title="从 promise 构造函数到 then 回调"></a>从 promise 构造函数到 then 回调</h3><p>通过在 promise 构造函数中给<code>res</code>或者<code>rej</code>传参，就可以给 then 回调函数传值了。<code>res(1) ---&gt; then((x) =&gt; x), x = 1</code><br><code>then</code>接受两个函数作为参数，状态转为<code>fulfilled</code>就调用第一个，转为<code>rejected</code>就调用第二个。常见的<code>then</code>只写第一个参数，<code>catch</code>常常写在一个 promise 调用链的最后，作为兜底的错误处理。<br><code>catch(func)</code>其实就是 <code>then(null, func)</code>——实际上，<code>catch</code>内部就是这么调用<code>then</code>的。</p>
