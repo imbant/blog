@@ -158,6 +158,8 @@ promise 还有一种 _pending_ 状态，作为其初始状态。
 **只要**发生了状态转变，**就**会调用 Promise.prototype.`then` 方法。
 为什么有时候会调用 Promise.prototype.`catch`方法呢？其实`catch`是`then`的一种简写。
 
+> `then(a, b)` 和 `then(a).catch(b)` 还是有区别的，区别在于 `a` 抛出的错误，只有后者才能 `catch` 住
+
 ## 传值
 
 通常，两个异步函数要按顺序执行，肯定是后一个要用到前一个处理过的值。
