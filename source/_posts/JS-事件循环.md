@@ -10,7 +10,7 @@ JS 有一个基于**事件循环**的并发模型。事件循环负责执行代�
 
 ## 运行时（Runtime）概念
 
-![](/blog/images/JS-事件循环.svg)
+![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/7/JS-%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF.svg)
 
 ### 栈
 

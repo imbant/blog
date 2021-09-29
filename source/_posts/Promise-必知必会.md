@@ -311,7 +311,7 @@ new Promise((res) => res())
 
 解析：
 
-![](/blog/images/Promise-必知必会1.png)
+![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/8/Promise-%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A1.png)
 
 ## 写 Promise 的最佳实践
 
