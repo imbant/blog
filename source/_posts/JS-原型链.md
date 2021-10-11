@@ -137,6 +137,18 @@ Object.prototype.__proto__; // null
 
   ES6 新特性，见后文。
 
+### Function 与 Object 的关系
+由于 `Object` 可以被 `new` 作用，所以是构造「函数」
+```js
+Object instanceof Function // true
+Object.__proto__ === Function.prototype // true
+```
+`Function` 是一个「对象」，也是一个「函数」。作为对象，有自己的原型对象 `__proto__`，作为函数，它也会通过原型链从 Function.prototype 继承一些属性和方法
+```js
+Function instanceof Object // true
+Function.__proto__ === Function.prototype // true
+```
+
 ### 总结一下
 
 构造函数将想共享的属性和方法写入原型对象，其生成的实例就可以调用他们。
