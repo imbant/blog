@@ -115,7 +115,7 @@ HTML 源码也会改变
 
 ```js
 i.value = '输入'          // 输入框也会显示“输入”
-i.getAttribute('value')  // '输入'
+i.getAttribute('value')  // 初始值 'Name:'
 ```
 
 ### 类型不同
@@ -141,21 +141,121 @@ el.href
 ```
 TODO: 看到一些文章说 `href` 的行为不同，但还没测试出来 
 
-## 非标准（自定义） attribute
+## 非标准（自定义） attribute 的应用
 通常自定义的 `attribute` 用于从 HTML 传递自定义数据，到 JS 或者 CSS
-JS 可以通过 `getAttribute` 或者 `dataset` 拿到数据，CSS 可以通过选择器拿到
+JS 可以通过 `getAttribute` 或者 `dataset` 拿到数据，CSS 可以通过 `attr` 或选择器
 
 ### HTML5 dataset
 
-// delete dataset 可以同步改变 attribute
+之前提到自定义的 `attribute` 不会映射到 `property` 中
+```html
+<input foo="bar" />
+```
+```js
+i.foo // undefined
+```
 
-### v-bind
+HTML5 提供了一种可扩展的设计，使得自定义 `attribute` 和 `property` 可以关联起来，这就是 dataset
 
+用 `data-` 作为前缀的 `attribute`，会被写入 DOM 的 `dataset` `property`
+```html
+<input data-foo="bar" />
+``` 
+```js
+i.dataset.foo // 'bar'
+```
+
+在语法层面提供了自定义属性在 `attribute` 和 `property` 之间的映射能力
+
+作为 `property`，可以通过 `getAttribute` 或者 `Element.dataset` 访问到 `attribute`
+
+在命名上，`attribute` 由连字符 `-` 和小写字母等组成，在 `property` 里会自动转为驼峰格式
+```html
+<input data-some_new-attribute="1" />
+```
+```js
+i.dataset.some_newAttribute // '1'
+```
+
+`dataset` 的 `attribute` 和 `property` 基本是一一对应关系，暂时没有找到反例
+
+
+改变 `attribute` 会同步到 `property`
+```js
+i.setAttribute('data-foo', 'new')
+i.dataset.foo // 'new'
+```
+改变 `property` 会同步到 `attribute`，即使是在 dataset 中新增或者 delete 属性，HTML 也会同步改变
+```js
+i.dataset.newItem = 'bar'
+```
+```html
+<input data-new-item="bar" />
+```
+
+> 值得注意的是，dataset 的值类型是 String，dataset 本身是 `DOMStringMap` 对象
+
+### CSS attr
+
+css 的 `attr()` 可以获取 attribute，但在2022年1月大部分特性仍然是实验性质的，浏览器支持很差
+
+```html
+<div data-text="hello">
+  world
+</div>
+```
+```css
+div::before {
+  content: attr(data-text) ""; // 屏幕中会显示 hello world
+}
+```
 
 ### CSS 属性选择器 (Attribute selectors)
 
+属性选择器通过 `attribute` 匹配元素
+匹配有 `title` 的 `div`
+```css
+div[title]
+```
+
+匹配*子*元素有 `title` 的 `div`
+```css
+div [title]
+```
+
+匹配 `title` 内容为 `dna`
+```css
+div[title="dna"]
+```
+
+匹配单词 `dna`，由空格分割的字符
+```css
+div[title~="dna"]
+``` 
+
+以 `dna` 结尾
+```css
+div[title$="dna"]
+```
+
+以 `dna` 开头
+```css
+div[title^="dna"]
+```
+
+包含 `dna`
+```css
+div[title*="dna"]
+```
+
+有 title 并且 class 由 gens 结尾。注意属性选择器可以*叠加*
+```css
+div[title][class$="gens"]
+```
+
+
 见到一个有意思的实现：
-一些特殊符号比如`'「'` `'【'`这类左边有比较大的空白，导致排版时看上去没有顶格
+一些特殊符号比如`「` `【`这类左边有比较大的空白，导致排版时看上去没有顶格
 可以把文本同步写进 attribute 里，选择器发现首字符是这类字符，就来特殊样式
 ```html
 <!-- vue -->
@@ -167,7 +267,15 @@ p[title^="「"] {
 }
 ```
 
+## 回到引入
+
+在元素上使用 `v-bind:key` 时，vue 会用 `in` 操作符检查被绑定的 `key` 是否存在于元素的 property 中，如果这个 `key` 存在，vue 会将这个值设置为 property 而不是 attribute
+
+通过 `.prop` `.attr` 可以显式地覆写这个行为，强制绑定到 property 或者 attribute 上
+
+
 ## 参考资料
 [Angular - HTML attributes and DOM properties](https://angular.io/guide/binding-syntax#html-attribute-vs-dom-property)
 [掘金 - 详解 HTML attribute 和 DOM property](https://juejin.cn/post/6844903874143191047)
 [dom-attributes-and-properties](https://javascript.info/dom-attributes-and-properties)
+[张鑫旭 - HTML5自定义属性对象Dataset简介](https://www.zhangxinxu.com/wordpress/2011/06/html5%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7%E5%AF%B9%E8%B1%A1dataset%E7%AE%80%E4%BB%8B/)
