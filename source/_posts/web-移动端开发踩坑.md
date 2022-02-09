@@ -6,7 +6,7 @@ tags: [移动 Web 开发]
 
 ## 浏览器内核
 
-所谓内核指渲染引擎，要和 js 引擎区分开来。大名鼎鼎的 js 引擎有 Chrome 用的 V8，其他浏览器不尽相同。
+所谓内核指*渲染引擎*，要和 *js 引擎*区分开来。*js 引擎*有 Chrome 用的大名鼎鼎的 `V8` 等，其他浏览器不尽相同。
 
 ### iOS
 
@@ -18,7 +18,7 @@ tags: [移动 Web 开发]
 
 - `Webkit`（Safari），Google（Chrome） 后来 Fork 它做出了 `Blink`，Opera 也在用这个引擎。
 - `Gecko`（Firefox），Netscape 做的，现在由 Mozilla 维护。
-- `Trident`（or whatever），微软做的，IE 在用，360安全浏览器也在用。现在（2020 年）Edge 已经在用 Chromium（Chrome 的开源先行版） 开发啦！
+- `Trident`（or whatever），微软做的，IE 在用，360安全浏览器也在用。微软新推出的 Edge 已经在用 Chromium（Chrome 的开源先行版）开发啦！
 
 根据360浏览器的[一份文档](https://browser.360.cn/se/help/kernel.html)，国产的主流浏览器都是双核浏览器：基于`Webkit`的内核用于常用网站的高速浏览，基于`IE`的内核主要用于部分网银、政府、办公系统等网站的正常使用。
 
@@ -28,9 +28,9 @@ iOS 随便哪个浏览器，问题都不大；
 
 ### 微信
 
-中国特色，微信浏览器。每个做移动端 web 开发都要吃的 💩。
+在2022年的今天，微信已经成为国内用户事实上的移动浏览器 💩。
 
-iOS 下虽然也是 WebKit 内核，但偶尔还是会出一些小坑，兼容性测试单独拎出来测一下就好。
+iOS 下虽然也是 `WebKit` 内核，但还是会出一些小坑，需要单独拎出来兼容性测试。
 安卓下腾讯出了一个 X5 内核，作为应对千变万化的安卓设备与特性的兼容性解决方案。似乎是基于 Chromium 做的。总之也需要单独拎出来测一下。
 
 ## 通用样式解决方案
@@ -77,23 +77,50 @@ rem 可以实现根据设备屏幕宽度不同，呈现比例相同、实际宽�
 
 见[这里](/blog/2019/12/20/CSS-方式解决-iOS-微信橡皮筋效果与-position-fixed-联动的坑/)
 
+#### click 事件
+
+在 iOS 的微信/企业微信，以及 Safari 内，给 `window` 绑定点击事件会有不能正常触发回调的问题
+```js
+window.addEventListener('click', fn)  // 页面内的点击事件不会调用 `fn`
+window.onclick = fn                   // 同上
+```
+
+解决方案是给根部的 `<html>` 标签加一个 `onclick` 事件，或者绑定一个 `eventListener`，绑定空的函数就行
+```js
+const htmlElement = document.getElementsByTagName('html')[0];
+const temp = htmlElement.onclick; // 或者 addEventListener('click', _ => {})
+htmlElement.onclick = function (...args) {
+  try {
+    if (temp) {
+      temp.apply(this, args);
+    }
+  } catch (error) {
+    //
+  }
+};
+```
+
+这个问题在 iOS Chrome 内表现正常，无需对 `<html>` 有额外操作。
+
+同时，这个问题**只有**给 `window` 绑定 `click` 事件时存在。
+- `window` 内部的普通 DOM 元素，绑定 `click` 事件，可以正常触发回调
+- 给 `window` 绑定 `touchstart` 事件，可以正常触发回调
+
+> 顺带一提，由于移动端有双击屏幕放大的逻辑，所以 `click` 事件会比 `touchstart` 晚一些触发
+
 ### 安卓微信
 
 #### 同层播放问题
 
 见[这里](/blog/2019/12/11/安卓微信-视频播放-相关踩坑/)
 
+不要做视频位置移动、视频被 DOM 遮挡的设计
+
 #### 奇数 font-size 不对齐问题
 
 不确定的信息来源：安卓 webview 中的浏览器为了避免奇数 font-size 带来的偏差，自动设置成了偶数。
 可以通过设置 2 倍 font-size 再做 0.5 倍缩放，或者干脆改为偶数 font-size 来规避问题。
 <https://imweb.io/topic/5848d0fc9be501ba17b10a94>
-
-## 基于用户体验的最佳实践
-
-- 不做视频位置移动、视频被 DOM 遮挡的设计
-
-- 引导用户使用 Chrome/Firefox 手机版
 
 ## 其他
 
