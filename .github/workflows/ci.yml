@@ -4,4 +4,18 @@ jobs:
   build-and-delpoy:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Hello GitHub Actions"
+      - name: Hello World
+        run: echo "Hello GitHub Actions"
+
+      - uses: actions/checkout@v2
+
+      - name: install and build
+        run: |
+          npm ci
+          npm run build
+
+      - name: deploy
+        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: public # The folder the action should deploy.
