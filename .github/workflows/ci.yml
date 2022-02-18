@@ -1,0 +1,7 @@
+name: GitHub Action CI
+on: [push]
+jobs:
+  build-and-delpoy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello GitHub Actions"
