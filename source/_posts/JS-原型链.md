@@ -2,7 +2,6 @@
 title: JS 原型链、this 与 class
 date: 2020-04-20 17:13:43
 tags: [JS]
-categories: [面试基础]
 ---
 
 # 原型链
@@ -64,7 +63,10 @@ Alaska.__proto__;
 原型本身就是对象，原型链的顶端指向`Object.prototype`，其中有`hasOwnProperty`、`toString`等方法。而`Object.prototype`的原型指向 null。
 
 ```js
-Object.prototype.__proto__; // null
+Alaska.__proto__; // {getName: ƒ, constructor: ƒ}
+Alaska.__proto__ === Dog.prototype; // true
+Alaska.__proto__.__proto__ === Object.prototype; // Alaska.__proto__ 原型是对象，对象的原型指向 Object.prototype
+Alaska.__proto__.__proto__ === null // true
 ```
 
 ## 创建对象的方法
@@ -76,7 +78,7 @@ Object.prototype.__proto__; // null
   // o 继承了 Object.prototype 里的所有属性
 
   let a = ["N", "M", "$", "L"];
-  // a 继承于 Array.prototype（indexOf，map）
+  // a 继承于 Array.prototype，比如 indexOf、map
 
   function f() {}
   // 函数也是一种对象，f 继承于 Function.prototype（call、bind）
@@ -140,13 +142,20 @@ Object.prototype.__proto__; // null
 ### Function 与 Object 的关系
 由于 `Object` 可以被 `new` 作用，所以是构造「函数」
 ```js
-Object instanceof Function // true
 Object.__proto__ === Function.prototype // true
+Object instanceof Function // true
+
+typeof Object // 'function'
 ```
 `Function` 是一个「对象」，也是一个「函数」。作为对象，有自己的原型对象 `__proto__`，作为函数，它也会通过原型链从 Function.prototype 继承一些属性和方法
 ```js
-Function instanceof Object // true
 Function.__proto__ === Function.prototype // true
+Function instanceof Function // true
+
+Function.__proto__.__proto__ === Object.prototype // true
+Function instanceof Object // true
+
+typeof Function // 'function'
 ```
 
 ### 总结一下
@@ -377,8 +386,205 @@ let fn2 = function () {
 };
 ```
 
-所以 fn2()() 指向全局对象。
+需要注意的是，执行 fn2()() 已经不是对象内调用方法了（与 obj 无关），是全局环境的直接调用，所以 fn2()() 指向全局对象。
 
-## 额外阅读
+# Class
+类是特殊的函数。类的声明`class A {}`或表达式`const A = class {}`不会变量提升。类内部的代码都是在严格模式下运行的
 
-<https://github.com/mqyqingfeng/Blog/issues/4>
+## constructor
+类的构造函数，在 `new` 关键字创建实例时执行。如果没有显式指定构造函数，则会添加一个默认构造函数
+```js
+// 基类
+constructor() {}
+
+// 派生类
+constructor(...args) {
+  super(...args)
+}
+```
+
+## 属性、方法和 static
+### 声明
+可以在类内部直接声明属性或方法
+```js
+class A {
+  x = 1;
+  y = 2;
+  foo() {
+    console.log('foo')
+  }
+}
+
+const a = new A()
+a.x // 1
+a.y // 2
+a.foo() // 'foo'
+```
+
+不过这种在类内部声明属性的方式，在当前（2022年4月）浏览器支持有限，需要 Babel 等构建一下
+
+### static
+可以用 `static` 声明静态方法和属性。
+静态方法不能在类**实例**上调用静态方法，只能用**类名**调用
+静态属性同理，不能在类**实例**中访问，只能用**类名**访问
+静态属性/方法是与实例无关的
+
+```js
+class A {
+  static x = 1;
+  static foo() {
+    console.log('foo')
+  }
+}
+
+const a = new A()
+a.x // undefined
+A.x // 1
+a.foo // undefined
+A.foo() // 'foo'
+```
+
+> 静态属性似乎是比较新的特性，暂时没查到具体的兼容性，在新版的 Chrome 和 Safari 上已经可用了
+
+### 子类的静态方法
+子类可以在自己的静态方法里调用父类的静态方法
+```js
+class A {
+  static foo() {
+    console.log('foo')
+  }
+}
+
+class B extends A {
+  static bar() { // 注意，如果 bar 不是静态方法，会报错
+    super.foo()
+    console.log('bar')
+  }
+}
+
+B.bar() // 'foo' 'bar'
+```
+
+## extends
+
+用于扩展子类。子类的原型会是父类的 `prototype`
+```js
+class View {
+  constructor(id) {
+    this.id = id
+  }
+  render() {
+    console.log('render in screen')
+  }
+  static getRootName() {
+    return 'view'
+  }
+}
+
+class Button extends View {
+  click() {
+    console.log('click')
+  }
+}
+
+const button = new Button('submit')
+button instanceof Button // true
+button instanceof View // true
+```
+![示意图](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/13/JS%20class3.png)
+
+`Button extends View` 创建了两个原型引用
+```js
+Button.__proto__ === View // 子类的原型等于父类（而不是父类的 prototype）
+Button.prototype.__proto__ === View.prototype // 子类实例的原型的原型等于父类的 prototype
+```
+
+## super
+
+super 用于在子类访问父类的方法
+
+### 构造函数中
+在子类的构造函数里 `super()` 可以调用父类的构造函数。
+注意一定要在访问 `this` **之前**调用 `super`
+
+```js
+class A {
+  constructor() {}
+}
+
+class B {
+  constructor() {
+    super()
+  }
+}
+```
+
+### 复写方法
+在子类的普通方法中，`super[key]` `super.key` 可以调用父类上的方法。
+
+即使不使用 `super`，子类通过 `this` 也同样可以访问到父类的方法（和属性）。
+区别在于，`super.good` 直接调用父类的函数实现，而 `this.good` 会在函数作用域链上寻找 `good` 最近的实现，两者的函数实现可能不同。
+因此 `super` 常用在复写父类的**同名**方法上
+```js
+class A {
+  good() {
+    console.log('this is A')
+  }
+}
+
+class B extends A {
+  good() {
+    // 这里想要调用父类的 good，不能直接写 this.good
+    // 因为作用域链里最近的 good 就是函数本身，会造成递归
+    // 注意，这里的 super 无需在访问 this 之前调用
+    super.good()
+
+    console.log('this is B')
+  }
+}
+```
+
+`constructor` 本身也是一个复写的例子，想要调用父类的构造函数，不能直接 `this.constructor`，而是借助 `super`
+
+## class与普通函数的区别
+### class 必须使用 new 操作符
+class 创建对象时需要用 `new`，而普通函数可以直接调用，浏览器环境内会以 `window` 作为 `this`
+
+```js
+function A() {
+  this.x = 1
+}
+A() // window.x === 1
+
+class B {}
+B() // 语法错误
+```
+
+### class 声明不会提升
+function 的声明是会提升的，所以可以先调用函数，再声明函数。class 则不会提升
+```js
+A() // window.x === 1
+function A() {
+  this.x = 1
+}
+
+new B()
+class B {} // 语法错误
+
+```
+
+### class 不能用 call、apply 改变 this
+```js
+const a = {}
+class B {}
+B.call(a) // error: Class constructor B cannot be invoked without 'new'
+new B.call(a) // error: B.call is not a constructor
+
+B.bind(a) // TODO: 这句不会报错，能顺利执行...
+```
+
+
+# 参考资料
+[static properties methods](https://javascript.info/static-properties-methods)
+[mdn](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Inheritance_and_the_prototype_chain)
+[JavaScript深入之执行上下文栈](https://github.com/mqyqingfeng/Blog/issues/4)
