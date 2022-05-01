@@ -6,7 +6,7 @@ tags: [JS]
 
 
 ## typeof
-结论：`null`、`Function` 不符合直觉，无法识别 `NaN`、`Infinity` 和`Array`。浏览器实现的对象因浏览器而异
+结论：`null`、`function` 不符合直觉；无法识别 `NaN`、`Infinity` 和`Array`；浏览器实现的对象因浏览器而异
 
 
 ### 语法：
@@ -49,9 +49,9 @@ d instanceof D
 检查 `D.prototype` 是否在 `d` 的**原型链**上
 可以粗暴的理解为 `d.__proto__.__proto__.__proto__...` 这个链中是否有一个节点等于（指向） `D.prototype`
 ```js
-[].__proto__ === Array.prototype
-[].__proto__.__proto__ === Object.prototype
-[].__proto__.__proto__.__proto__ === null
+[].__proto__ === Array.prototype              // [] instanceof Array === true
+[].__proto__.__proto__ === Object.prototype   // [] instanceof Object === true
+[].__proto__.__proto__.__proto__ === null     // [] instanceof null 会报错，null 不是对象 😝
 ```
 
 ### 用途
@@ -116,6 +116,18 @@ Object.prototype.toString.call(undefined) // [object Undefined]
 ```
 
 > 顺带一提，有这样的写法 `Function.prototype.apply.call(fn, this, args)`，而不是直接执行 `fn.apply(this, args)`，目的就是避免 fn 的 apply 方法已经被重写覆盖过
+
+## constructor
+实例的 constructor === 构造函数
+但是用 constructor 判断不安全，constructor 有被覆盖的风险，例如构造函数的 prototype 被重写，这时候实例的 constructor 不等于构造函数
+
+```js
+function Fn () {}
+Fn.prototype = new Array()
+const f = new Fn()
+f.constructor // Array，而不是 Fn
+// TODO: class 的写法下，似乎对 Fn.prototype 赋值没有生效
+```
 
 ## 实践
 
