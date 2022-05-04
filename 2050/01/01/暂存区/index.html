@@ -1,0 +1,284 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="google-site-verification" content="_s8zp9HC5xK3I7RCh_8RJrSUgYtyNgc09bZvTV11nFI"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>暂存区 | imbAnt's blog</title><link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/blog/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/blog/favicon.ico"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/blog/apple-touch-icon.png"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">暂存区</h1><a id="logo" href="/blog/.">imbAnt's blog</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/blog/."><i class="fa fa-home"> 首页</i></a><a href="/blog/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/blog/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">暂存区</h1><div class="post-meta">2050-01-01</div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1"><span class="toc-number">1.</span> <span class="toc-text">1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2"><span class="toc-number">2.</span> <span class="toc-text">2</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3"><span class="toc-number">3.</span> <span class="toc-text">3</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4"><span class="toc-number">4.</span> <span class="toc-text">4</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5"><span class="toc-number">5.</span> <span class="toc-text">5</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6"><span class="toc-number">6.</span> <span class="toc-text">6</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#javascript%E3%80%81ES-567-%E5%9F%BA%E7%A1%80"><span class="toc-number">6.1.</span> <span class="toc-text">javascript、ES 567 基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#call-apply-bind-%E5%8C%BA%E5%88%AB%EF%BC%8C%E6%89%8B%E5%86%99%E9%98%B2%E6%8A%96%E8%8A%82%E6%B5%81%EF%BC%8C%E6%B3%A8%E6%84%8F-this-%E5%92%8C%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0"><span class="toc-number">6.1.1.</span> <span class="toc-text">call, apply, bind 区别，手写防抖节流，注意 this 和箭头函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B"><span class="toc-number">6.1.2.</span> <span class="toc-text">如何判断变量类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%8F%E8%BF%B0%E4%B8%80%E4%B8%8B-new-%E6%93%8D%E4%BD%9C%E7%AC%A6%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">6.1.3.</span> <span class="toc-text">描述一下 new 操作符做了什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#getter%E3%80%81setter"><span class="toc-number">6.1.4.</span> <span class="toc-text">getter、setter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9B%B8%E5%85%B3%EF%BC%9A%E5%8E%9F%E5%9E%8B%E9%93%BE%E3%80%81this%E3%80%81%E7%AE%AD%E5%A4%B4%E5%87%BD%E6%95%B0%E3%80%81class-constructor%E3%80%81extends%E3%80%81super%E3%80%81static"><span class="toc-number">6.1.5.</span> <span class="toc-text">面向对象相关：原型链、this、箭头函数、class(constructor、extends、super、static)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%A3%B0%E6%98%8E%E8%B7%9F%E5%87%BD%E6%95%B0%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%8C%E5%8F%98%E9%87%8F%E6%8F%90%E5%8D%87%E9%97%AE%E9%A2%98"><span class="toc-number">6.1.6.</span> <span class="toc-text">函数声明跟函数表达式的区别，变量提升问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#for-in-%E4%B8%8E%E5%8F%AF%E6%9E%9A%E4%B8%BE%E5%B1%9E%E6%80%A7%EF%BC%9Bfor-of-%E4%B8%8E%E8%BF%AD%E4%BB%A3%E5%99%A8%E3%80%81%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%AF%B9%E8%B1%A1"><span class="toc-number">6.1.7.</span> <span class="toc-text">for in 与可枚举属性；for of 与迭代器、可迭代对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E5%AE%9A%E5%8F%82%E6%95%B0%E5%87%BD%E6%95%B0%E7%9A%84%E8%AF%AD%E6%B3%95%EF%BC%8C%E6%89%8B%E5%86%99%E3%80%82%E5%9C%A8-es6-%E4%B9%8B%E5%89%8D%E6%B2%A1%E6%9C%89%E8%BF%99%E7%A7%8D%E8%AF%AD%E6%B3%95%EF%BC%8C%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%EF%BC%88arguments%EF%BC%9F%EF%BC%89"><span class="toc-number">6.1.8.</span> <span class="toc-text">不定参数函数的语法，手写。在 es6 之前没有这种语法，怎么解决（arguments？）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#js-%E7%9A%84%E6%95%B0%E5%80%BC"><span class="toc-number">6.1.9.</span> <span class="toc-text">js 的数值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A3%E5%88%99"><span class="toc-number">6.1.10.</span> <span class="toc-text">正则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%B9%E6%96%B0%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E4%BA%86%E8%A7%A3%EF%BC%9ASymbol-Set-Map"><span class="toc-number">6.1.11.</span> <span class="toc-text">对新数据类型的了解：Symbol, Set, Map</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Array-%E6%9C%89%E5%93%AA%E4%BA%9B%E6%96%B9%E6%B3%95%EF%BC%8C%E5%93%AA%E4%BA%9B%E6%94%B9%E5%8F%98%E5%8E%9F%E6%95%B0%E7%BB%84"><span class="toc-number">6.1.12.</span> <span class="toc-text">Array 有哪些方法，哪些改变原数组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%B1%E6%8B%B7%E8%B4%9D%E3%80%81%E6%B5%85%E6%8B%B7%E8%B4%9D%EF%BC%8C%E6%89%8B%E5%86%99"><span class="toc-number">6.1.13.</span> <span class="toc-text">深拷贝、浅拷贝，手写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#es6-%E5%8F%8A%E4%BB%A5%E4%B8%8A%E6%96%B0%E5%A2%9E%E7%9A%84%E7%89%B9%E6%80%A7%EF%BC%8C%E5%8F%A3%E5%96%B7%E6%9C%89%E5%93%AA%E4%BA%9B%E7%89%B9%E6%80%A7"><span class="toc-number">6.1.14.</span> <span class="toc-text">es6 及以上新增的特性，口喷有哪些特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#event-loop%E3%80%81%E5%AE%8F%E4%BB%BB%E5%8A%A1%E3%80%81%E5%BE%AE%E4%BB%BB%E5%8A%A1-%E5%85%AC%E4%BC%97%E5%8F%B7%E6%96%87%E7%AB%A0"><span class="toc-number">6.1.15.</span> <span class="toc-text">event loop、宏任务、微任务 公众号文章</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%84%E4%B8%AA-observer-%E5%90%8D%E5%AD%97%E3%80%81%E8%AF%BB%E6%B3%95%EF%BC%8C%E6%89%8B%E5%86%99%E7%94%A8%E6%B3%95-MutationObserver%E3%80%81IntersectionObserver%E3%80%81PerformanceObserver"><span class="toc-number">6.1.16.</span> <span class="toc-text">各个 observer 名字、读法，手写用法 MutationObserver、IntersectionObserver、PerformanceObserver</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%B8%AD%E6%96%AD-xhr-%E8%AF%B7%E6%B1%82"><span class="toc-number">6.1.17.</span> <span class="toc-text">如何中断 xhr 请求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#defineProperty-%E5%92%8C-proxy-%E7%9A%84%E7%94%A8%E6%B3%95%EF%BC%88Vue-23-%E5%90%B9%E9%80%BC%E7%94%A8%EF%BC%89"><span class="toc-number">6.1.18.</span> <span class="toc-text">defineProperty 和 proxy 的用法（Vue 23 吹逼用）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#setTimeout-%E7%9A%84-this-%E9%97%AE%E9%A2%98-mdn"><span class="toc-number">6.1.19.</span> <span class="toc-text">setTimeout 的 this 问题 mdn</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Promise-race-%E3%80%81all-%EF%BC%8C%E5%A6%82%E6%9E%9C%E6%9F%90%E4%B8%80%E4%B8%AA-reject-%E4%BA%86%E6%98%AF%E4%BB%80%E4%B9%88%E6%A0%B7"><span class="toc-number">6.1.20.</span> <span class="toc-text">Promise.race 、all ，如果某一个 reject 了是什么样</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E5%A4%84%E7%90%86%E7%9A%84%E6%BC%94%E8%BF%9B%EF%BC%9ACallback%EF%BC%8CPromise-Generator-Async-Await-%E7%9A%84%E4%BA%86%E8%A7%A3%E7%A8%8B%E5%BA%A6-%E5%8F%AF%E4%BB%A5%E6%B7%B1%E5%85%A5%E7%9A%84%E9%97%AE%E9%A2%98%E5%AE%9E%E7%8E%B0%EF%BC%8C%E7%9C%8B%E5%80%99%E9%80%89%E4%BA%BA%E8%83%BD%E4%BC%9A%E5%88%B0%E5%93%AA%E4%B8%AA%E7%A8%8B%E5%BA%A6%EF%BC%8C%E5%8F%AF%E4%BB%A5%E6%8B%93%E5%B1%95%E5%88%B0-event-loop%EF%BC%8C%E5%BE%AE%E4%BB%BB%E5%8A%A1%EF%BC%8C%E5%AE%8F%E4%BB%BB%E5%8A%A1%EF%BC%8C%E8%BF%98%E5%8F%AF%E4%BB%A5%E8%81%8A%E5%88%B0%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BA%BF%E7%A8%8B%EF%BC%8Cweb-worker-%E4%B9%8B%E7%B1%BB%E7%9A%84%EF%BC%8C%E5%8F%AF%E4%BB%A5%E6%9C%89%E5%85%B7%E4%BD%93%E7%9A%84%E9%A2%98%E7%9B%AE"><span class="toc-number">6.1.21.</span> <span class="toc-text">异步处理的演进：Callback，Promise, Generator, Async Await 的了解程度, 可以深入的问题实现，看候选人能会到哪个程度，可以拓展到 event loop，微任务，宏任务，还可以聊到浏览器线程，web worker 之类的，可以有具体的题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E8%80%83%E9%A2%98%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9C%8B%E6%83%85%E5%86%B5%E9%97%AE"><span class="toc-number">6.1.22.</span> <span class="toc-text">异步考题，可以看情况问</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#css-%E5%B8%83%E5%B1%80%E5%9F%BA%E7%A1%80"><span class="toc-number">6.2.</span> <span class="toc-text">css 布局基础</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-number">6.3.</span> <span class="toc-text">前端模块化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#webpack-%E4%B8%8E-vite"><span class="toc-number">6.3.1.</span> <span class="toc-text">webpack 与 vite</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A5%E5%85%85%E9%82%A3%E7%89%87%E5%8D%9A%E6%96%87%EF%BC%8CcommonJS-AMD-%E9%83%BD%E8%A6%81%E5%86%99%E5%AE%8C"><span class="toc-number">6.3.2.</span> <span class="toc-text">补充那片博文，commonJS AMD 都要写完</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTML"><span class="toc-number">6.4.</span> <span class="toc-text">HTML</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%86%E6%9E%B6%E8%BF%90%E7%94%A8%E4%BB%A5%E5%8F%8A%E7%90%86%E8%A7%A3%E8%83%BD%E5%8A%9B-vue-react-angular"><span class="toc-number">6.5.</span> <span class="toc-text">框架运用以及理解能力 vue react angular</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#router-%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">6.5.1.</span> <span class="toc-text">router 的实现原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#React"><span class="toc-number">6.5.2.</span> <span class="toc-text">React</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Vue"><span class="toc-number">6.5.3.</span> <span class="toc-text">Vue</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E7%9B%B8%E5%85%B3"><span class="toc-number">6.6.</span> <span class="toc-text">安全相关</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#csrf"><span class="toc-number">6.6.1.</span> <span class="toc-text">csrf</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#xss"><span class="toc-number">6.6.2.</span> <span class="toc-text">xss</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3"><span class="toc-number">6.7.</span> <span class="toc-text">网络相关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E6%80%9D%E7%BB%B4%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95%EF%BC%88%E9%AB%98%E7%BA%A7%E5%B7%A5%E7%A8%8B%E5%B8%88%E6%88%96%E8%80%85-Leader-%E5%B2%97%E4%BD%8D%E5%8F%AF%E4%BB%A5%E8%80%83%E8%99%91%E5%8A%A0%E5%88%86%E9%A1%B9%EF%BC%89"><span class="toc-number">6.8.</span> <span class="toc-text">逻辑思维基础算法（高级工程师或者 Leader 岗位可以考虑加分项）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%BC%E5%90%88%E8%83%BD%E5%8A%9B%E8%AF%84%E4%BC%B0%EF%BC%88%E5%AD%A6%E4%B9%A0%E8%83%BD%E5%8A%9B%E3%80%81%E8%A1%A8%E8%BE%BE%E8%83%BD%E5%8A%9B%E3%80%81%E6%B2%9F%E9%80%9A%E8%83%BD%E5%8A%9B%E3%80%81%E9%80%BB%E8%BE%91%E7%BB%84%E7%BB%87%E8%83%BD%E5%8A%9B%EF%BC%89"><span class="toc-number">6.9.</span> <span class="toc-text">综合能力评估（学习能力、表达能力、沟通能力、逻辑组织能力）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%8F%E9%AA%8C%E8%AF%84%E4%BC%B0"><span class="toc-number">6.10.</span> <span class="toc-text">项目经验评估</span></a></li></ol></li></ol></div></div><div class="post-content"><p><a target="_blank" rel="noopener" href="https://docs.github.com/cn/github/authenticating-to-github/removing-sensitive-data-from-a-repository">从仓库中删除敏感数据</a></p>
+<h2 id="1"><a href="#1" class="headerlink" title="1"></a>1</h2><ul>
+<li><p>HTML</p>
+<ul>
+<li>语义化标签<br>是什么：一些带有语义的标签，对开发者和浏览器都可读。<br><code>header</code> <code>nav</code> <code>main</code> <code>section</code> <code>article</code> <code>details</code> <code>figure</code> <code>footer</code><br>为什么：对开发者，提高可读性；对浏览器，有利于 SEO（根据标签确定上下文和关键字权重），有利于可访问性/无障碍（视障用户的屏幕阅读器等辅助功能）；即使 CSS 未加载，仍能看懂 HTML 结构。<br>怎么用：在符合语义化的地方用语义化标签代替 div，注意，它们的默认样式都是：<code>display: block</code><br><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/2/2020-%E5%BA%94%E8%81%98.gif"></li>
+</ul>
+</li>
+<li><p>CSS</p>
+<ul>
+<li>BFC</li>
+<li>垂直居中</li>
+<li>line-height 对齐哪条线</li>
+<li>margin 坍缩、span 中的 margin</li>
+</ul>
+</li>
+<li><p>JS</p>
+<ul>
+<li>Symbol</li>
+<li>原型</li>
+<li>正则</li>
+</ul>
+</li>
+<li><p>浏览器</p>
+<ul>
+<li>跨域问题</li>
+</ul>
+</li>
+</ul>
+<h2 id="2"><a href="#2" class="headerlink" title="2"></a>2</h2><ul>
+<li><p>HTML</p>
+<ul>
+<li><p>meta 标签<br>表示元数据信息。属性有<code>name</code> <code>http-equiv(alent)</code> <code>content</code> 等。<br>常用用法是在一个标签里定义一个<code>name</code>或者<code>http-equiv</code>，再定义一个<code>content</code>与前者对应，作为键值对的形式。</p>
+<p><code>name</code>作为元数据的名称。</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>content</th>
+<th>content 值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>keywords</td>
+<td>SEO 关键词</td>
+<td></td>
+</tr>
+<tr>
+<td>description</td>
+<td>SEO 关键词</td>
+<td></td>
+</tr>
+<tr>
+<td>author</td>
+<td>作者</td>
+<td></td>
+</tr>
+<tr>
+<td>copyright</td>
+<td>版权</td>
+<td></td>
+</tr>
+<tr>
+<td>referrer</td>
+<td>控制从该文档发出的 HTTP 请求的 referer 头</td>
+<td>no-referrer 不发送；origin 正常发</td>
+</tr>
+<tr>
+<td>viewport</td>
+<td>仅供移动端使用的属性</td>
+<td>width=device-width(定义 viewport 宽度);user-scalable=no(用户不能放大或缩小网页)</td>
+</tr>
+</tbody></table>
+<p><code>http-equiv</code>的值和一些 HTTP 头的字段同名。</p>
+<table>
+<thead>
+<tr>
+<th>http-equiv</th>
+<th>content</th>
+<th>content 值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>content-type</td>
+<td>设定文档字符集</td>
+<td>必须是”text/html; charset=utf-8”，不推荐使用，最好用 HTML5 的<code>&lt;meta charset=&#39;utf-8&#39;&gt;</code></td>
+</tr>
+<tr>
+<td>x-ua-compatible</td>
+<td>IE 浏览器以如何版本渲染页面</td>
+<td>IE=edge,chrome=1</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>strong b 两个标签区别<br>在样式上都是粗体<code>font-weight: bold</code>，根据人类语言中侧重不同来表达不同的语义。<br>em 和 i 也是同理，都是斜体，语义不同。</p>
+</li>
+<li><p>JS</p>
+<ul>
+<li>Map 与 Set</li>
+<li>Array 的方法 哪些改变原数组 哪些返回原数组</li>
+<li>如何判断变量类型</li>
+<li>import require 区别、commonJS</li>
+</ul>
+</li>
+<li><p>Git</p>
+<ul>
+<li>git rebase 作用</li>
+</ul>
+</li>
+<li><p>HTTP</p>
+<ul>
+<li>400 状态码意义</li>
+</ul>
+</li>
+<li><p>编码</p>
+<ul>
+<li>数组扁平化、数组/对象深拷贝</li>
+</ul>
+</li>
+</ul>
+<h2 id="3"><a href="#3" class="headerlink" title="3"></a>3</h2><ul>
+<li><p>CSS</p>
+<ul>
+<li>选择器有哪些</li>
+</ul>
+</li>
+<li><p>JS</p>
+<ul>
+<li>await 一个 rejected 的 Promise 会怎么样？await 一个不是 Promise 会怎么样？<br><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/learn/JavaScript/%E5%BC%82%E6%AD%A5/Async_await">https://developer.mozilla.org/zh-CN/docs/learn/JavaScript/%E5%BC%82%E6%AD%A5/Async_await</a></li>
+<li>熟练的手写 for-of / for-in / try / switch / import(export) 语法</li>
+<li>super 意义、class 写法</li>
+<li>Promise.allSettled</li>
+</ul>
+</li>
+<li><p>浏览器</p>
+<ul>
+<li>cookie、session storage、local storage 区别</li>
+</ul>
+</li>
+<li><p>工程化</p>
+<ul>
+<li>简述 webpack 功能、工作流程</li>
+<li>webpack splitChunk</li>
+</ul>
+</li>
+</ul>
+<h2 id="4"><a href="#4" class="headerlink" title="4"></a>4</h2><ul>
+<li><p>js</p>
+<ul>
+<li>实现 Promise.race</li>
+<li>generator function 和 async/await 关系</li>
+<li>实现一个高阶函数，为包裹的异步函数加一个 timeout，超时后 reject（如何“中断”一个函数/异步操作/网络请求/Promise；this 传递问题）</li>
+<li>useCallback 为什么要有第二个参数（闭包是个什么）</li>
+<li>不定参数的函数语法</li>
+</ul>
+</li>
+</ul>
+<h2 id="5"><a href="#5" class="headerlink" title="5"></a>5</h2><ul>
+<li><p>HTML</p>
+<ul>
+<li>shadow dom</li>
+<li>web component</li>
+</ul>
+</li>
+<li><p>js</p>
+<ul>
+<li>ts type interface 的区别、泛型</li>
+<li>React 自定义 hook 用过没，functional component 的优势（没系统思考过，说的七七八八的）</li>
+<li>React HOC 和 render props 是什么、解决什么问题。render props 和 hooks 的关系</li>
+<li>Redux 原理、工作流</li>
+<li>Array.prototype.reduce</li>
+</ul>
+</li>
+<li><p>css</p>
+<ul>
+<li>BFC(大厂里第二次问了)</li>
+<li>flex box 哪些属性（说的不够系统，也是第二次问到了）</li>
+</ul>
+</li>
+<li><p>浏览器</p>
+<ul>
+<li>浏览器缓存策略</li>
+</ul>
+</li>
+<li><p>Git</p>
+<ul>
+<li>有哪些命令</li>
+</ul>
+</li>
+</ul>
+<h2 id="6"><a href="#6" class="headerlink" title="6"></a>6</h2><h3 id="javascript、ES-567-基础"><a href="#javascript、ES-567-基础" class="headerlink" title="javascript、ES 567 基础"></a>javascript、ES 567 基础</h3><h4 id="call-apply-bind-区别，手写防抖节流，注意-this-和箭头函数"><a href="#call-apply-bind-区别，手写防抖节流，注意-this-和箭头函数" class="headerlink" title="call, apply, bind 区别，手写防抖节流，注意 this 和箭头函数"></a>call, apply, bind 区别，手写防抖节流，注意 this 和箭头函数</h4><ul>
+<li><code>call</code> 接收 <code>this</code> 和多个入参 <code>call(this, a, b, c)</code></li>
+<li><code>apply</code> 接收 <code>this</code> 和入参数组 <code>apply(this, [a, b, c])</code> 因此 <code>apply</code> 用在高阶函数里接收不定数量的参数</li>
+<li><code>bind</code> 绑定 <code>this</code>，且是一次性的，后续再 <code>bind</code> 不会生效。<code>bind</code> 第一个以后的参数可以绑定入参，变成偏函数</li>
+</ul>
+<h4 id="如何判断变量类型"><a href="#如何判断变量类型" class="headerlink" title="如何判断变量类型"></a>如何判断变量类型</h4><ul>
+<li><code>typeof null === &#39;object&#39;</code>、<code>typeof Func === &#39;function&#39;</code></li>
+<li><code>instanceof</code> 判断原型链</li>
+<li><code>Object.prototype.toString.call</code></li>
+</ul>
+<p><a href="/blog/2022/04/30/JS-%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%88%A4%E6%96%AD/">JS 的类型判断</a></p>
+<h4 id="描述一下-new-操作符做了什么"><a href="#描述一下-new-操作符做了什么" class="headerlink" title="描述一下 new 操作符做了什么"></a>描述一下 new 操作符做了什么</h4><ol>
+<li><code>const a = new Object()</code></li>
+<li><code>a.__proto__ = A.prototype</code></li>
+<li><code>A.call(a)</code></li>
+</ol>
+<h4 id="getter、setter"><a href="#getter、setter" class="headerlink" title="getter、setter"></a>getter、setter</h4><p><a href="/blog/2022/05/03/JS-defineProperty/#%E8%AE%BF%E9%97%AE%E5%99%A8%E5%B1%9E%E6%80%A7">访问器属性</a></p>
+<h4 id="面向对象相关：原型链、this、箭头函数、class-constructor、extends、super、static"><a href="#面向对象相关：原型链、this、箭头函数、class-constructor、extends、super、static" class="headerlink" title="面向对象相关：原型链、this、箭头函数、class(constructor、extends、super、static)"></a>面向对象相关：原型链、this、箭头函数、class(constructor、extends、super、static)</h4><p><a href="/blog/2020/04/20/JS-%E5%8E%9F%E5%9E%8B%E9%93%BE/">JS 原型链、this 与 class</a></p>
+<h4 id="函数声明跟函数表达式的区别，变量提升问题"><a href="#函数声明跟函数表达式的区别，变量提升问题" class="headerlink" title="函数声明跟函数表达式的区别，变量提升问题"></a>函数声明跟函数表达式的区别，变量提升问题</h4><p>变量提升： <code>var</code>声明的变量的<strong>声明</strong>会在编译阶段放到内存中，初始化<strong>赋值</strong>不会</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(a) <span class="comment">// undefined</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span></span><br><span class="line"><span class="built_in">console</span>.log(a) <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+<p>这种在编译阶段放到内存中的特性，隐式地等于下边的写法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a</span><br><span class="line"><span class="built_in">console</span>.log(a)</span><br><span class="line">a = <span class="number">1</span></span><br><span class="line"><span class="built_in">console</span>.log(a)</span><br></pre></td></tr></table></figure>
+
+<p>同样的，定义函数时也会遇到变量提升的问题：<br><strong>函数声明会提升</strong>。用 var 声明的函数表达式的<em>定义</em>不会提升</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">a() <span class="comment">// &#x27;a&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">a</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">b() <span class="comment">// 报错，b 此时为 undefined，var 只是提升了变量的声明，没有提升初始化定义</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;b&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在用 <code>function</code> 定义类时，与 <code>class</code> 语法也会不同，<code>class</code> 不会提升，而 <code>function</code> 表达式会提升</p>
+<h4 id="for-in-与可枚举属性；for-of-与迭代器、可迭代对象"><a href="#for-in-与可枚举属性；for-of-与迭代器、可迭代对象" class="headerlink" title="for in 与可枚举属性；for of 与迭代器、可迭代对象"></a>for in 与可枚举属性；for of 与迭代器、可迭代对象</h4><p><a href="/blog/2022/05/03/JS-defineProperty/#%E5%8F%AF%E6%9E%9A%E4%B8%BE%E5%B1%9E%E6%80%A7">可枚举属性</a> <a href="/blog/2021/10/02/ES6%20%E5%90%88%E9%9B%86/#%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%8D%8F%E8%AE%AE">可迭代对象</a></p>
+<h4 id="不定参数函数的语法，手写。在-es6-之前没有这种语法，怎么解决（arguments？）"><a href="#不定参数函数的语法，手写。在-es6-之前没有这种语法，怎么解决（arguments？）" class="headerlink" title="不定参数函数的语法，手写。在 es6 之前没有这种语法，怎么解决（arguments？）"></a>不定参数函数的语法，手写。在 es6 之前没有这种语法，怎么解决（arguments？）</h4><h4 id="js-的数值"><a href="#js-的数值" class="headerlink" title="js 的数值"></a>js 的数值</h4><h4 id="正则"><a href="#正则" class="headerlink" title="正则"></a>正则</h4><h4 id="对新数据类型的了解：Symbol-Set-Map"><a href="#对新数据类型的了解：Symbol-Set-Map" class="headerlink" title="对新数据类型的了解：Symbol, Set, Map"></a>对新数据类型的了解：Symbol, Set, Map</h4><h4 id="Array-有哪些方法，哪些改变原数组"><a href="#Array-有哪些方法，哪些改变原数组" class="headerlink" title="Array 有哪些方法，哪些改变原数组"></a>Array 有哪些方法，哪些改变原数组</h4><h4 id="深拷贝、浅拷贝，手写"><a href="#深拷贝、浅拷贝，手写" class="headerlink" title="深拷贝、浅拷贝，手写"></a>深拷贝、浅拷贝，手写</h4><h4 id="es6-及以上新增的特性，口喷有哪些特性"><a href="#es6-及以上新增的特性，口喷有哪些特性" class="headerlink" title="es6 及以上新增的特性，口喷有哪些特性"></a>es6 及以上新增的特性，口喷有哪些特性</h4><h4 id="event-loop、宏任务、微任务-公众号文章"><a href="#event-loop、宏任务、微任务-公众号文章" class="headerlink" title="event loop、宏任务、微任务 公众号文章"></a>event loop、宏任务、微任务 公众号文章</h4><h4 id="各个-observer-名字、读法，手写用法-MutationObserver、IntersectionObserver、PerformanceObserver"><a href="#各个-observer-名字、读法，手写用法-MutationObserver、IntersectionObserver、PerformanceObserver" class="headerlink" title="各个 observer 名字、读法，手写用法 MutationObserver、IntersectionObserver、PerformanceObserver"></a>各个 observer 名字、读法，手写用法 MutationObserver、IntersectionObserver、PerformanceObserver</h4><h4 id="如何中断-xhr-请求"><a href="#如何中断-xhr-请求" class="headerlink" title="如何中断 xhr 请求"></a>如何中断 xhr 请求</h4><h4 id="defineProperty-和-proxy-的用法（Vue-23-吹逼用）"><a href="#defineProperty-和-proxy-的用法（Vue-23-吹逼用）" class="headerlink" title="defineProperty 和 proxy 的用法（Vue 23 吹逼用）"></a>defineProperty 和 proxy 的用法（Vue 23 吹逼用）</h4><h4 id="setTimeout-的-this-问题-mdn"><a href="#setTimeout-的-this-问题-mdn" class="headerlink" title="setTimeout 的 this 问题 mdn"></a>setTimeout 的 this 问题 mdn</h4><h4 id="Promise-race-、all-，如果某一个-reject-了是什么样"><a href="#Promise-race-、all-，如果某一个-reject-了是什么样" class="headerlink" title="Promise.race 、all ，如果某一个 reject 了是什么样"></a>Promise.race 、all ，如果某一个 reject 了是什么样</h4><h4 id="异步处理的演进：Callback，Promise-Generator-Async-Await-的了解程度-可以深入的问题实现，看候选人能会到哪个程度，可以拓展到-event-loop，微任务，宏任务，还可以聊到浏览器线程，web-worker-之类的，可以有具体的题目"><a href="#异步处理的演进：Callback，Promise-Generator-Async-Await-的了解程度-可以深入的问题实现，看候选人能会到哪个程度，可以拓展到-event-loop，微任务，宏任务，还可以聊到浏览器线程，web-worker-之类的，可以有具体的题目" class="headerlink" title="异步处理的演进：Callback，Promise, Generator, Async Await 的了解程度, 可以深入的问题实现，看候选人能会到哪个程度，可以拓展到 event loop，微任务，宏任务，还可以聊到浏览器线程，web worker 之类的，可以有具体的题目"></a>异步处理的演进：Callback，Promise, Generator, Async Await 的了解程度, 可以深入的问题实现，看候选人能会到哪个程度，可以拓展到 event loop，微任务，宏任务，还可以聊到浏览器线程，web worker 之类的，可以有具体的题目</h4><h4 id="异步考题，可以看情况问"><a href="#异步考题，可以看情况问" class="headerlink" title="异步考题，可以看情况问"></a>异步考题，可以看情况问</h4><p>//请写出输出内容</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;async1 start&#x27;</span>);</span><br><span class="line">  <span class="keyword">await</span> async2();</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;async1 end&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">async2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;async2&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;script start&#x27;</span>);</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;setTimeout&#x27;</span>);</span><br><span class="line">&#125;, <span class="number">0</span>)</span><br><span class="line">async1();</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;promise1&#x27;</span>);</span><br><span class="line">  resolve();</span><br><span class="line">&#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;promise2&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">&#x27;script end&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">script start</span></span><br><span class="line"><span class="comment">async1 start</span></span><br><span class="line"><span class="comment">async2</span></span><br><span class="line"><span class="comment">promise1</span></span><br><span class="line"><span class="comment">script end</span></span><br><span class="line"><span class="comment">async1 end</span></span><br><span class="line"><span class="comment">promise2</span></span><br><span class="line"><span class="comment">setTimeout</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="css-布局基础"><a href="#css-布局基础" class="headerlink" title="css 布局基础"></a>css 布局基础</h3><ol>
+<li>选择器优先级</li>
+<li>flex: flex: 0 1 auto; 代表什么意思？<br>○ 0: flex-grow, （剩余空间索取）main-size 系数，系数越大占空间越大<br>○ 1: flex-shrink, （子元素总宽度大于复制元素如何缩小） 收缩系数，占满全部空间后，系数越大，缩得越厉害<br>○ auto: flex-basis, auto是默认值，设置了宽度跟宽度走，没设置宽度跟内容实际宽度走 （该属性用来设置元素的宽度，当然width也可以用来设置元素的宽度，如果设置了width和flex-basis，那么flex-basis会覆盖width值）</li>
+<li>经典的垂直居中</li>
+<li>重绘重排</li>
+<li>BFC！BFC！</li>
+</ol>
+<h3 id="前端模块化"><a href="#前端模块化" class="headerlink" title="前端模块化"></a>前端模块化</h3><h4 id="webpack-与-vite"><a href="#webpack-与-vite" class="headerlink" title="webpack 与 vite"></a>webpack 与 vite</h4><h4 id="补充那片博文，commonJS-AMD-都要写完"><a href="#补充那片博文，commonJS-AMD-都要写完" class="headerlink" title="补充那片博文，commonJS AMD 都要写完"></a>补充那片博文，commonJS AMD 都要写完</h4><h3 id="HTML"><a href="#HTML" class="headerlink" title="HTML"></a>HTML</h3><ol>
+<li>meta 标签是啥。引申打开 tatter.com 前10行 HTML 标签是干嘛的</li>
+<li>shadow dom、web component</li>
+</ol>
+<h3 id="框架运用以及理解能力-vue-react-angular"><a href="#框架运用以及理解能力-vue-react-angular" class="headerlink" title="框架运用以及理解能力 vue react angular"></a>框架运用以及理解能力 vue react angular</h3><h4 id="router-的实现原理"><a href="#router-的实现原理" class="headerlink" title="router 的实现原理"></a>router 的实现原理</h4><h4 id="React"><a href="#React" class="headerlink" title="React"></a>React</h4><ol>
+<li>八股文：函数式比类的写法的优势，能完整口喷</li>
+<li>setState 同步异步</li>
+<li>16 版本的生命周期，以及新增的两个 static 生命周期</li>
+<li>hooks 的了解程度，可以问到hooks的内部实现是什么</li>
+<li>redux 相关（可以根据项目使用哪种状态管理工具具体问）</li>
+<li>context，ref</li>
+<li>hoc、render props</li>
+<li>加分项：拓展可以问问 fiber 的数据结构，16 版本跟 15 版本的最大的区别，新旧 diff 算法的区别是什么</li>
+</ol>
+<h4 id="Vue"><a href="#Vue" class="headerlink" title="Vue"></a>Vue</h4><ol>
+<li>生命周期</li>
+<li>computed 跟 watch 的用法区别</li>
+<li>Vue 跟 React 或者 Angular 直接的区别</li>
+<li>Vue 的双向绑定的实现</li>
+<li>Vue 3.0 新增内容，3.0 双向绑定的原理<br>a. options API -&gt; composition API 便于封装和复用代码<br>b. 响应式系统：defineProperty 拦截某个具体属性改为 proxy 代理<br>c. tree-shacking 友好<br>d. Teleport 新组件（组件层级和渲染层级解耦）<br>e. TS 支持</li>
+<li>Composition API接触过没有</li>
+<li>有没有玩过vite, rollup之类的</li>
+</ol>
+<h3 id="安全相关"><a href="#安全相关" class="headerlink" title="安全相关"></a>安全相关</h3><h4 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h4><h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><h3 id="网络相关"><a href="#网络相关" class="headerlink" title="网络相关"></a>网络相关</h3><ol>
+<li>常见状态码语意</li>
+<li>https 原理实现</li>
+<li>http2.0 的优化升级，可以深入问问知不知道怎么实际部署 http2.0</li>
+<li>http3.0 的了解</li>
+<li>TCP 三次握手，四次挥手等等</li>
+<li>网络分层等</li>
+<li>缓存相关</li>
+</ol>
+<h3 id="逻辑思维基础算法（高级工程师或者-Leader-岗位可以考虑加分项）"><a href="#逻辑思维基础算法（高级工程师或者-Leader-岗位可以考虑加分项）" class="headerlink" title="逻辑思维基础算法（高级工程师或者 Leader 岗位可以考虑加分项）"></a>逻辑思维基础算法（高级工程师或者 Leader 岗位可以考虑加分项）</h3><ol>
+<li>反转单链表</li>
+<li>数组去重(多种方法)</li>
+<li>遍历二叉树，递归实现，模拟栈实现，模拟队列实现</li>
+<li>哈希表实现</li>
+<li>排序算法</li>
+<li>更高级的可以问具体的题目，考一些动态规划之类的</li>
+</ol>
+<h3 id="综合能力评估（学习能力、表达能力、沟通能力、逻辑组织能力）"><a href="#综合能力评估（学习能力、表达能力、沟通能力、逻辑组织能力）" class="headerlink" title="综合能力评估（学习能力、表达能力、沟通能力、逻辑组织能力）"></a>综合能力评估（学习能力、表达能力、沟通能力、逻辑组织能力）</h3><ol>
+<li>从输入 URL 到页面加载，这个是个很常见的问题，可以用来考察表达能力</li>
+<li>问一些项目中遇到的难点，怎么解决等等，可以看看候选人的解决问题能力和思路，以及表达能力，沟通能力</li>
+<li>如何实现图片滚动懒加载</li>
+<li>性能优化方面的内容: 优化的指标是什么，做了哪些优化工作</li>
+<li>问问平时会不会用 Google，会不会看一些英文文档</li>
+</ol>
+<h3 id="项目经验评估"><a href="#项目经验评估" class="headerlink" title="项目经验评估"></a>项目经验评估</h3><ol>
+<li>用到 TS 的项目可以问一些 ts 方面的东西</li>
+<li>用到 SSR 的项目，可以问一下相关内容</li>
+<li>如果有 node 相关的可以问一些偏后端的问题</li>
+</ol>
+</div><div class="tags"></div><div class="post-nav"><a class="next" href="/blog/2022/05/03/JS-defineProperty/">JS defineProperty</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://imbant.github.io/blog"/></form></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2022 <a href="/blog/." rel="nofollow">imbAnt's blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/blog/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/blog/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/blog/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/smartresize.js?v=1.0.0"></script></div></body></html>

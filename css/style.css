@@ -230,6 +230,10 @@ div {
     text-align: justify;
     text-justify: distribute;
     word-break: normal; }
+    .post .post-content h2, .post .post-content h3, .post .post-content h4 {
+      position: sticky;
+      top: 0;
+      background-color: white; }
     .post .post-content h2 {
       margin: 1.4em 0 1.1em;
       border-bottom: 1px solid #eee;
