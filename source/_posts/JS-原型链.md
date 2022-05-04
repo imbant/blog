@@ -163,7 +163,7 @@ typeof Function // 'function'
 构造函数将想共享的属性和方法写入原型对象，其生成的实例就可以调用他们。
 构造函数定义 prototype，而实例则访问`__proto__`或者`Object.getPrototypeOf`，查找原型链上的属性和方法。
 
-在原型链中查找属性对性能有副作用；有两个方法**不会**遍历原型链：`Object.prototype.hasOwnProperty()`和`Object.map`
+在原型链中查找属性对性能有副作用；有两个方法**不会**遍历原型链：`Object.prototype.hasOwnProperty()`和`Object.keys`
 
 # this
 
