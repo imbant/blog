@@ -117,16 +117,19 @@ Object.prototype.toString.call(undefined) // [object Undefined]
 
 > 顺带一提，有这样的写法 `Function.prototype.apply.call(fn, this, args)`，而不是直接执行 `fn.apply(this, args)`，目的就是避免 fn 的 apply 方法已经被重写覆盖过
 
-## constructor
-实例的 constructor === 构造函数
-但是用 constructor 判断不安全，constructor 有被覆盖的风险，例如构造函数的 prototype 被重写，这时候实例的 constructor 不等于构造函数
-
+## Object.prototype.constructor
+`Object.prototype.constructor` 指向回创建实例对象的构造函数。
+通常来说，它可以判断类型
 ```js
-function Fn () {}
-Fn.prototype = new Array()
-const f = new Fn()
-f.constructor // Array，而不是 Fn
-// TODO: class 的写法下，似乎对 Fn.prototype 赋值没有生效
+[].constructor === Array // true
+```
+但这种方式**不安全**，不可以依赖。
+原因在于原型链中可以改写构造函数
+```js
+const a = new Array()
+a.__proto__ = {}
+
+a.prototype // Object，而非 Array，因为 a 的原型是一个普通的 Object
 ```
 
 ## 实践
