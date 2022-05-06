@@ -325,6 +325,9 @@ let F = () => {};
 new F(); // TypeError: F is not a constructor
 ```
 
+#### 箭头函数中不能用 arguments
+`arguments` 是用于**非**箭头函数的局部变量，用来引用函数的实参（实际参数，和形式参数对应）
+
 ### DOM 事件处理函数、HTML 内联事件处理函数
 
 非箭头函数下 this 都指向 DOM 元素本身。
