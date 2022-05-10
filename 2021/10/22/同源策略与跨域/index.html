@@ -17,20 +17,20 @@
 <h2 id="XHR-跨域"><a href="#XHR-跨域" class="headerlink" title="XHR 跨域"></a>XHR 跨域</h2><p>为了安全性，XHR 需要牺牲便利性，来发起跨域请求。</p>
 <h3 id="CORS-Cross-Orign-Resource-Sharing"><a href="#CORS-Cross-Orign-Resource-Sharing" class="headerlink" title="CORS(Cross-Orign Resource Sharing)"></a>CORS(Cross-Orign Resource Sharing)</h3><p>CORS 是一个 W3C 标准，由一些 HTTP 头组成，可以让前后端共同配置，实现跨域 XHR 请求。</p>
 <p>有两种场景：简单请求和预检请求</p>
-<p>简单请求需要满足：</p>
+<h4 id="简单请求"><a href="#简单请求" class="headerlink" title="简单请求"></a>简单请求</h4><p>简单请求需要满足：</p>
 <ul>
 <li>方法只能为 <code>GET</code>、<code>HEAD</code>、<code>POST</code>。其中 <code>HEAD</code> 用于只请求 header，并且这个 header 会和 <code>GET</code> 请求中的一样，用于下载大文件前提前了解大小，节省带宽。</li>
 <li>除了默认 header 之外，只可以有以下 header<ul>
 <li><code>Accept</code> response 可选的 <code>MIME</code> 类型</li>
 <li><code>Accept-Language</code> 指定客户端可以理解的自然语言</li>
 <li><code>Content-Language</code> 指定用户（audience）希望的自然语言</li>
-<li><code>ContentType</code></li>
+<li><code>Content-Type</code></li>
 <li>还有一些头 TODO:</li>
 </ul>
 </li>
-<li><code>Content Type</code> 只能为三者之一<ul>
+<li><code>Content-Type</code> 只能为三者之一<ul>
 <li><code>application/x-www-form-urlencoded</code> 通过 ‘&amp;’ 和 ‘=’ 连接的键值对</li>
-<li><code>multiparty/form-data</code> 表格类型</li>
+<li><code>multipart/form-data</code> 表格类型</li>
 <li><code>text/plain</code> 原始文本</li>
 </ul>
 </li>
@@ -47,7 +47,11 @@
 <blockquote>
 <p>XMLHttpRequest 对象的请求默认不带 cookie，需要手动设置 withCredentials = true</p>
 </blockquote>
-<p>不符合简单请求的被称为预检（preflight）请求。<br>TODO: 为什么需要预检？<br>浏览器发现 XHR 请求需要预检，会先发送一个 <code>OPTION</code> 请求到服务端，这个请求不会对服务器资源产生影响。<br>预检会带上以下 header</p>
+<h4 id="预检请求"><a href="#预检请求" class="headerlink" title="预检请求"></a>预检请求</h4><p>不符合简单请求的被称为预检（preflight）请求。<br>浏览器发现 XHR 请求需要预检，会先发送一个 <code>OPTION</code> 请求到服务端，这个请求不会对服务器资源产生影响。</p>
+<blockquote>
+<p>用 OPTION 做预检的原因在于，节省服务端处理跨域请求的资源</p>
+</blockquote>
+<p>预检会带上以下 header</p>
 <ul>
 <li><code>Origin</code></li>
 <li><code>Access-Control-Request-Method</code> 告知实际请求的 method</li>
