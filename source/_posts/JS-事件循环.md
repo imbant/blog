@@ -4,6 +4,62 @@ date: 2020-04-13 14:31:08
 tags: [JS]
 ---
 
+## 背景
+JS 诞生时，为了简化多线程 DOM 操作带来的问题，设计成单线程。
+单线程遇到**异步逻辑**（定时、网络请求）又会阻塞住，因此加入了调度逻辑——事件循环
+
+## 事件循环(event loop)
+JS 引擎会一直在休眠 - 执行任务 - 进入休眠状态等待新的任务这个几个状态间无限循环。
+JS 代码被封装成一个一个任务，通过在任务队列（或者消息队列）中调度任务，来实现调度逻辑。
+
+## 宏任务(MacroTask)
+宏任务示例：
+- `<script>` 标签加载完成时，任务就是执行它
+- `XMLHttpRequest` `fetch` 
+- `setTimeout` 时间到达时，任务是执行回调
+- 浏览器事件触发（click、mousemove、resize），任务是执行回调
+- requestAnimationFrame 见下文
+定时器、网络请求等异步逻辑完成后，就在任务队列里放个任务，主线程来执行它
+
+## 微任务(MicroTask)
+现有的事件循环机制有个问题：缺少插队机制，只能按顺序执行任务，如果有高优任务没法优先执行。
+为此有一个高优先级的任务队列——微任务的队列。
+每执行过一个宏任务，就去执行*全部*的微任务（清空队列中的微任务），然后再执行新的宏任务，这样微任务就可以插队（当然，只是任务队列中的插队，正在执行的宏任务不会被中断，还是要等它完成）
+
+可以认为任务队列里的任务都是宏任务，每个宏任务又回包含一个微任务队列。
+
+### 微任务示例
+#### Promise.then()
+`Promise.then()` 的回调函数会被插进微任务队列，可以写 `Promise.resolve().then()` 去手动插队
+
+#### queueMicrotask()
+代替 `Promise.resolve().then()` 写法的新 API，看 polifill 就是写了一个 `Promise.resolve().then()`
+
+#### MutationObserver
+
+#### Object.observe （已废弃）
+
+## 事件循环算法
+1. 从宏任务队列出队（dequeue）最早的任务并执行
+2. 执行所有微任务（同样是队列，有顺序）
+3. 如果有变更，渲染出来
+4. 如果宏任务队列为空，休眠直到出现宏任务
+5. 转到1
+
+![Performance 中灰色的任务就是队列里的每个任务](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/7/%E6%88%AA%E5%B1%8F2022-05-10%20%E4%B8%8B%E5%8D%884.59.38.png)
+Performance 中灰色的任务就是主线程消息队列里的每个任务
+
+## setTimeout
+在事件循环中，消息队列是立即执行其中的任务的。但 `setTimeout` 要求延迟到特定时间执行，因此 `setTimeout` 实际上是维护了一个 `hashmap` 去储存延时任务。在消息队列中，每执行完一个任务后都会检查 `hashmap`，根据发起时间和延迟时间算出到期的任务，然后执行它们。
+`clearTimeout` 就是删除其中对应 id 的任务。
+
+### requestAnimationFrame
+嵌套调用 `setTimeout` 时，后续每次调用的时间最小间隔是 4ms，因此高时效性的场景不适用，比如动画；`requestAnimationFrame` 会根据浏览器刷新率决定执行时机和次数，如1秒内执行144次或者60次，更适用于动画；但是 `requestAnimationFrame` 同样有宏任务的缺点：前一个任务执行太久，新的任务就会阻塞
+
+## 参考
+[JSConf EU 2014（视频版）](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
+[JSConf EU 2014（文字版）](https://2014.jsconf.eu/speakers/philip-roberts-what-the-heck-is-the-event-loop-anyway.html)
+<!-- 
 摘自 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/EventLoop#%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF)
 
 JS 有一个基于**事件循环**的并发模型。事件循环负责执行代码、收集和处理事件，以及执行队列中的子任务。
@@ -124,4 +180,4 @@ console.log(5);
 // 5
 // 2
 // 4
-```
+``` -->
