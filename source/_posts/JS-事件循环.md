@@ -59,6 +59,7 @@ Performance 中灰色的任务就是主线程消息队列里的每个任务
 ## 参考
 [JSConf EU 2014（视频版）](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
 [JSConf EU 2014（文字版）](https://2014.jsconf.eu/speakers/philip-roberts-what-the-heck-is-the-event-loop-anyway.html)
+[EventLoop为何这么设计？](https://mp.weixin.qq.com/s/xeTBJsW6YKld6VsNoGv_aw)
 <!-- 
 摘自 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/EventLoop#%E4%BA%8B%E4%BB%B6%E5%BE%AA%E7%8E%AF)
 
