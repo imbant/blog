@@ -2,6 +2,7 @@
 title: ES6 合集
 date: 2021-10-02 16:09:24
 tags: [JS]
+toc: true
 ---
 
 ## Symbol
@@ -122,8 +123,50 @@ Symbol.keyFor(s) // 'key'
 
 
 ## Map 与 Set
+`Object` 是一种键值对的结构，但 key 只能是 `String` 或者 `Symbol`。作为扩展，出现了可以用任何数据类型作为 key 的键值对结构：Map
 
-## Generator 函数
+### Map
+通过 set、get、has 来读写值，通过 clear 清空，通过 size 得到大小，array-like
+```js
+const a = new Map()
+const obj = {}
+
+a.set(obj, 1)
+a.get(obj)      // 1
+a.has(obj)      // true
+a.size          // 1
+
+a.set(obj, 2)
+a.get(obj)      // 2，会被覆盖，key 是唯一的
+```
+
+与 Object 的区别：
+
+1. Map 的 key 可以是任意数据类型
+2. Map 实现了可迭代协议，可以被 `for..of` 这样的语法迭代
+3. Map 是**有序**的，迭代时会按照 set 的顺序遍历元素
+
+### Set
+与 `Map` 相比，`Set` 是值的集合，没有 `key` 的概念。但 `Set` 会保证集合里的值都是唯一的，不会重复
+
+```js
+const a = new Set()
+
+a.add(1)
+a.has(1)  // true
+a.add(3)
+a.size    //  2
+a.add(1)
+a.size    //  2
+```
+
+`Set` 同样可以迭代，迭代时**有序**
+
+通过构造函数，`Set` 可以用于数组去重：
+```js
+const a = [1, 2, 5, 3, 1, 2]
+const b = [...new Set(a)]
+```
 
 ## Iterator 与 for of 循环
 
@@ -255,3 +298,5 @@ for(const i in arr) {
 ## class
 
 ## es module
+
+## Generator 函数
