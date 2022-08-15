@@ -46,7 +46,7 @@ const a = {
 
 `Symbol.toPrimitive` 这个方法会有一个入参，被称为 `hint`，具体值可以是 `'number'`、`'string'` 或者 `'default'`。
 
-可以认为是 `hint` 一种语言内置的「提示」，在上述场景下调用 `Symbol.toPrimitive` 时，JS 会自动传入对应的 `hint`。
+可以认为 `hint` 是语言内置的「提示」，在上述场景下调用 `Symbol.toPrimitive` 时，JS 会自动传入对应的 `hint`。
 
 如果 JS 认为是字符串，就会传 `'string'`，如果认为是数值，就会传 `'number'`，如果有些场景既可能是字符串，有可能是数值，无法判断，就会传 `'default'`
 
@@ -70,23 +70,37 @@ obj - 100   // 23    在减法里认为是 number
 obj + 'c'   // '5c'  字符串和数值都有加法，认为是 default
 obj == '5'  // true  字符串和数值都可以进行 == 比较，认为是 default
 obj === '5' // false 不过 strict equality 不会做类型转换
-
 ```
 
 ## ES6 之前的方案
-`Symbol.toPrimitive` 是 ES6 之后的解决方案。在此之前，“老派”的做法是实现 `valueOf` 和 `toString` 方法。
+`Symbol.toPrimitive` 是 ES6 之后的解决方案。在此之前，已有的对象通过实现 `valueOf` 和 `toString` 方法，来转换成原始值。
 
-值得注意的是，`hint` 的概念是一直存在的，`Symbol.toPrimitive` 只是一个显式的获取 `hint` 的途径。在 ES6 之前，如果 hint 为 `string` 会调用 'toString '，其它 hint 会调用 valueof
+值得注意的是，`hint` 的概念是一直存在的，`Symbol.toPrimitive` 只是一个显式的获取 `hint` 的途径。
+
+注意，如果 `hint` 为 `'string'` 会调用对象的 `toString`，其它 `hint` 会调用 `valueof`，这里没有 `default` 的概念
 
 ### valueOf 与 toString
+`Object` 的 `prototype` 里定义了 `valueOf` 和 `toString` 两个方法，可供后续覆写——由对象自定义转换为原始值时的行为。
 
+对原型来说，`Object.prototype.valueOf` 会返回对象自身；`Object.prototype.toString` 会返回 `'[object type]'`，比如 `'[object Object]'`
 
-## 为什么 Date 对象可以做相减操作
+## 实践：为什么 Date 对象可以做相减操作
 
-JS 没有类似 C++ 那样的运算符重载的能力，对象之间相减，会遵循二元减法运算符的语法（TODO: 这个语法待补充），应该是把两个对象转为 number 之后再做减法
+JS 没有类似 C++ 那样的运算符重载的能力，对象之间相减，会尝试把它们转换为 number 后，再做计算。
+
+`Date.prototyle.valueOf` 会返回自身的 Unix 时间戳，因此两者的减法，就是相对时间的长度了。
 
 ## 兜底与多次转换
-Symbol.toPrimitive、valueOf、toString 优先级关系、注意当返回值不是基本数据类型，会调用另一者，然后尝试再做转换
+通过 `Symbol.toPrimitive`、`valueOf`、`toString` 转换原始值，需要这些方法返回**原始值**，否则，就会尝试别的方法来转换。例如对象原生的 `valueOf` 返回自身，是一个对象，就不能用于原始值的转换，就会尝试 `toString`。
+
+转换的算法是：
+
+1. 如果 `Symbol.toPrimitive` 存在，调用它
+2. 不存在或者返回值不是原始值：
+    
+    1. 如果 hint 是 'string'：尝试调用 `toString`，如果返回值不是原始值，尝试调用 `valueOf`
+    2. 如果 hint 是 'number' 或者 'default'：尝试调用 `valueOf`，如果返回值不是原始值，尝试调用 `toString`
+
 
 ```js
 const a = {
@@ -97,7 +111,9 @@ const a = {
 
 +a // 123， number 而非 string
 ```
-没有 Symbol.toPrimitive，兜底到 valueOf，没有 valueOf，兜底到 toString，返回 string 后，再把它从 "123" 转为 123，得到 number
+1. 没有 `Symbol.toPrimitive`，因为是一元加法，`hint` 为 `'number'`，兜底到 `valueOf`；
+2. `valueOf` 默认返回 `a` 自身，不是原始值，兜底到 `toString`；
+3. 返回 `string` 后，`+"123"` 表达式就是一个基本数据类型的转换了，得到 `number`
 
 
 ## 参考资料
