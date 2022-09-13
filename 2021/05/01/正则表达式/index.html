@@ -15,7 +15,7 @@
 <li>纵向匹配的扩展：字符组——一个字符的集合<ul>
 <li><code>-</code> 表示范围<ul>
 <li><code>/[a-d2-5D-I]/</code> 是 <code>[abcd2345DHI]</code> 的省略简写模式</li>
-<li>转意问题：<code>\-</code> 用来匹配 <code>-</code> 字符本身</li>
+<li>转义问题：<code>\-</code> 用来匹配 <code>-</code> 字符本身</li>
 </ul>
 </li>
 <li><code>^</code> 表示取反<ul>
@@ -49,7 +49,7 @@
 <li>贪婪匹配和惰性匹配<ul>
 <li>在量词后边加<code>?</code>可以改为惰性匹配</li>
 <li>Q：差别不是特别清楚 贪婪匹配会匹配出尽可能长的字符串，惰性则是尽可能短的，符合匹配就返回</li>
-<li><code>/\d&#123;2,4&#125;/g</code> 匹配 <code>123 1234 12345 123456</code> 结果：<code>123 1234 1234 1234 156</code> </li>
+<li><code>/\d&#123;2,4&#125;/g</code> 匹配 <code>123 1234 12345 123456</code> 结果：<code>123 1234 1234 1234 56</code> </li>
 <li><code>/\d&#123;2,4&#125;?/g</code> 匹配 <code>123 1234 12345 123456</code> 结果： <code>12 12 34 12 34 12 34 56</code></li>
 <li><code>/\d+/</code> 匹配 <code>123 2</code> 结果：<code>123 2</code></li>
 <li><code>/\d+?/</code> 匹配 <code>123 2</code> 结果：<code>1 2 3 2</code></li>
@@ -71,8 +71,8 @@
 <ul>
 <li><p><code>^</code> <code>$</code> 匹配开头结尾</p>
 <ul>
-<li>把字符串的开头/结尾替换成# <code>&#39;hello&#39;.replace(/^|$/g, &#39;#&#39;) // &#39;#hello$&#39;</code></li>
-<li>多行匹配时，两个字符是<strong>行</strong>的开头结尾<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;hello\nworld&#x27;</span>.replace(<span class="regexp">/^|$/</span>, <span class="string">&#x27;#&#x27;</span>)</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">*	#hello#</span></span><br><span class="line"><span class="comment">*	#world#</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></li>
+<li>把字符串的开头/结尾替换成# <code>&#39;hello&#39;.replace(/^|$/g, &#39;#&#39;) // &#39;#hello#&#39;</code></li>
+<li>多行匹配时，两个字符是<strong>行</strong>的开头结尾<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// g: 全局匹配，m: 多行匹配</span></span><br><span class="line"><span class="string">&#x27;hello\nworld&#x27;</span>.replace(<span class="regexp">/^|$/gm</span>, <span class="string">&#x27;#&#x27;</span>)</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">*	#hello#</span></span><br><span class="line"><span class="comment">*	#world#</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 <li><p><code>\b</code> 匹配单词边界，<code>\w</code> 与 <code>\W</code>或<code>^</code>或<code>$</code> 的边界 ::Boundary::</p>
@@ -121,16 +121,17 @@
 </ul>
 </li>
 </ul>
-<p>扩展：要求匹配’123456 12345678‘<br><code>/\B(?=(\d&#123;3&#125;)+\b)/g</code></p>
+<p>扩展：要求匹配 <code>123456 12345678</code></p>
+<p><code>/\B(?=(\d&#123;3&#125;)+\b)/g</code></p>
 <p>学习正则匹配有点像是学自然语言而不是编程语言——先学会实践怎么用，而不是学习如何实现（语法结构）</p>
 <h2 id="括号的作用"><a href="#括号的作用" class="headerlink" title="括号的作用"></a>括号的作用</h2><h4 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h4><p>要匹配连续的字符<code>a</code>可以写 <code>/a+/</code>，如果想匹配连续的<code>ab</code>，需要括号<code>/(ab)+/</code>，括号提供<strong>分组</strong>功能</p>
 <h4 id="分支结构"><a href="#分支结构" class="headerlink" title="分支结构"></a>分支结构</h4><p>用 <code>|</code> 表示分支结构时，可选项的范围需要由括号包围。<br><code>/(JS|Java) is the best lang/</code> 匹配 <code>JS is the best lang</code> 或者 <code>Java is the best lang</code><br>如果没有括号 <code>/JS|Java is the best lang/</code> 匹配 <code>JS</code> 或者 <code>Java is the best lang</code>，整个表达式都是分支</p>
 <h4 id="引用分组——JS实现"><a href="#引用分组——JS实现" class="headerlink" title="引用分组——JS实现"></a>引用分组——JS实现</h4><p>括号可以进行<strong>数据提取</strong>，必须配合使用实现环境的 API。下边以 JS 为例<br>简单来说就是可以将表达式中的匹配项以 JS 变量的方式获取到。</p>
 <p><code>RegExp.prototype.exec</code>、<code>String.prototype.match</code>、<code>String.prototype.replace</code> 三个函数都会得到一个数组（前两个是返回值，后一个会传给 lambda 的入参）</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/(\d&#123;<span class="number">4</span>&#125;)-(\d&#123;<span class="number">2</span>&#125;)-(\d&#123;<span class="number">2</span>&#125;)/.exec(<span class="string">&#x27;2021-04-29&#x27;</span>)</span><br><span class="line"><span class="comment">// [&quot;2021-04-29&quot;, &quot;2021&quot;, &quot;04&quot;, &quot;29&quot;, index: 0, input: &quot;2021-04-29 2021-05-01&quot;, groups: undefined]</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/(\d&#123;<span class="number">4</span>&#125;)-(\d&#123;<span class="number">2</span>&#125;)-(\d&#123;<span class="number">2</span>&#125;)/.exec(<span class="string">&#x27;2021-04-29&#x27;</span>)</span><br><span class="line"><span class="comment">// [&#x27;2021-04-29&#x27;, &#x27;2021&#x27;, &#x27;04&#x27;, &#x27;29&#x27;, index: 0, input: &#x27;2021-04-29&#x27;, groups: undefined]</span></span><br></pre></td></tr></table></figure>
 <p>其中1～3个元素就是括号提取出的数据，第0个表示正则表达式匹配到的字符串。</p>
 <blockquote>
-<p>另外提一句，这也是我第一次知道<strong>JS 的数组可以被添加属性</strong>，Array 是 Object 的实例，自带 <code>length</code> 属性，也可以像上边的返回值一样增加 index、input 属性。  </p>
+<p>另外提一句，返回值是一个<strong>添加了自定义属性</strong>的数组。Array 是 Object 的实例，自带 <code>length</code> 属性，也可以像这里的返回值一样增加 <code>index</code>、<code>input</code>、<code>groups</code> 属性。  </p>
 </blockquote>
 <p>前边的例子中，调用 <code>replace</code> 之后也可以通过 <code>RegExp.$1</code> <code>RegExp.$2 </code> <code>RegExp.$3</code> 拿到对应三个数据，不过这种方式已经<em>废弃</em>。这种实例能改变对象本身的变量，设计也很奇怪，不再深究。</p>
 <h4 id="反向引用"><a href="#反向引用" class="headerlink" title="反向引用"></a>反向引用</h4><p>指表达式前边声明过的模式，后边有一份一模一样的引用</p>
@@ -142,9 +143,10 @@
 <li>引用不存在的分组时，<code>\1</code> 保持字面意思，代表一个字符</li>
 </ul>
 <blockquote>
-<p>再另外提一句，在 JS 的字符串中，反斜杠<code>\</code>有转义的作用<br>0. 转义字符：<code>\0 \b \f \n \r \t \v \&#39; \&quot; \\</code>  </p>
+<p>再另外提一句，在 JS 的字符串中，反斜杠<code>\</code>有转义的作用  </p>
 <ol>
-<li><code>\HHH</code> 后边跟三个 <code>000</code> 到 <code>377</code> 的<strong>八进制</strong>数代表一个字符，<code>HHH</code> 代表对应 Unicode 码点(code point)，一共能输出256种字符。<br><code>\1 === \001</code> 遵循这个规则  </li>
+<li>转义字符：<code>\0 \b \f \n \r \t \v \&#39; \&quot; \\</code>  </li>
+<li><code>\HHH</code> 后边跟三个 <code>000</code> 到 <code>377</code> 的<strong>八进制</strong>数代表一个字符，<code>HHH</code> 代表对应 Unicode 码点(code point)，一共能输出256种字符。<code>\1 === \001</code> 遵循这个规则  </li>
 <li><code>\xHH</code> 后边跟 <code>00</code> 到 <code>FF</code> 的<strong>十六进制</strong>数，同样代表对应 Unicode 码点，能输出256种字符  </li>
 <li><code>\uXXXX</code> 后边也跟 <code>0000</code> 到 <code>FFFF</code> 的<strong>十六进制数</strong>，<code>XXXX</code> 代表对应码点  </li>
 <li>如果反斜杠后边不是特殊字符，则反斜杠会被省略 <code>&#39;\a&#39; === &#39;a&#39;</code>  </li>
