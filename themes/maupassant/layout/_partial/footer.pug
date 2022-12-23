@@ -1,7 +1,9 @@
-#footer= 'Copyright © ' + date(Date.now(), 'YYYY') + ' '
+#footer
+  span#footer-copyright Copyright © 
   a(href=url_for('.'), rel='nofollow')= config.title + '.'
   |  Powered by
   a(rel='nofollow', target='_blank', href='https://hexo.io')  Hexo.
   a(rel='nofollow', target='_blank', href='https://github.com/tufu9441/maupassant-hexo')  Theme
   |  by
   a(rel='nofollow', target='_blank', href='https://github.com/pagecho')  Cho.
+  script const tag = document.getElementById('footer-copyright');const year = new Date().getFullYear();tag.innerText += year + ' ';
