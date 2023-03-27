@@ -17,17 +17,17 @@
 <p>devtool 中以 <code>EventStream</code> 的形式显示数据</p>
 <p><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream.png"></p>
 <p>值得一提的是，在 ChatGPT 网站里开 devtool，SSE 请求是看不到 <code>EventStream</code> 的，似乎是<a target="_blank" rel="noopener" href="https://github.com/Azure/fetch-event-source/issues/3">本地调试</a>才能看到数据。</p>
-<h2 id="分析请求"><a href="#分析请求" class="headerlink" title="分析请求"></a>分析请求</h2><p>服务端每次发送 <code>SSE</code> _消息_，由一个或者多个 <code>message</code> 组成，每个 <code>message</code> 都能传递 <code>Id</code>、<code>Type</code>、<code>Data</code> 这三项数据，一条 <code>message</code> 的格式如下：</p>
+<h2 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h2><p>服务端每次发送 <code>SSE</code> <strong>消息</strong>（一次消息指客户端 <code>EventSource</code> 通过 <code>EventListener</code> 收到一次事件），由一个或者多个 <code>message</code> 组成，每个 <code>message</code> 都能传递 <code>Id</code>、<code>Type</code>、<code>Data</code> 这三项数据，<code>message</code> 的格式如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[field]: value\n</span><br></pre></td></tr></table></figure>
 
 <p>其中 field 可以是 <code>id</code>、<code>event</code> 、 <code>data</code>，对应 devtool 中的三个表头，还可以是 <code>retry</code>。可见一条 <code>message</code> 以 <code>\n</code> 结尾</p>
 <h2 id="data"><a href="#data" class="headerlink" title="data"></a>data</h2><p><code>data</code> 代表数据内容，每条数据以 <code>\n</code> 结尾。前边说一次消息可能对应一个或者多个 <code>message</code>，比如传递一行数据，就是：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data: message\n\n</span><br></pre></td></tr></table></figure>
 
-<p>这里是<strong>两个</strong> <code>\n</code>，其实是和前边说 <code>message</code> 也以 <code>\n</code> 结尾，是相通的，传递多行数据时就能看出区别了：比如传一个 json</p>
+<p>这里是<strong>两个</strong> <code>\n</code>，其实是和前边说 <code>message</code> 也以 <code>\n</code> 结尾，是相通的，传递多行数据时就能看出区别了：比如传一个 <code>JSON</code></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">data: &#123;\n</span><br><span class="line">data: &quot;a&quot;: 2,\n</span><br><span class="line">data: &quot;b&quot;: true\n</span><br><span class="line">data: &#125;\n\n</span><br></pre></td></tr></table></figure>
 
-<p>这一次信息里有四条 message，其中前边都是<em>一个</em> <code>\n</code>，最后是<em>两个</em> <code>\n</code> 结尾。可以理解为多出来的 <code>\n</code> 代表这次消息结束了。</p>
+<p>这一次消息里有四条 message，其中前边都是<em>一个</em> <code>\n</code>，最后是<em>两个</em> <code>\n</code> 结尾。可以理解为多出来的 <code>\n</code> 代表这次消息结束了。客户端收到的，是一条完整的 <code>JSON</code> 字符串</p>
 <p><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-data.png"></p>
 <h2 id="type"><a href="#type" class="headerlink" title="type"></a>type</h2><p><code>type</code> 定义事件类型，在客户端 <code>EventSource</code> 除了监听默认的 <code>message</code> 事件，还可以监听自定义类型的事件，是一种分发消息的机制。</p>
 <p>服务器在前边的例子后再发一段自定义事件 <code>someEvent</code>：</p>
@@ -38,14 +38,16 @@
 
 <p>结果如下：<br><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-type.png"></p>
 <p>在客户端，<code>EventSource</code> 只能监听一个类型的消息，需要自己选择是默认的 <code>message</code>，还是自定义的事件名字，这个和 <code>DOM</code> 的 <code>addEventListener</code> 很像。</p>
-<h2 id="id"><a href="#id" class="headerlink" title="id"></a>id</h2><p><code>SSE</code> 自带了断线重连功能，这也是比起 <code>WebSock</code> 需要自建断线重连功能的优势。方法就是每个消息都传一个 <code>id</code>，客户端记录在 <code>eventSource.lastEventId</code> 里。重新连接时，客户端请求头 <code>header</code> 会传一个 <code>Last-Event-ID</code>，告知服务器收到了哪些消息。</p>
-<p><a target="_blank" rel="noopener" href="https://zh.javascript.info/server-sent-events">现代 JavaScript 教程</a>中推荐服务端把 <code>id</code> 附加到 <code>data</code> 后，确保 <code>data</code> 全部收到后再更新 <code>lastEventId</code>。我理解原因是如果先收到 <code>id</code>，在接收 <code>data</code> 时断网，数据没有全部收到，但已经改变过 <code>lastEventId</code>，重连时这段 <code>data</code> 就丢了。</p>
+<h2 id="id"><a href="#id" class="headerlink" title="id"></a>id</h2><p><code>SSE</code> 自带了断线重连功能，这也是比起 <code>WebSocket</code> 需要自建断线重连功能的优势。方法就是每个消息都传一个 <code>id</code>，客户端记录在实例的 <code>eventSource.lastEventId</code> 里。重新连接时，客户端请求头（<code>header</code>）会传一个 <code>Last-Event-ID</code>，告知服务器收到了哪些消息。</p>
+<p><a target="_blank" rel="noopener" href="https://zh.javascript.info/server-sent-events">现代 JavaScript 教程</a>中推荐服务端把 <code>id</code> 附加到 <code>data</code> 后，确保 <code>data</code> 全部收到后再更新 <code>lastEventId</code>。我理解原因是先收到 <code>id</code>，如果在接收 <code>data</code> 时断网，没有收到完整的数据，但已经改变过 <code>lastEventId</code>，重连时这段 <code>data</code> 就丢了。</p>
 <blockquote>
 <p>我理解这段逻辑和 TCP 发送报文是异曲同工的，但是更轻量。<br><code>id</code> 应该是有规律的值，这样消息才是有序的，服务端也能用一个 <code>lastEventId</code> 就知道后续发哪些消息。</p>
 </blockquote>
 <blockquote>
-<p>不过 <code>SSE</code> 是单项通信，不用担心被猜到滑动窗口范围内的 ISN，用 RST 报文恶意攻击，所以不需要三次握手交换 ISN。</p>
+<p>不过 <code>SSE</code> 是单向通信，不用担心被猜到滑动窗口范围内的 ISN，用 RST 报文恶意攻击，所以不需要三次握手交换 ISN。</p>
 </blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">event: otherEvent \n</span><br><span class="line">data: custom message \n</span><br><span class="line">id: 1\n\n</span><br><span class="line"></span><br><span class="line">data: object: \n</span><br><span class="line">id: 2\n\n</span><br></pre></td></tr></table></figure>
+
 <p><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-id.png"></p>
 <h2 id="retry"><a href="#retry" class="headerlink" title="retry"></a>retry</h2><p><code>retry</code> 可以让服务端设置每次客户端断线后，每次重连之间的延迟响应时间。</p>
 <h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><p>服务端：</p>
