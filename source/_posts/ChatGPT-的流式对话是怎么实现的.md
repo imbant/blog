@@ -86,9 +86,9 @@ devtool 中以 `EventStream` 的形式显示数据
 
 值得一提的是，在 ChatGPT 网站里开 devtool，SSE 请求是看不到 `EventStream` 的，似乎是[本地调试](https://github.com/Azure/fetch-event-source/issues/3)才能看到数据。
 
-## 分析请求
+## 数据格式
 
-服务端每次发送 `SSE` _消息_，由一个或者多个 `message` 组成，每个 `message` 都能传递 `Id`、`Type`、`Data` 这三项数据，一条 `message` 的格式如下：
+服务端每次发送 `SSE` **消息**（一次消息指客户端 `EventSource` 通过 `EventListener` 收到一次事件），由一个或者多个 `message` 组成，每个 `message` 都能传递 `Id`、`Type`、`Data` 这三项数据，`message` 的格式如下：
 
 ```shell
 [field]: value\n
@@ -104,7 +104,7 @@ devtool 中以 `EventStream` 的形式显示数据
 data: message\n\n
 ```
 
-这里是**两个** `\n`，其实是和前边说 `message` 也以 `\n` 结尾，是相通的，传递多行数据时就能看出区别了：比如传一个 json
+这里是**两个** `\n`，其实是和前边说 `message` 也以 `\n` 结尾，是相通的，传递多行数据时就能看出区别了：比如传一个 `JSON`
 
 ```shell
 data: {\n
@@ -113,7 +113,7 @@ data: "b": true\n
 data: }\n\n
 ```
 
-这一次信息里有四条 message，其中前边都是*一个* `\n`，最后是*两个* `\n` 结尾。可以理解为多出来的 `\n` 代表这次消息结束了。
+这一次消息里有四条 message，其中前边都是*一个* `\n`，最后是*两个* `\n` 结尾。可以理解为多出来的 `\n` 代表这次消息结束了。客户端收到的，是一条完整的 `JSON` 字符串
 
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-data.png)
 
@@ -146,14 +146,23 @@ source.addEventListener("someEvent", function (event) {
 
 ## id
 
-`SSE` 自带了断线重连功能，这也是比起 `WebSock` 需要自建断线重连功能的优势。方法就是每个消息都传一个 `id`，客户端记录在 `eventSource.lastEventId` 里。重新连接时，客户端请求头 `header` 会传一个 `Last-Event-ID`，告知服务器收到了哪些消息。
+`SSE` 自带了断线重连功能，这也是比起 `WebSocket` 需要自建断线重连功能的优势。方法就是每个消息都传一个 `id`，客户端记录在实例的 `eventSource.lastEventId` 里。重新连接时，客户端请求头（`header`）会传一个 `Last-Event-ID`，告知服务器收到了哪些消息。
 
-[现代 JavaScript 教程](https://zh.javascript.info/server-sent-events)中推荐服务端把 `id` 附加到 `data` 后，确保 `data` 全部收到后再更新 `lastEventId`。我理解原因是如果先收到 `id`，在接收 `data` 时断网，数据没有全部收到，但已经改变过 `lastEventId`，重连时这段 `data` 就丢了。
+[现代 JavaScript 教程](https://zh.javascript.info/server-sent-events)中推荐服务端把 `id` 附加到 `data` 后，确保 `data` 全部收到后再更新 `lastEventId`。我理解原因是先收到 `id`，如果在接收 `data` 时断网，没有收到完整的数据，但已经改变过 `lastEventId`，重连时这段 `data` 就丢了。
 
 > 我理解这段逻辑和 TCP 发送报文是异曲同工的，但是更轻量。
 > `id` 应该是有规律的值，这样消息才是有序的，服务端也能用一个 `lastEventId` 就知道后续发哪些消息。
 
-> 不过 `SSE` 是单项通信，不用担心被猜到滑动窗口范围内的 ISN，用 RST 报文恶意攻击，所以不需要三次握手交换 ISN。
+> 不过 `SSE` 是单向通信，不用担心被猜到滑动窗口范围内的 ISN，用 RST 报文恶意攻击，所以不需要三次握手交换 ISN。
+
+```shell
+event: otherEvent \n
+data: custom message \n
+id: 1\n\n
+
+data: object: \n
+id: 2\n\n
+```
 
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-id.png)
 
