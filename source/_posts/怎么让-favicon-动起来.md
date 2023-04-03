@@ -10,7 +10,7 @@ tags: [html]
 
 可是现代浏览器里 `favicon` 如果是 `gif` 格式，通常只会展示它的第一帧，并不能动起来。
 
-于是想到了这个[favicon-pong 项目](https://glitch.com/edit/#!/favicon-pong)：在 favicon 里打乒乓球，网页里上下滚动，favicon 里球拍和球就会做出变化。
+于是想到了这个 [favicon-pong 项目](https://glitch.com/edit/#!/favicon-pong)：在 favicon 里打乒乓球，网页里上下滚动，favicon 里球拍和球就会做出变化。
 
 ## link 标签
 
@@ -37,7 +37,7 @@ link.setAttribute("href", "some_path");
 
 这样做也有缺点，图片数据是打包到代码里的，会增加包体积。可以尝试用 canvas 或者 svg 去动态的画图片，然后转成 data url 来解决，也更灵活。favicon-pong 就是手动画 svg 的。
 
-## link\[rel\*='icon'\]
+## link\[rel\*=\'icon\'\]
 
 前文说到 rel 不仅是 `icon`，所以选择器里用了 `*=` 的写法，星号表示通配符，只要含有 `"icon"` 的都选中。
 
