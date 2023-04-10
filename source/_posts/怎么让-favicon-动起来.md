@@ -45,6 +45,18 @@ link.setAttribute("href", "some_path");
 - `rel="mask-icon"` Safari 用于 svg 格式 `favicon`，除了 Safari，其他浏览器直接用 `"icon"` 应该就支持 svg 了。[文档](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/pinnedTabs/pinnedTabs.html)
 - `rel="apple-touch-icon"` 在 iOS 把网页添加到主屏幕（称为 Web Clip，不是“小程序” App Clips，哈哈），用到的 icon。[文档](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html)
 
+使用 `apple-touch-icon` 在 iPhone 主屏幕添加网站 icon 的例子：
+
+```html
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://p8.itc.cn/images01/20220406/bf5efc87481c47bca041ed20d64e4a01.jpeg">
+</head>
+```
+
+用 Safari 添加到主屏幕：
+
+![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/gif-favicon/B61318AF-21CF-4104-BF3D-6A29BC2F3927_1_201_a.jpeg)
+
 ## 最终效果
 
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/gif-favicon/giffavicon.gif)
