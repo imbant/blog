@@ -9,7 +9,7 @@
 如何启动：
 
 ```bash
-node -v // 13.14.0，与 node-sass 等相关
+node -v # 13.14.0，与 node-sass 等相关
 
 npm i
 
