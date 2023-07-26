@@ -105,12 +105,12 @@ Vue.prototype.$emit = function (event: string): Component {
 利用断点看看 `close` 和 `resize` 时有什么不同
 
 `close` 事件：
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/emit-close.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/emit-close.png)
 
 点击立即触发 `close` 事件时，实例中有 `close` 和 `resize` 两个回调。
 
 `resize` 事件：
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/emit-resize.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/emit-resize.png)
 
 经过一个 tick，实例已经销毁（`_isDestroyed: true`），`_events` 回调也清空了，因此不会调用到父组件的函数。
 
@@ -142,7 +142,7 @@ export default {
 };
 ```
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/settimeout.gif)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/settimeout.gif)
 
 可见，触发父组件的 `handleClose` 后，子组件会率先销毁，而 `nextTick` 和前边的回调都在一个事件循环内，执行完了，才执行 `setTimeout` 的宏任务。
 
@@ -150,7 +150,7 @@ export default {
 
 通过 performance 录制，我发现点击按钮时，会调用 `$destroy`，这个时机应该是父组件更新 virtual DOM 后发现子组件可以销毁时。
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/vuedestroy.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/vuedestroy.png)
 
 ```typescript
 // https://github.com/vuejs/vue/blob/main/src/core/instance/lifecycle.ts

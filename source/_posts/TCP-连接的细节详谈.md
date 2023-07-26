@@ -20,7 +20,7 @@ TCP 是可以可靠传输数据的，也就是说，建立 TCP 连接的双方�
 - 如果一共发送了五段报文，第 ③ 段接收端还没有收到，就收到了 ④、⑤ 段，说明第 ③ 段传输失败了。因此接收端只能确认收到第 ② 段。
 - 发送端得知最后一个未被确认的包是第 ③ 段，重传它。成功接收后，接收端就可以直接确认 ⑤ 段，因为 ④ ⑤ 已经收到。
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%881.gif)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%881.gif)
 
 TCP 标识了报文数据的顺序，从而接收端接收数据时可以重建顺序。关于上文说到的，在接收到一定量的连续字节流后才发送确认，这是一种 TCP 的扩展，被称为选择确认（Selective Acknowledgement）。选择确认使得接收端可以对乱序到达的数据块进行确认。乱序到达可能是因为包的乱序交付(由于网络延迟，第 ② 段报文比第 ① 段先送到），或者丢包。
 
@@ -36,7 +36,7 @@ TCP 标识了报文数据的顺序，从而接收端接收数据时可以重建�
 `SYN`（synchronization  `/ˌsɪŋkrənaɪˈzeɪʃən/`）：同步，指一端告诉另一端自己的 ISN
 `FIN`（finish）：指断开连接
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%882.jpg)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%882.jpg)
 
 可见：
 
@@ -69,7 +69,7 @@ TCP 标识了报文数据的顺序，从而接收端接收数据时可以重建�
 > 2. 服务端收到客户端的 SYN 后，向客户端发送 SYN/ACK 报文，带上 ACK number，SN = ISN，由`LISTEN`状态转为`SYN-RCVD`（RCVD = received）状态
 > 3. 客户端收到服务端的 SYN/ACK 后，向服务端发送 ACK 报文，带上 ACK number, SN = (ISN + 1)，由`SYN-SENT`转为`ESTABLISHED`状态
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%883.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%883.png)
 
 之后，当服务端接收到 ACK，转为`ESTABLISHED`状态，TCP 连接建立成功
 
@@ -108,8 +108,8 @@ TCP 标识了报文数据的顺序，从而接收端接收数据时可以重建�
   - 服务端还在`SYN_RCVD`状态，服务端会正常收到数据 + 期望中的 ACK number，相当于还是成功接收到 ACK 了，第三次握手成功，服务端也转为 `ESTABLISHED` 状态。
 
 服务端在`SYN_RCVD`和`CLOSED`状态下的行为
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%884.jpeg)
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%885.jpeg)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%884.jpeg)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%885.jpeg)
 图片源自《TCP/IP 协议族》
 
 可见，第三次握手中客户端发出的 ACK 是“不可靠的”。这次客户端没能保证自己的信息被服务端成功接收。不过由于第一次 SYN 之外的全部报文中 ACK 都置 1 这个设计，规避了不稳定的隐患。
@@ -141,7 +141,7 @@ TCP 设计者将 SYN 报文设计成占用一个字节的编号（可以理解�
 
 通过发送`FIN`报文，A 端可以向 B 端发出断开连接的请求。
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%886.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%886.png)
 
 1. A 端发送 FIN，其中 SN = `x`。从`ESTABLISHED`状态转为`FIN-WAIT-1`状态
 2. B 端接收到报文，回复 ACK，其中 ACK number = `x + 1`。从`ESTABLISHED`状态转为`CLOSE-WAIT`状态
@@ -192,7 +192,7 @@ TCP 作为一个可靠传输协议，其可靠性就是依赖于收到对方的�
 
 时间分两段，第一段是第四次挥手的 ACK 报文的 MSL；第二段是服务端没收到 ACK 而重传的 FIN 报文的 MSL。
 极端情况是如果在 ACK 到达的前一普朗克时间，服务端等不及就重发了 FIN，可以认为两端报文的传输时间是没有重叠的，加起来为 2SML
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%887.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/10/TCP-%E8%BF%9E%E6%8E%A5%E7%9A%84%E7%BB%86%E8%8A%82%E8%AF%A6%E8%B0%887.png)
 
 2MSL 能保证接收到服务端超时重发的 FIN 报文的最长期限，这段时间里都收不到，就可以认为当前网络里不存在这段报文了，即使存在也会失效，就避免了新 TCP 连接被这段旧报文干扰。
 

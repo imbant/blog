@@ -6,11 +6,11 @@ tags: React
 
 # React 16.3 之前（不包括 16.3）已弃用
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F1.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F1.png)
 
 # React ^16.4
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F2.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F2.png)
 分三个阶段，mount、update 和 unmount
 注意点：
 
@@ -23,7 +23,7 @@ tags: React
 
 # with hooks
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F3.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F3.png)
 注意点：
 
 - **每次**重新渲染，前一个 Effect 都要被清除（cleanup），return 的函数都要被执行。但由于 useEffect 第二个参数的存在，我们可以在第二个参数不变的情况下**跳过** Effect，Effect 不被执行，其 return 返回的函数也就不会被执行了。

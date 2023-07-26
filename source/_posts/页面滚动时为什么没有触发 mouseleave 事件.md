@@ -11,7 +11,7 @@ tags: [浏览器, js, DOM]
 但是这个按钮，位于可以滚动的列表上。显示 tooltips 后，滚动列表，滚动期间鼠标已经离开元素，但 tooltips 不会消失；当滚动结束，tooltips 才（可能）消失。
 最终发现是 mouseleave 事件，没有在滚动到鼠标离开按钮时，而是滚动结束后才触发。
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/14/scroll-mouseleave.gif)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/14/scroll-mouseleave.gif)
 
 ## 是什么
 

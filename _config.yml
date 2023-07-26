@@ -5,8 +5,8 @@
 # Site
 title: imbAnt's blog
 subtitle: ''
-description: ''
-keywords: Front-End,Web Developer,Blog
+description: 'imbant 前端工程师技术博客'
+keywords: 前端,imbant,技术博客,浏览器,Electron,React,Vue,Node,Webpack,Vite,Chrome
 author: imbant
 language: zh-CN
 timezone: ''

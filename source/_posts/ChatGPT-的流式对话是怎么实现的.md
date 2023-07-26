@@ -7,7 +7,7 @@ tags: [HTTP]
 ## 背景
 
 网页里 ChatGPT 是逐字输出文字的，很像人类在一个一个打字：
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/sse2.gif)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/sse2.gif)
 
 API 文档里这种方式称为“流式” `stream`，实现方法是 `server-sent events`(SSE)。本质上它是 HTTP 请求，可以实现服务端向客户端一段一段地推送消息。
 
@@ -82,7 +82,7 @@ source.addEventListener("message", function (event) {
 
 devtool 中以 `EventStream` 的形式显示数据
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream.png)
 
 值得一提的是，在 ChatGPT 网站里开 devtool，SSE 请求是看不到 `EventStream` 的，似乎是[本地调试](https://github.com/Azure/fetch-event-source/issues/3)才能看到数据。
 
@@ -115,7 +115,7 @@ data: }\n\n
 
 这一次消息里有四条 message，其中前边都是*一个* `\n`，最后是*两个* `\n` 结尾。可以理解为多出来的 `\n` 代表这次消息结束了。客户端收到的，是一条完整的 `JSON` 字符串
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-data.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-data.png)
 
 ## type
 
@@ -140,7 +140,7 @@ source.addEventListener("someEvent", function (event) {
 ```
 
 结果如下：
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-type.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-type.png)
 
 在客户端，`EventSource` 只能监听一个类型的消息，需要自己选择是默认的 `message`，还是自定义的事件名字，这个和 `DOM` 的 `addEventListener` 很像。
 
@@ -164,7 +164,7 @@ data: object: \n
 id: 2\n\n
 ```
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-id.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/sse-chatgpt/EventStream-id.png)
 
 ## retry
 

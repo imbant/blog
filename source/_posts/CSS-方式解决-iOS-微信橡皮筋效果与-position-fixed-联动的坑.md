@@ -40,7 +40,7 @@ Android 微信中 fixed 的元素表现正常，**出乎意料，出乎意料**�
 
 ::first-line 是描述选择器中的第一行样式，注意这里只有第一行，但选择器的内容可能不止一行，伪元素只描述**其中一部分**：
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/5/CSS-%E6%96%B9%E5%BC%8F%E8%A7%A3%E5%86%B3-iOS-%E5%BE%AE%E4%BF%A1%E6%A9%A1%E7%9A%AE%E7%AD%8B%E6%95%88%E6%9E%9C%E4%B8%8E-position-fixed-%E8%81%94%E5%8A%A8%E7%9A%84%E5%9D%914.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/5/CSS-%E6%96%B9%E5%BC%8F%E8%A7%A3%E5%86%B3-iOS-%E5%BE%AE%E4%BF%A1%E6%A9%A1%E7%9A%AE%E7%AD%8B%E6%95%88%E6%9E%9C%E4%B8%8E-position-fixed-%E8%81%94%E5%8A%A8%E7%9A%84%E5%9D%914.png)
 
 ### 伪类
 
@@ -56,4 +56,4 @@ https://www.w3.org/TR/CSS2/generate.html#before-after-content
 ```
 
 注意，这里只是说渲染的效果一样，但实际在 dom 树(dom 从数据结构角度讲就是棵树嘛)中，伪元素和 span 依然是两个属性不同的节点
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/5/CSS-%E6%96%B9%E5%BC%8F%E8%A7%A3%E5%86%B3-iOS-%E5%BE%AE%E4%BF%A1%E6%A9%A1%E7%9A%AE%E7%AD%8B%E6%95%88%E6%9E%9C%E4%B8%8E-position-fixed-%E8%81%94%E5%8A%A8%E7%9A%84%E5%9D%915.png)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/5/CSS-%E6%96%B9%E5%BC%8F%E8%A7%A3%E5%86%B3-iOS-%E5%BE%AE%E4%BF%A1%E6%A9%A1%E7%9A%AE%E7%AD%8B%E6%95%88%E6%9E%9C%E4%B8%8E-position-fixed-%E8%81%94%E5%8A%A8%E7%9A%84%E5%9D%915.png)

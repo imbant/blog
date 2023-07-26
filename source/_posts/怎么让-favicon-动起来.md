@@ -55,11 +55,11 @@ link.setAttribute("href", "some_path");
 
 用 Safari 添加到主屏幕：
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/gif-favicon/B61318AF-21CF-4104-BF3D-6A29BC2F3927_1_201_a.jpeg)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/gif-favicon/B61318AF-21CF-4104-BF3D-6A29BC2F3927_1_201_a.jpeg)
 
 ## 最终效果
 
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/gif-favicon/giffavicon.gif)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/gif-favicon/giffavicon.gif)
 
 ## 完整代码
 

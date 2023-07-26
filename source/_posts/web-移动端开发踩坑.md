@@ -66,8 +66,8 @@ rem 可以实现根据设备屏幕宽度不同，呈现比例相同、实际宽�
 
 因此，即使是 100px\*100px 的 img，也应该填入至少 200px\*200px 尺寸的图片。 pc 端同样适用哦。
 
-![](https://developer.apple.com/design/tips/images/imagery-high-resolution_2x.png)
-![](https://developer.apple.com/design/human-interface-guidelines/ios/images/ImageResolution-Graphic_2x.png)
+![img](https://developer.apple.com/design/tips/images/imagery-high-resolution_2x.png)
+![img](https://developer.apple.com/design/human-interface-guidelines/ios/images/ImageResolution-Graphic_2x.png)
 
 ## 微信的坑
 

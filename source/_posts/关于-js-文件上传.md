@@ -173,7 +173,7 @@ reader.addEventListener("load", () => {
 ```
 
 这里有一个坑：`fetch` 方法里没有配置 `content-type`，这里的原因是：`FormData()` 模拟了一份数据表单，会自动设置 `content-type`，事实上，自动设置的 `content-type` 里不只有 `multipart/form-data` 这个值，还设置了一个 `Boundary`。找了一张知乎[柳兮](https://zhuanlan.zhihu.com/p/34291688)小姐姐的截图：
-![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/3/%E5%85%B3%E4%BA%8E-js-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01.jpg)
+![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/3/%E5%85%B3%E4%BA%8E-js-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01.jpg)
 
 可以看到，Headers 中已经有一个 `content-type` 了（第一行）。`multipart/form-data` 后边多了一个 `Boundary`。这个值是一个标示分界线的作用，可以看到 `Request Payload` 源码里有几个相同的字符串，这些的作用就和写文章的分割线一样，把 Body 分成好几个部分，每个部分对应一个 `form` 表单的字段。值得注意的是，在每个部分中都有新定义的 `content-disposition` 和 `content-type` 这些「本该」出现在 Headers 里的字段，这些都是服务器用于分段解析 Body 的。
 
