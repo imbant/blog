@@ -32,6 +32,24 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-size: 14px;
+    overflow: overlay;
+}
+
+::-webkit-scrollbar-track
+{
+	border: 1px solid black;
+	background-color: white;
+}
+
+::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: white;
+}
+
+::-webkit-scrollbar-thumb
+{
+	background-color: #000000;	
 }
 
 .body_container {
