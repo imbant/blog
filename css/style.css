@@ -28,7 +28,19 @@ body {
   font-family: "TIBch", "Classic Grotesque W01", "Helvetica Neue", Arial, "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 14px; }
+  font-size: 14px;
+  overflow: overlay; }
+
+::-webkit-scrollbar-track {
+  border: 1px solid black;
+  background-color: white; }
+
+::-webkit-scrollbar {
+  width: 10px;
+  background-color: white; }
+
+::-webkit-scrollbar-thumb {
+  background-color: #000000; }
 
 .body_container {
   padding: 0 60px;
