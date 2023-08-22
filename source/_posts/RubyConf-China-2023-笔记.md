@@ -12,13 +12,28 @@ tags: [Ruby]
 
 讲了 Ruby 做词法、语法分析，以及实现 lint 工具的方法。
 
+AST 除了会用于编译器（静态语言）、解释器（动态语言），也会用在 lint 工具、格式化工具中，例如 Prettier。格式化工具通过遍历 AST，在感兴趣的节点插入或者减少空格，来统一缩进。
+
 作者实现了一个 [DSL](https://github.com/xinminlabs/node-query-ruby)，作为在 AST 中查找节点的查询语句，类似 SQL。在树结构中按照一定条件查询节点确实是一个难题。能想到的场景是，在 language server 中，自动补全或者悬浮提示功能，就需要根据鼠标或者光标的位置，查询 AST 中具体对应哪个节点。
 
 ## Rails 应用安全与 rack - security
 
 了解了一些常见安全问题和防御对策。
 
+安全问题包括这样几类：
+
+- 注入（参数校验）
+- 泄露敏感信息（过度展示，没有剪裁）
+- 身份验证（越权操作）
+
+RESTfull API 有两个风险：
+
+- 方便遍历数据
+- 泄露数据库表结构
+
 除了前端常见的 XSS 和 CSRF，最近有一种新的攻击手段，称为 SSRF(Server-Side Request Forgery)，服务端请求伪造。
+
+除了常见的业务场景，Ruby 在安全领域依然是一门被使用的语言。
 
 ## Ruby 十年 @华为
 
@@ -44,6 +59,24 @@ Solargraph 是 Ruby 的 Language Server。
 另外还介绍了在 vs code 中断点调试。让我意外的是 Ruby 程序员更多是靠 log 调试，使用断点的比例很少。
 
 还看到一个奇技淫巧，断点时在 debug console 面板可以输入代码执行，没想到还可以直接输入 `return []` 中断一个函数，让它直接返回。不过在 js 中没复现出来，会报一个 SyntaxError，哈哈。
+
+## AI
+
+这次有三场 AI 相关的会议，确实是非常热的技术了。
+
+目前大模型应用有三个方向：
+
+1. 转发 ChatGPT，有利于 startup 公司快速开发。缺点是能沉淀的知识产权只有 prompt，比如被逆向查出 prompt
+2. 自研端到端大模型
+3. 用 GPT 判断意图，调用和转发给内部系统的 API
+
+另外还提到一点，就是 GPT 的出现是一种新的用户交互升级：
+
+```
+cmd -> Windows -> iPhone -> ChatGPT
+```
+
+这个最早我是在[比尔盖茨的文章](https://www.nbd.com.cn/articles/2023-03-23/2723535.html)中看到的
 
 ## 其他
 
