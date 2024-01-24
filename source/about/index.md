@@ -10,7 +10,7 @@ layout: page
 
 工作中我还参与 Sentry 维护的工作，负责从前期调研、落地接入到长期维护全流程。此外主导项目 Electron 的升级工作，从 14.0 版本逐步升级到 23.0+，跟进稳定版本。
 
-平时会把学习笔记写到本[博客](https://imbant.github.io/blog)。有空会参与一些简单的，例如 [MDN](https://github.com/mdn/translated-content/pulls?q=is%3Apr+author%3Aimbant+) 和 [Astro](https://astro.badg.es/contributor/imbant/)。
+平时会把学习笔记写到本[博客](https://imbant.github.io/blog)。有空会参与一些简单的翻译，例如 [MDN](https://github.com/mdn/translated-content/pulls?q=is%3Apr+author%3Aimbant+) 和 [Astro](https://astro.badg.es/contributor/imbant/)。
 
 毕业于同济大学软件学院，本科学历。
 
