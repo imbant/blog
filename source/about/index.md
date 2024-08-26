@@ -16,7 +16,7 @@ layout: page
 
 我在各个平台的昵称为：imbAnt，前缀取自 imbalance，在游戏领域意为 awesome。后缀取自高中绰号「蚂蚁」。
 
-即刻：imbant
+即刻：[imbant](https://okjk.co/OUqto1)
 
 GitHub: [@imbant](https://github.com/imbant)
 
