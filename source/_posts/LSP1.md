@@ -52,7 +52,7 @@ Vue 插件做了哪些事情，才让你的编程体验变得如此美好呢？�
 
 > Any application that can be written in JavaScript, will eventually be written in JavaScript - Jeff Atwood
 
-我们先从 VS Code 入手，看看它是如何设计，使得开发者能接入新语言的：它通过出色的插件系统，将内部代码的接口暴露出来，供插件调用。这些 API 就包括了高亮、自动补全、错误提示等等功能——换句话说，这些智能编程功能，都是 VS Code 开发者一行一行代码实现的，而插件开发者也可以用同样的方式实现。
+我们先从 VS Code 入手，看看它是如何设计，使得开发者能接入新语言的：它通过出色的插件系统，将内部代码封装成接口暴露出来，供插件调用。这些 API 就包括了高亮、自动补全、错误提示等等功能。这些功能都是数据驱动的，换句话说，这些智能编程功能，具体是由 VS Code 开发者一行一行代码实现的，将输入数据转化为 DOM 操作；而插件开发者无需关注细节，只需要提供符合格式的数据即可。
 
 例如，你可以写一个简单的插件，让注释里的 `TODO` 高亮显示：逻辑非常简单，匹配文本中的 TODO 字符，记录它的行列号，给出高亮的颜色。事实上这个简单的插件已经[有人写了](https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight)，并且有 400w+ 的下载量。
 
