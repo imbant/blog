@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="google-site-verification" content="_s8zp9HC5xK3I7RCh_8RJrSUgYtyNgc09bZvTV11nFI"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="imbant 前端工程师技术博客"><meta name="keywords" content="前端,imbant,技术博客,浏览器,Electron,React,Vue,Node,Webpack,Vite,Chrome"><title>Node require 执行细节 | imbAnt's blog</title><link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any"><link rel="Shortcut Icon" type="image/x-icon" href="/blog/favicon.ico"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/blog/apple-touch-icon.png"><script async src="https://www.googletagmanager.com/gtag/js?id=G-ZM9NGRYKWS"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-ZM9NGRYKWS');
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Node require 执行细节</h1><a id="logo" href="/blog/.">imbAnt's blog</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/blog/."><i class="fa fa-home"> 首页</i></a><a href="/blog/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/blog/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Node require 执行细节</h1><div class="post-meta">2019-08-09</div><div class="post-content"><h2 id="当-Node-遇到-require-X-时，按如下顺序处理"><a href="#当-Node-遇到-require-X-时，按如下顺序处理" class="headerlink" title="当 Node 遇到 require(X) 时，按如下顺序处理"></a>当 Node 遇到 require(X) 时，按如下顺序处理</h2><ol>
+<li>X 为内置模块（比如 require(‘http’)）<br>直接执行</li>
+<li>X 以 ./ 或 / 或 ../ 开头</li>
+</ol>
+<ul>
+<li>根据 X 所在的父模块，补全绝对路径</li>
+<li>将 X 视为文件，依次查找如下的文件，找到就返回该文件。<ul>
+<li>X</li>
+<li>X.js （这样就可以在 require 中只写 js 文件的名字，不写后缀名了）</li>
+<li>X.json</li>
+<li>X.node</li>
+</ul>
+</li>
+<li>将 X 视为目录，依次查找如下文件，找到就返回该文件。<ul>
+<li>X/package.json（main 字段）</li>
+<li>X/index.js</li>
+<li>X/index.json</li>
+<li>X/index.node</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li>如果 X 不带路径<ul>
+<li>根据 X 所在的父模块，确定 X 可能的安装路径</li>
+<li>依次在每个目录中，将 X 当成文件名或目录名加载</li>
+</ul>
+</li>
+<li>抛出 “not found”</li>
+</ol>
+</div><div class="tags"><a href="/blog/tags/Node/"><i class="fa fa-tag"></i>Node</a></div><div class="post-nav"><a class="pre" href="/blog/2019/08/11/%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90/">持续集成</a><a class="next" href="/blog/1970/01/01/%E6%9A%82%E5%AD%98%E5%8C%BA/">暂存区</a></div><div class="giscus"></div><script src="https://giscus.app/client.js" data-repo="imbant/blog" data-repo-id="MDEwOlJlcG9zaXRvcnkyNDkzOTc0NDM=" data-category="General" data-category-id="DIC_kwDODt2Aw84Ch79K" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://imbant.github.io/blog"/></form></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer"><span id="footer-copyright">Copyright © </span><a href="/blog/." rel="nofollow">imbAnt's blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><script>const tag = document.getElementById('footer-copyright');const year = new Date().getFullYear();tag.innerText += year + ' ';</script></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/blog/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/blog/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/blog/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/gifFavIcon.js"></script></div></body></html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="google-site-verification" content="_s8zp9HC5xK3I7RCh_8RJrSUgYtyNgc09bZvTV11nFI"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="imbant 前端工程师技术博客"><meta name="keywords" content="前端,imbant,技术博客,浏览器,Electron,React,Vue,Node,Webpack,Vite,Chrome"><title>JS 的数值 | imbAnt's blog</title><link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any"><link rel="Shortcut Icon" type="image/x-icon" href="/blog/favicon.ico"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/blog/apple-touch-icon.png"><script async src="https://www.googletagmanager.com/gtag/js?id=G-ZM9NGRYKWS"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-ZM9NGRYKWS');
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">JS 的数值</h1><a id="logo" href="/blog/.">imbAnt's blog</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/blog/."><i class="fa fa-home"> 首页</i></a><a href="/blog/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/blog/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">JS 的数值</h1><div class="post-meta">2021-04-20</div><div class="post-content"><h2 id="双精度浮点数"><a href="#双精度浮点数" class="headerlink" title="双精度浮点数"></a>双精度浮点数</h2><p>JS 用双精度浮点数 double 储存 Number<br>浮点数是一种对于实数的<strong>近似值</strong>的表示法</p>
+<p>double 储存规则<br>正负 + 指数 + 精度</p>
+<p>十进制 <code>78.375</code><br>二进制<code>1001 110.011</code> </p>
+<ul>
+<li>小数部分由十进制转为二进制，不一定可以转的很规整，例如十进制<code>0.1</code>被专为二进制<code>0.0001100110011001100</code>（1100无限循环）。因此需要舍去或进位，从而形成误差</li>
+<li><code>1001 110.011</code> 科学记数法为 <code>1.001 110 011 * 2^6</code>。其中前者一定以1开头，所以可以只记录小数部分；同理后者底数一定是2，只记录指数部分即可。再加上正负数，就是 double 的三个部分了</li>
+</ul>
+<h3 id="精度部分"><a href="#精度部分" class="headerlink" title="精度部分"></a>精度部分</h3><p>精度部分有52位，因此把指数放大，最大可以<strong>精确</strong>储存 <code>2^53</code> 的<strong>整数</strong>值（记得前一段被忽略的开头的1也算一位）<br><code>Math.pow(2,53) === 9007199254740992</code> 是 JS 可以储存的最大整数。再往大计算，就不会精确</p>
+<h3 id="指数部分"><a href="#指数部分" class="headerlink" title="指数部分"></a>指数部分</h3><p>指数部分有11位，最大值为2^11-1 = 2047。由于指数有正有负，但有符号计算比无符号计算麻烦，因此存为无符号整数，其中分出一半表示负数部分，因此指数部分的值范围是 <code>2^-1023 到 2^1024</code>。</p>
+<p>::TODO:: 一个猜测：double 能表示的最大值 为 1 * 1.111111111（52位）* 2^1024<br>但是 JS 里 <code>Math.pow(2,1024)</code> 就返回了 <code>Infinity</code>，可以理解为 Number 能表示的最大值其实小于 double 真正能表示的最大值？</p>
+<h2 id="数值的表示法"><a href="#数值的表示法" class="headerlink" title="数值的表示法"></a>数值的表示法</h2><p>字面量和科学计数法两种</p>
+<h3 id="字面量"><a href="#字面量" class="headerlink" title="字面量"></a>字面量</h3><p>JS 有四种进制来表示字面量：<code>二进制</code>、<code>八进制</code>、<code>十进制</code>和<code>十六进制</code></p>
+<ul>
+<li>十进制：没有前导0的数值</li>
+<li>二进制：有前缀 <code>0b</code>、<code>0B</code>的数值 b = Binary</li>
+<li>八进制：有前缀 <code>0o</code>、<code>0O</code>的数值 o = Octal<ul>
+<li>前导0也可以表示八进制</li>
+<li><code>010</code> 表示十进制的 <code>8</code></li>
+<li>这个表示法容易造成混乱，已被 ES5 的严格模式、ES6 废弃。但为了兼容，浏览器依然支持这种表示</li>
+</ul>
+</li>
+<li>十六进制：有前缀<code>0x</code>、<code>0X</code>的数值 x = Hex?</li>
+</ul>
+<h3 id="科学记数法"><a href="#科学记数法" class="headerlink" title="科学记数法"></a>科学记数法</h3><p>以下两种场景下会表示为科学计数法</p>
+<ul>
+<li>小数点前有超过(大于等于)21位数字<br><code>1234567890123456789012 =&gt; 1.2345678901234568e+21</code><br>::TODO::此时整数超过了 Number 可精确表示的最大整数，可以看到e前边的小数精度不够，没有完整储存原本的数字</li>
+<li>小数点后的0大于等于6个<br><code>0.0000001 =&gt; 1e-7</code></li>
+</ul>
+<p>通过小写<code>e</code>或者大写<code>E</code>后边加一个整数，用来表示指数部分。</p>
+<blockquote>
+<p><strong>注意</strong>被转为科学计数法后，toString 方法也会输出带e的字符串<br><code>1234567890123456789012.toString() =&gt; &#39;1.2345678901234568e+21&#39;</code>  </p>
+</blockquote>
+<h2 id="一句话概括0-1-0-2-0-3"><a href="#一句话概括0-1-0-2-0-3" class="headerlink" title="一句话概括0.1+0.2!=0.3"></a>一句话概括0.1+0.2!=0.3</h2><p>JS 中 Number 全部用双精度浮点数 double 储存，在十进制小数部分转为二进制小数时，可能出现除不尽的情况，小数部分无限长（应该是无限循环了），限于double储存结构，只能储存有限位数，因此存下来的会是有误差的值。运算时也是二机制数字之间运算，因此结果是不精确的。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>分场景讨论这个问题</p>
+<h3 id="运算类"><a href="#运算类" class="headerlink" title="运算类"></a>运算类</h3><p>一个经典场景，元转分问题<br><code>0.58 * 100 === 57.99999999999999</code><br>一般场景下分就是精度极限了，不会再往后有小数，因此可以 <code>Math.round</code> 四舍五入，拿到整数分<br><code>Math.round(0.58 * 100) === 58</code></p>
+<p>上边是一种把小数转为整数的方案。更通用一些，涉及运算都需要转为整数。</p>
+<p>可能遇到科学计数法和最大数问题</p>
+<h3 id="转为字符串运算"><a href="#转为字符串运算" class="headerlink" title="转为字符串运算"></a>转为字符串运算</h3><h3 id="最大值问题"><a href="#最大值问题" class="headerlink" title="最大值问题"></a>最大值问题</h3><h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><p><a target="_blank" rel="noopener" href="https://wangdoc.com/javascript/types/number.html">数值 - JavaScript 教程 - 网道</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/ne-fe">前端新能源 - 知乎</a></p>
+</div><div class="tags"><a href="/blog/tags/JS/"><i class="fa fa-tag"></i>JS</a><a href="/blog/tags/%E6%B5%AE%E7%82%B9%E6%95%B0/"><i class="fa fa-tag"></i>浮点数</a></div><div class="post-nav"><a class="pre" href="/blog/2021/05/01/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a><a class="next" href="/blog/2020/10/01/JS%20%E6%A8%A1%E5%9D%97%E5%8C%96%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">JS 模块化解决方案</a></div><div class="giscus"></div><script src="https://giscus.app/client.js" data-repo="imbant/blog" data-repo-id="MDEwOlJlcG9zaXRvcnkyNDkzOTc0NDM=" data-category="General" data-category-id="DIC_kwDODt2Aw84Ch79K" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://imbant.github.io/blog"/></form></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer"><span id="footer-copyright">Copyright © </span><a href="/blog/." rel="nofollow">imbAnt's blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><script>const tag = document.getElementById('footer-copyright');const year = new Date().getFullYear();tag.innerText += year + ' ';</script></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/blog/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/blog/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/blog/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/gifFavIcon.js"></script></div></body></html>

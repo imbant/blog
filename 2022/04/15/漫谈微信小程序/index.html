@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="google-site-verification" content="_s8zp9HC5xK3I7RCh_8RJrSUgYtyNgc09bZvTV11nFI"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="imbant 前端工程师技术博客"><meta name="keywords" content="前端,imbant,技术博客,浏览器,Electron,React,Vue,Node,Webpack,Vite,Chrome"><title>漫谈微信小程序 | imbAnt's blog</title><link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any"><link rel="Shortcut Icon" type="image/x-icon" href="/blog/favicon.ico"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/blog/apple-touch-icon.png"><script async src="https://www.googletagmanager.com/gtag/js?id=G-ZM9NGRYKWS"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-ZM9NGRYKWS');
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">漫谈微信小程序</h1><a id="logo" href="/blog/.">imbAnt's blog</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/blog/."><i class="fa fa-home"> 首页</i></a><a href="/blog/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/blog/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">漫谈微信小程序</h1><div class="post-meta">2022-04-15</div><div class="post-content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我有过大约 10 个月的时间，参与开发了一款体量较大的电商小程序。在这期间看着它体积暴涨、从野蛮生长到逐步治理，总结一些经验和思考</p>
+<h2 id="小程序的优势"><a href="#小程序的优势" class="headerlink" title="小程序的优势"></a>小程序的优势</h2><ul>
+<li>2022 年的中文互联网，事实上大家都在用微信作为浏览器</li>
+<li>微信原生能力：支付、分享（最重要）、扫一扫</li>
+<li>体验强于 h5<ul>
+<li>手势管理（下拉刷新，侧面滑动后退）、原生 tab 栏等贴近原生 App 的交互</li>
+<li>一个 MPA 里边多个 SPA，状态管理好做（可能内存也更富裕一些？）</li>
+</ul>
+</li>
+<li>支持快速构建应用（学习成本低、原生组件、原生的 ci 能力、无需手动部署，提供基础性能、数据分析等等）</li>
+</ul>
+<h2 id="小程序的劣势"><a href="#小程序的劣势" class="headerlink" title="小程序的劣势"></a>小程序的劣势</h2><ul>
+<li>表单组件错误频出，弱于原生</li>
+<li>体验弱于客户端</li>
+<li>商业价值远大于技术价值<ul>
+<li>割裂互联网生态，是</li>
+<li>所有数据都要过一遍微信，数据安全有问题</li>
+<li>更新代码需要审核，与 web 急速发布的理念有冲突，会随时被审核卡住以及下架</li>
+</ul>
+</li>
+<li>开发者工具编译慢，bug 多</li>
+<li>代码更新后覆盖慢，只能保证 24 小时全覆盖，没有全量覆盖的方法</li>
+<li>架构缺陷<ul>
+<li>双线程：渲染层 webview 线程 + 逻辑层 js 解释引擎线程</li>
+<li>通过将 data 转为 JSON 字符串在两个线程中传递，性能差</li>
+<li>渲染层提供了 wxs，语法类似 js 的脚本语言，能力残缺很多，只用于渲染层的函数功能有限</li>
+</ul>
+</li>
+<li>缺乏构建大型软件的能力<ul>
+<li>缺少 babel 这样的编译工具，如果可用的微信版本设置的很低，就只能使用最原始的语言能力，无法 polyfill</li>
+<li>不支持 less sass 需要开发者手动编译</li>
+<li>分包有主包体积问题</li>
+<li>性能优化空间很有限（ssr、首屏、TTFB 等，收集数据的 wx.getPerformance 也有版本限制）</li>
+</ul>
+</li>
+</ul>
+</div><div class="tags"><a href="/blog/tags/%E5%BE%AE%E4%BF%A1/"><i class="fa fa-tag"></i>微信</a><a href="/blog/tags/%E5%B0%8F%E7%A8%8B%E5%BA%8F/"><i class="fa fa-tag"></i>小程序</a><a href="/blog/tags/%E7%A7%BB%E5%8A%A8%E7%AB%AF/"><i class="fa fa-tag"></i>移动端</a></div><div class="post-nav"><a class="pre" href="/blog/2022/04/30/JS-%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%88%A4%E6%96%AD/">JS 的类型判断</a><a class="next" href="/blog/2022/01/26/HTML-attribute-%E4%B8%8E-DOM-property-%E8%AF%A6%E8%A7%A3/">DOM property 与 attribute 详解</a></div><div class="giscus"></div><script src="https://giscus.app/client.js" data-repo="imbant/blog" data-repo-id="MDEwOlJlcG9zaXRvcnkyNDkzOTc0NDM=" data-category="General" data-category-id="DIC_kwDODt2Aw84Ch79K" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://imbant.github.io/blog"/></form></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer"><span id="footer-copyright">Copyright © </span><a href="/blog/." rel="nofollow">imbAnt's blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><script>const tag = document.getElementById('footer-copyright');const year = new Date().getFullYear();tag.innerText += year + ' ';</script></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/blog/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/blog/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/blog/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/gifFavIcon.js"></script></div></body></html>
