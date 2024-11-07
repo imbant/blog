@@ -2,7 +2,7 @@
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-ga('create','G-ZM9NGRYKWS','auto');ga('send','pageview');
+ga('create','G-95VDNDSZFV','auto');ga('send','pageview');
 </script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">从源码看 Vue 组件销毁后触发其事件</h1><a id="logo" href="/blog/.">imbAnt's blog</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/blog/."><i class="fa fa-home"> 首页</i></a><a href="/blog/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/blog/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">从源码看 Vue 组件销毁后触发其事件</h1><div class="post-meta">2023-07-25</div><div class="post-content"><h2 id="从一个-bug-说起"><a href="#从一个-bug-说起" class="headerlink" title="从一个 bug 说起"></a>从一个 bug 说起</h2><p>记录一个 Vue 组件事件的边界情况。项目中有一个组件，是一个面板，可以通过拖拽改变自身尺寸，也可以被关闭。</p>
 <p>面板尺寸有变化后，需要通知父组件 <code>resize</code> 事件。例如，其他非响应式的 DOM 利用这个事件更新尺寸<br>而点击关闭按钮后，需要通知父组件 <code>close</code> 事件。同时，这也是一个 <code>resize</code> 事件。</p>
 <p>面板：</p>
