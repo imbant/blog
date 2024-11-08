@@ -6,7 +6,7 @@ layout: page
 
 前端开发者。VS Code 插件、语言服务器开发者。
 
-就职于一家上海的游戏公司，我的主要工作是开发 UGC 业务的游戏编辑器，这是一个基于 Electron 的桌面应用；同时我还负责独立开发和维护内部领域特定语言（DSL）的语言服务器，基于 Node.js 集成到 VS Code 插件中，实现自动补全、语法高亮、错误提示等各类语言服务。
+就职于一家上海的游戏公司，我的主要工作是开发 UGC 业务的游戏编辑器，这是一个基于 Electron 的桌面应用；同时我还负责开发这款[插件](https://marketplace.visualstudio.com/items?itemName=craftLandstudio.ffugclanguage)。它集成了一个基于 `LSP` 的语言服务器，可以为自研编程语言提供智能编程功能。
 
 工作中我还参与 Sentry 维护的工作，负责从前期调研、落地接入到长期维护全流程。此外主导项目 Electron 的升级工作，从 14.0 版本逐步升级到 23.0+，跟进稳定版本。
 
