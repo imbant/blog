@@ -108,3 +108,18 @@ go test -c -tags test -o ./unittest.exe ../unittest
 # 改为
 ./unittest.exe "-test.v" "-test.failfast"
 ```
+
+## 测试单个用例？
+
+可以为编译好的可执行文件传入 `-test.run` 参数，也就是加到 args 中：
+
+```diff
+{
+  "args": [
+    "-test.failfast",
+    "-test.v",
+++  "-test.run",
+++  "YourTestCaseName"
+  ]
+}
+```
