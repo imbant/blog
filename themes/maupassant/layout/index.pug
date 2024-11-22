@@ -7,6 +7,27 @@ block title
     title= config.title
 
 block content
+  //- TODO: 改为在 .md 中写入
+  p Hi 👋，欢迎访问我的博客
+  p 我是一名前端开发者，VS Code 插件和语言服务器开发者
+  p 我目前正在构建基于 LSP 的 
+    a(href='https://marketplace.visualstudio.com/items?itemName=craftLandstudio.ffugclanguage') 语言服务器
+    | ，也在维护用 Go 构建的编译器。
+  p 在
+    a(href='/about/') 这里
+    | 查看更多关于我的信息
+  br
+  p 我希望通过这个博客记录技术知识，提升影响力。如果你感兴趣，可以看看这些文章：
+  ul 
+    li
+      a(href='/2024/10/29/VS-Code-Thankyou/') 我为 VS Code 贡献了代码
+    li
+      a(href='2024/08/24/LSP1/') LSP 与 VS Code 插件开发 第一章
+    li
+      a(href='2023/03/30/怎么让-favicon-动起来/') 怎么让 favicon 动起来
+
+  hr
+
   for post in page.posts.toArray()
     .post
       h1.post-title
