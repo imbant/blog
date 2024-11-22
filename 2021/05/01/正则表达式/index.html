@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="google-site-verification" content="_s8zp9HC5xK3I7RCh_8RJrSUgYtyNgc09bZvTV11nFI"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="imbant 前端工程师技术博客"><meta name="keywords" content="前端,imbant,技术博客,浏览器,Electron,React,Vue,Node,Webpack,Vite,Chrome"><title>正则表达式 | imbAnt's blog</title><link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any"><link rel="Shortcut Icon" type="image/x-icon" href="/blog/favicon.ico"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/blog/apple-touch-icon.png"><script async src="https://www.googletagmanager.com/gtag/js?id=G-ZM9NGRYKWS"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-ZM9NGRYKWS');
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">正则表达式</h1><a id="logo" href="/blog/.">imbAnt's blog</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/blog/."><i class="fa fa-home"> 首页</i></a><a href="/blog/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/blog/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container">Hi 👋，欢迎访问我的博客
+我是一名前端开发者，VS Code 插件和语言服务器开发者
+我目前正在构建基于 LSP 的 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=craftLandstudio.ffugclanguage">语言服务器</a>，也在维护用 Go 构建的编译器。
+在<a href="/about/">这里</a>查看更多关于我的信息<br>我希望通过这个博客记录技术知识，提升影响力。如果你感兴趣，可以看看这些文章：<br><a href="/2024/10/29/VS-Code-Thankyou/">我为 VS Code 贡献了代码</a><br><a href="2024/08/24/LSP1/">LSP 与 VS Code 插件开发 第一章</a><br><a href="2023/03/30/怎么让-favicon-动起来/">怎么让 favicon 动起来</a><div class="post"><h1 class="post-title">正则表达式</h1><div class="post-meta">2021-05-01</div><div class="post-content"><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903487155732494#heading-4">JS正则表达式完整教程（略长）</a></p>
+<p>正则表达式用于1.匹配字符，或者2.匹配位置</p>
+<h2 id="1-字符匹配攻略"><a href="#1-字符匹配攻略" class="headerlink" title="1.字符匹配攻略"></a>1.字符匹配攻略</h2><ul>
+<li>横向与纵向匹配<ul>
+<li><code>&#123;m,n&#125;</code> 匹配m到n长度的字符<ul>
+<li><code>/ab&#123;2,4&#125;c/</code> 匹配 a 和 c 中间2到4个b</li>
+</ul>
+</li>
+<li><code>[abc]</code> 匹配 <code>a</code> <code>b</code> <code>c</code> 中任一字符 <ul>
+<li><code>/ab[123]c/</code> 匹配 ab 和 c 中间出现1、2或者3</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>纵向匹配的扩展：字符组——一个字符的集合<ul>
+<li><code>-</code> 表示范围<ul>
+<li><code>/[a-d2-5D-I]/</code> 是 <code>[abcd2345DHI]</code> 的省略简写模式</li>
+<li>转义问题：<code>\-</code> 用来匹配 <code>-</code> 字符本身</li>
+</ul>
+</li>
+<li><code>^</code> 表示取反<ul>
+<li><code>/[^abc]/</code> 可以匹配 <code>x</code> 但不匹配 <code>a</code>、<code>b</code>、<code>c</code></li>
+<li>Q：^ 只能放在纵向匹配方括号中吗？</li>
+</ul>
+</li>
+<li>常见缩写——大小写互为补集<ul>
+<li><code>\d</code> = <code>[0-9]</code> ::Digit::</li>
+<li><code>\D</code> = <code>[^0-9]</code></li>
+<li><code>\w</code> = <code>[0-9a-zA-Z_]</code> 数字、大小写字母和下划线 ::Word::</li>
+<li><code>\W</code> = <code>[^0-9a-zA-Z]</code></li>
+<li><code>\s</code> = <code>[\t\v\n\r\f]</code> 表示空白符，包括空格、水平制表符</li>
+<li>换行符、回车符、换页符::Space::</li>
+<li><code>\S</code></li>
+<li><code>.</code> = <code>[^\n\r\u2028\u2029]</code>通配符，几乎匹配任何字符，换行符、回车符、行分隔符和段分隔符除外</li>
+<li><code>[\d\D] [\w\W] [\s\S] [^]</code> 可以表示匹配任何字符</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>横向匹配的扩展：量词<ul>
+<li>简写<ul>
+<li><code>&#123;m,&#125;</code> 最少 m 次</li>
+<li><code>&#123;m&#125;</code> 精确的 m 次</li>
+<li><code>?</code> = <code>&#123;0,1&#125;</code> 出现一次或0次</li>
+<li><code>+</code> = <code>&#123;1,&#125;</code> 最少出现一次</li>
+<li><code>*</code> = <code>&#123;0,&#125;</code> 可以不出现或出现不限次数</li>
+</ul>
+</li>
+<li>贪婪匹配和惰性匹配<ul>
+<li>在量词后边加<code>?</code>可以改为惰性匹配</li>
+<li>Q：差别不是特别清楚 贪婪匹配会匹配出尽可能长的字符串，惰性则是尽可能短的，符合匹配就返回</li>
+<li><code>/\d&#123;2,4&#125;/g</code> 匹配 <code>123 1234 12345 123456</code> 结果：<code>123 1234 1234 1234 56</code> </li>
+<li><code>/\d&#123;2,4&#125;?/g</code> 匹配 <code>123 1234 12345 123456</code> 结果： <code>12 12 34 12 34 12 34 56</code></li>
+<li><code>/\d+/</code> 匹配 <code>123 2</code> 结果：<code>123 2</code></li>
+<li><code>/\d+?/</code> 匹配 <code>123 2</code> 结果：<code>1 2 3 2</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>多选分支<ul>
+<li><code>|</code> 管道符可以在多个模式中任选其一匹配<ul>
+<li><code>/good|goodbye/</code> 匹配到<code>good</code>就会返回，而不会匹配到<code>goodbye</code>，所以管道符号会短路，有匹配到就不会继续匹配</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-位置匹配攻略"><a href="#2-位置匹配攻略" class="headerlink" title="2.位置匹配攻略"></a>2.位置匹配攻略</h2><p>理解「位置」：可以认为位置是字符串中字符与字符之间的“空字符”<br>例如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;hello&quot;</span> === <span class="string">&quot;&quot;</span> + <span class="string">&quot;hello&quot;</span> + <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="string">&quot;hello&quot;</span> === <span class="string">&quot;&quot;</span> + <span class="string">&quot;&quot;</span> + <span class="string">&quot;hello&quot;</span></span><br><span class="line"><span class="string">&quot;hello&quot;</span> === <span class="string">&quot;h&quot;</span> + <span class="string">&quot;&quot;</span> + <span class="string">&quot;ello&quot;</span></span><br></pre></td></tr></table></figure>
+<p>匹配位置就是匹配这些空字符串，这些空字符串可以做<strong>替换</strong></p>
+<ul>
+<li><p><code>^</code> <code>$</code> 匹配开头结尾</p>
+<ul>
+<li>把字符串的开头/结尾替换成# <code>&#39;hello&#39;.replace(/^|$/g, &#39;#&#39;) // &#39;#hello#&#39;</code></li>
+<li>多行匹配时，两个字符是<strong>行</strong>的开头结尾<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// g: 全局匹配，m: 多行匹配</span></span><br><span class="line"><span class="string">&#x27;hello\nworld&#x27;</span>.replace(<span class="regexp">/^|$/gm</span>, <span class="string">&#x27;#&#x27;</span>)</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">*	#hello#</span></span><br><span class="line"><span class="comment">*	#world#</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><code>\b</code> 匹配单词边界，<code>\w</code> 与 <code>\W</code>或<code>^</code>或<code>$</code> 的边界 ::Boundary::</p>
+<ul>
+<li>虽然被称为“单词”，但 <code>\w</code> 代表数字字母下划线，不仅仅是字母</li>
+<li>一个文件名为”[JS] Lesson_01.mp4”，其单词边界为<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;[JS] Lesson_01.mp4&#x27;</span>.replace(<span class="regexp">/\b/g</span>, <span class="string">&#x27;#&#x27;</span>)</span><br><span class="line"><span class="comment">// [#JS#] #Lesson_01#.#mp4#</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><code>\B</code> 取反</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;[JS] Lesson_01.mp4&#x27;</span>.replace(<span class="regexp">/\B/g</span>, <span class="string">&#x27;#&#x27;</span>)</span><br><span class="line"><span class="comment">// #[J#S]# L#e#s#s#o#n#_#0#1.m#p#4</span></span><br></pre></td></tr></table></figure></li>
+<li><p><code>(?=p)</code> 匹配 <code>p</code> 左边的位置，<code>p</code>表示一个子模式</p>
+<ul>
+<li>positive lookahead，正向先行断言</li>
+<li>匹配 l 之前的位置<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;hello&#x27;</span>.replace(<span class="regexp">/(?=l)/g</span>, <span class="string">&#x27;#&#x27;</span>)</span><br><span class="line"><span class="comment">// he#l#lo</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><code>(?!p)</code> 匹配与 <code>(?=p)</code> 取反</p>
+<ul>
+<li>negative lookahead，负向先行断言</li>
+</ul>
+</li>
+<li><p>ES6 还支持 <code>(?&lt;=p)</code> 和 <code>(?&lt;!p)</code> 表示匹配右边的位置</p>
+</li>
+</ul>
+<h4 id="案例：数字的千分位分隔符匹配法"><a href="#案例：数字的千分位分隔符匹配法" class="headerlink" title="案例：数字的千分位分隔符匹配法"></a>案例：数字的千分位分隔符匹配法</h4><p>要求把 ”1234567” 变成 “1,234,567”</p>
+<p><code>&#39;1234567&#39;.replace(reg, &#39;,&#39;)</code></p>
+<p>思路是匹配连续三个数字<code>\d&#123;3&#125;</code>，在它们前边加逗号。有两个问题：</p>
+<ul>
+<li>如何从后往前匹配<ul>
+<li><code>/(?=\d&#123;3&#125;)/</code> 这样会替换成 <code>,1,2,3,4,567</code>，原因是从前向后依次匹配到了 <code>123 234 345 456</code>， 所以1 2 3 4 5前边都加上了逗号</li>
+<li>增加结尾匹配  <code>/(?=\d&#123;3&#125;$)/</code>，这样会在结尾替换出<code>1234,567</code><ul>
+<li>如果把 <code>$</code> 写在括号外边：<code>/(?=\d&#123;3&#125;)$/</code> 则表示匹配连续三个数字之前的位置，但是这个位置之后就是结尾。这应该是一种无效匹配</li>
+</ul>
+</li>
+<li>再给<code>\d&#123;3&#125;</code>整体加上量词 <code>/(?=(\d&#123;3&#125;)+$)/</code>，就能匹配多组数字了<ul>
+<li><code>1,234,567</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如何避免开头有逗号<ul>
+<li>前边的表达式替换<code>123456789</code>会出现<code>,123,456,789</code>，需要避免匹配到开头<code>^</code> </li>
+<li> <code>(?!^)</code>可以匹配非开头（还是没明白为啥…），个人觉得应该有一个类似匹配字符的 ^ 来表示取反，而不是用位置来表示“开头”。开头和结尾这两个位置的定义还是很奇妙。</li>
+<li><code>/(?!^)(?=(\d&#123;3&#125;)+$)/</code> 可以替换出 <code>123,456,789</code></li>
+<li>::位置匹配如何做到「非」？::  ::两个位置连用 代表对同一个位置的「且」？::看上去两个位置连用的确表示一起描述同一个位置</li>
+</ul>
+</li>
+</ul>
+<p>扩展：要求匹配 <code>123456 12345678</code></p>
+<p><code>/\B(?=(\d&#123;3&#125;)+\b)/g</code></p>
+<p>学习正则匹配有点像是学自然语言而不是编程语言——先学会实践怎么用，而不是学习如何实现（语法结构）</p>
+<h2 id="括号的作用"><a href="#括号的作用" class="headerlink" title="括号的作用"></a>括号的作用</h2><h4 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h4><p>要匹配连续的字符<code>a</code>可以写 <code>/a+/</code>，如果想匹配连续的<code>ab</code>，需要括号<code>/(ab)+/</code>，括号提供<strong>分组</strong>功能</p>
+<h4 id="分支结构"><a href="#分支结构" class="headerlink" title="分支结构"></a>分支结构</h4><p>用 <code>|</code> 表示分支结构时，可选项的范围需要由括号包围。<br><code>/(JS|Java) is the best lang/</code> 匹配 <code>JS is the best lang</code> 或者 <code>Java is the best lang</code><br>如果没有括号 <code>/JS|Java is the best lang/</code> 匹配 <code>JS</code> 或者 <code>Java is the best lang</code>，整个表达式都是分支</p>
+<h4 id="引用分组——JS实现"><a href="#引用分组——JS实现" class="headerlink" title="引用分组——JS实现"></a>引用分组——JS实现</h4><p>括号可以进行<strong>数据提取</strong>，必须配合使用实现环境的 API。下边以 JS 为例<br>简单来说就是可以将表达式中的匹配项以 JS 变量的方式获取到。</p>
+<p><code>RegExp.prototype.exec</code>、<code>String.prototype.match</code>、<code>String.prototype.replace</code> 三个函数都会得到一个数组（前两个是返回值，后一个会传给 lambda 的入参）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/(\d&#123;<span class="number">4</span>&#125;)-(\d&#123;<span class="number">2</span>&#125;)-(\d&#123;<span class="number">2</span>&#125;)/.exec(<span class="string">&#x27;2021-04-29&#x27;</span>)</span><br><span class="line"><span class="comment">// [&#x27;2021-04-29&#x27;, &#x27;2021&#x27;, &#x27;04&#x27;, &#x27;29&#x27;, index: 0, input: &#x27;2021-04-29&#x27;, groups: undefined]</span></span><br></pre></td></tr></table></figure>
+<p>其中1～3个元素就是括号提取出的数据，第0个表示正则表达式匹配到的字符串。</p>
+<blockquote>
+<p>另外提一句，返回值是一个<strong>添加了自定义属性</strong>的数组。Array 是 Object 的实例，自带 <code>length</code> 属性，也可以像这里的返回值一样增加 <code>index</code>、<code>input</code>、<code>groups</code> 属性。  </p>
+</blockquote>
+<p>前边的例子中，调用 <code>replace</code> 之后也可以通过 <code>RegExp.$1</code> <code>RegExp.$2 </code> <code>RegExp.$3</code> 拿到对应三个数据，不过这种方式已经<em>废弃</em>。这种实例能改变对象本身的变量，设计也很奇怪，不再深究。</p>
+<h4 id="反向引用"><a href="#反向引用" class="headerlink" title="反向引用"></a>反向引用</h4><p>指表达式前边声明过的模式，后边有一份一模一样的引用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 匹配 2021-04-29 2021/04/29 2021.04.29</span></span><br><span class="line"><span class="comment">// 要求前后两个符号一模一样，不能是 2021/04.29</span></span><br><span class="line">/\d&#123;<span class="number">4</span>&#125;(-|\/|\.)\d&#123;<span class="number">2</span>&#125;\<span class="number">1</span>\d&#123;<span class="number">2</span>&#125;/</span><br></pre></td></tr></table></figure>
+<p>其中的 <code>\1</code> 就表示第一个分组<code>(-|\/|\.)</code>，<strong>不论</strong>第一个分组匹配到什么，<code>\1</code> 的内容都<strong>一模一样</strong>。注意这里和复制粘贴一份 <code>(-|\/|\.)</code> 到后边有本质区别，反向引用使得两个模式有了关联。::为啥这里写([-/.])不行？::<br>随着分组数量增加，\1 \2 \3 后边的数字也增加</p>
+<ul>
+<li>括号嵌套时，左括号的次序代表\后边的数字<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/^((\d)(\d(\d)))\<span class="number">1</span>\<span class="number">2</span>\<span class="number">3</span>\<span class="number">4</span>$/.exec(<span class="string">&quot;4564564566&quot;</span>)</span><br><span class="line"><span class="comment">// [4564564566, 456(\1), 4(\2), 56(\3), 6(\4) ...]</span></span><br></pre></td></tr></table></figure></li>
+<li><code>\10</code> 表示的是第10个分组，而不是<code>\1</code> 和 <code>0</code></li>
+<li>引用不存在的分组时，<code>\1</code> 保持字面意思，代表一个字符</li>
+</ul>
+<blockquote>
+<p>再另外提一句，在 JS 的字符串中，反斜杠<code>\</code>有转义的作用  </p>
+<ol>
+<li>转义字符：<code>\0 \b \f \n \r \t \v \&#39; \&quot; \\</code>  </li>
+<li><code>\HHH</code> 后边跟三个 <code>000</code> 到 <code>377</code> 的<strong>八进制</strong>数代表一个字符，<code>HHH</code> 代表对应 Unicode 码点(code point)，一共能输出256种字符。<code>\1 === \001</code> 遵循这个规则  </li>
+<li><code>\xHH</code> 后边跟 <code>00</code> 到 <code>FF</code> 的<strong>十六进制</strong>数，同样代表对应 Unicode 码点，能输出256种字符  </li>
+<li><code>\uXXXX</code> 后边也跟 <code>0000</code> 到 <code>FFFF</code> 的<strong>十六进制数</strong>，<code>XXXX</code> 代表对应码点  </li>
+<li>如果反斜杠后边不是特殊字符，则反斜杠会被省略 <code>&#39;\a&#39; === &#39;a&#39;</code>  </li>
+</ol>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;\172&#x27;</span> === <span class="string">&#x27;z&#x27;</span> <span class="comment">// true</span></span><br><span class="line"><span class="string">&#x27;\x7A&#x27;</span> === <span class="string">&#x27;z&#x27;</span> <span class="comment">// true</span></span><br><span class="line"><span class="string">&#x27;\u007A&#x27;</span> === <span class="string">&#x27;z&#x27;</span> <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="非捕获分组"><a href="#非捕获分组" class="headerlink" title="非捕获分组"></a>非捕获分组</h4><p>可以用<code>(?:p)</code>来避免分组引用，括号内的匹配不会被提取，而只是作为分组或者分支结构用 <code>/(?:a|b)(\d+)/</code> 不会引用a或b，只会引用到后边的数字</p>
+</div><div class="tags"><a href="/blog/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"><i class="fa fa-tag"></i>正则表达式</a></div><div class="post-nav"><a class="pre" href="/blog/2021/07/20/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B7%A8%E5%88%86%E5%8C%85%E5%A4%8D%E7%94%A8%E4%BB%A3%E7%A0%81%E6%96%B9%E6%A1%88/">小程序跨分包复用代码方案</a><a class="next" href="/blog/2021/04/20/JS%20%E7%9A%84%E6%95%B0%E5%80%BC/">JS 的数值</a></div><div class="giscus"></div><script src="https://giscus.app/client.js" data-repo="imbant/blog" data-repo-id="MDEwOlJlcG9zaXRvcnkyNDkzOTc0NDM=" data-category="General" data-category-id="DIC_kwDODt2Aw84Ch79K" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://imbant.github.io/blog"/></form></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer"><span id="footer-copyright">Copyright © </span><a href="/blog/." rel="nofollow">imbAnt's blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><script>const tag = document.getElementById('footer-copyright');const year = new Date().getFullYear();tag.innerText += year + ' ';</script></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/blog/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/blog/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/blog/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/gifFavIcon.js"></script></div></body></html>

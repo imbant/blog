@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="google-site-verification" content="_s8zp9HC5xK3I7RCh_8RJrSUgYtyNgc09bZvTV11nFI"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="imbant 前端工程师技术博客"><meta name="keywords" content="前端,imbant,技术博客,浏览器,Electron,React,Vue,Node,Webpack,Vite,Chrome"><title>前端性能监控指标与实现 | imbAnt's blog</title><link rel="stylesheet" type="text/css" href="/blog/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any"><link rel="Shortcut Icon" type="image/x-icon" href="/blog/favicon.ico"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/blog/apple-touch-icon.png"><script async src="https://www.googletagmanager.com/gtag/js?id=G-ZM9NGRYKWS"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-ZM9NGRYKWS');
+</script><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.0.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">前端性能监控指标与实现</h1><a id="logo" href="/blog/.">imbAnt's blog</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/blog/."><i class="fa fa-home"> 首页</i></a><a href="/blog/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/blog/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container">Hi 👋，欢迎访问我的博客
+我是一名前端开发者，VS Code 插件和语言服务器开发者
+我目前正在构建基于 LSP 的 <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=craftLandstudio.ffugclanguage">语言服务器</a>，也在维护用 Go 构建的编译器。
+在<a href="/about/">这里</a>查看更多关于我的信息<br>我希望通过这个博客记录技术知识，提升影响力。如果你感兴趣，可以看看这些文章：<br><a href="/2024/10/29/VS-Code-Thankyou/">我为 VS Code 贡献了代码</a><br><a href="2024/08/24/LSP1/">LSP 与 VS Code 插件开发 第一章</a><br><a href="2023/03/30/怎么让-favicon-动起来/">怎么让 favicon 动起来</a><div class="post"><h1 class="post-title">前端性能监控指标与实现</h1><div class="post-meta">2021-09-28</div><div class="post-content"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>从浏览器底层 api 说起，结合浏览器渲染原理，自底向上谈谈前端性能监控的指标具体都是如何实现的</p>
+<h2 id="Navigation-Timing-标准"><a href="#Navigation-Timing-标准" class="headerlink" title="Navigation Timing 标准"></a>Navigation Timing 标准</h2><p>W3C 提供了测试 Web App 性能特征的<a target="_blank" rel="noopener" href="https://www.w3.org/TR/navigation-timing-2/">规范</a>，和时间模型：</p>
+<p><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/1/%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E6%8C%87%E6%A0%87%E4%B8%8E%E5%AE%9E%E7%8E%B0.svg" alt="img"></p>
+<h2 id="浏览器实现"><a href="#浏览器实现" class="headerlink" title="浏览器实现"></a>浏览器实现</h2><h3 id="window-performance-对象"><a href="#window-performance-对象" class="headerlink" title="window.performance 对象"></a>window.performance 对象</h3><p>浏览器通过 <code>performance</code> 对象实现这一规范。图里的各个指标，可以在 <code>window.performance.timing</code> 对象中拿到。这些字段的值为事件发生时的 <code>UNIX 时间戳</code>。</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>意义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fetchStart</code></td>
+<td>浏览器准备好使用 http 请求（fetch）文档时</td>
+<td></td>
+</tr>
+<tr>
+<td><code>domainLookupStart</code></td>
+<td>开始 dns 解析时</td>
+<td>如果用了持续连接（persistent connection），或者信息命中缓存或者本地资源上，将和 <code>fetchStart</code> 相同</td>
+</tr>
+<tr>
+<td><code>domainLookupEnd</code></td>
+<td>dns 解析结束时</td>
+<td>同上，可能等于 <code>fetchStart</code></td>
+</tr>
+<tr>
+<td><code>connectStart</code></td>
+<td>开始 tcp 连接时</td>
+<td>如果使用持久链接（persistent connection），将和 <code>fetchStart</code> 相同（同上， 无需 dns 解析） </td>
+</tr>
+<tr>
+<td><code>secureConnectionStart(可选)</code></td>
+<td>开始 ssl 安全连接时</td>
+<td>HTTPS 协议有这一步，否则为 0</td>
+</tr>
+<tr>
+<td><code>connectEnd</code></td>
+<td>与服务器建立连接（握手和认证过程全部结束）时</td>
+<td>同上，可能等于 <code>fetchStart</code></td>
+</tr>
+<tr>
+<td><code>requestStart</code></td>
+<td>向服务器发出 http 请求/读取本地缓存/读取本地资源时</td>
+<td></td>
+</tr>
+<tr>
+<td><code>responseStart</code></td>
+<td>从服务器收到首字节时</td>
+<td></td>
+</tr>
+<tr>
+<td><code>responseEnd</code></td>
+<td>从服务器收到最后一个字节时</td>
+<td></td>
+</tr>
+<tr>
+<td><code>domLoading</code></td>
+<td>开始解析 DOM 树时</td>
+<td><code>document.readyState = &#39;loading&#39;</code>，触发 <code>readystatechange</code> 事件</td>
+</tr>
+<tr>
+<td><code>domInteractive</code></td>
+<td>已经生成 DOM 树时</td>
+<td><code>document.readyState = &#39;interactive&#39;</code>，触发 <code>readystatechange</code> 事件。DOM 对象可以被访问，可以执行例如<code>document.createElement</code> <code>document.body.appendChild</code></td>
+</tr>
+<tr>
+<td><code>domContentLoadedEventStart</code></td>
+<td>所有需要被执行的脚本已经被解析时</td>
+<td>触发 <code>DOMContentLoaded</code> 事件之前</td>
+</tr>
+<tr>
+<td><code>domContentLoadedEventEnd</code></td>
+<td>所有需要被执行的脚本已经被执行时</td>
+<td>async 的脚本除外</td>
+</tr>
+<tr>
+<td><code>domComplete</code></td>
+<td>HTML 解析完成时</td>
+<td><code>document.readyState = &#39;complete&#39;</code>，触发 <code>readystatechange</code> 事件</td>
+</tr>
+<tr>
+<td><code>loadEventStart</code></td>
+<td>触发 <code>load</code> 事件时</td>
+<td>还没触发时为0</td>
+</tr>
+<tr>
+<td><code>loadEventEnd</code></td>
+<td><code>load</code> 事件结束时</td>
+<td>还没完成时为0 TODO: 是指 load 事件的 handler 函数执行完成吗？</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>包括表中所述在内，还有一些<strong>导航相关</strong>属性：navigationStart、unloadEventStart、unloadEventEnd、redirectStart、redirectEnd 「不再有望成为标准」，未来由 <code>PerformanceNavigationTiming</code> 代替</p>
+</blockquote>
+<h3 id="解析静态资源"><a href="#解析静态资源" class="headerlink" title="解析静态资源"></a>解析静态资源</h3><p>在解析 HTML 过程中，对以下静态资源：</p>
+<ol>
+<li>图片资源：异步下载，不阻塞解析 HTML</li>
+<li>css 资源：异步生成 CSSOM，不阻塞构建 DOM 树，<strong>阻塞渲染</strong>（合并 DOM 树和 CSSOM 树，之后生成 render 树，计算尺寸、绘制像素，显示在屏幕上），<strong>阻塞后续 JS 的执行</strong></li>
+<li>js 资源：根据 <code>script</code> 的 <code>defer</code> 和 <code>async</code> 两个属性：<ul>
+<li>都没有时会阻塞解析，需要等资源下载完成并且<strong>执行</strong>后，才会继续解析</li>
+<li><code>async</code>时并行下载资源，不会阻塞解析和执行，下载完成立即执行（并且<strong>阻塞当前解析</strong>），所以<strong>不会</strong>严格按照标签的前后顺序执行。如果依赖 DOM 树或者对其他脚本有依赖，可能出错</li>
+<li><code>defer</code>时并行下载资源，不会阻塞解析和执行，会在 <code>domInteractive</code> （生成 DOM 树）之后，<code>domContentLoaded</code> 之前执行。效果就像放在 <code>body</code> 最后的 <code>script</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="lt-script-gt-的-async-与-defer"><a href="#lt-script-gt-的-async-与-defer" class="headerlink" title="&lt;script/&gt; 的 async 与 defer"></a>&lt;script/&gt; 的 async 与 defer</h3><ul>
+<li>async 是「异步」，defer 是「延迟」。defer 可以阻止 <code>domContentLoaded</code> 事件直到脚本执行完（TODO: 规范如此，浏览器实现可能不同）</li>
+<li>async 无法保证执行顺序和标签顺序一致，defer 可以</li>
+<li>defer 兼容性更好，async 优先级更高。有 <code>&lt;script async defer /&gt;</code> 的用法，支持 async 的浏览器会优先生效，否则降级到 defer，同样不阻塞后续解析，体验更好</li>
+<li>ES module TODO: 待补充</li>
+</ul>
+<h3 id="DOMContentLoaded、load-事件"><a href="#DOMContentLoaded、load-事件" class="headerlink" title="DOMContentLoaded、load 事件"></a>DOMContentLoaded、load 事件</h3><p>DOMContentLoaded 事件会在完成解析 HTML 之后触发。load 需要等所有资源（包括图片、css）都加载完毕后才触发</p>
+<h3 id="performance-的其他"><a href="#performance-的其他" class="headerlink" title="performance 的其他"></a>performance 的其他</h3><p><code>PerformanceEntry</code> 对象用来描述性能指标。在加载图片、js、css 资源的时候会生成，也可以手动 mark()。<br>有 <code>name</code>、<code>entryType</code>、<code>startTime</code>、<code>duration</code> 四个属性。<br><code>entryType</code> 可以为 paint、resource、mark 等，paint 记录 FP 和 FCP（见下文），resource 就是再加对应 url 的时间了。<br><code>performance.getEntries()</code> 可以拿到全部的 entry 列表。</p>
+<h2 id="性能监控指标"><a href="#性能监控指标" class="headerlink" title="性能监控指标"></a>性能监控指标</h2><h3 id="TTFB-time-to-first-byte"><a href="#TTFB-time-to-first-byte" class="headerlink" title="TTFB(time to first byte)"></a>TTFB(time to first byte)</h3><p>首字节时间<br><code>responseStart - fetchStart</code></p>
+<h3 id="FP-first-paint-和-FCP-first-contentful-paint"><a href="#FP-first-paint-和-FCP-first-contentful-paint" class="headerlink" title="FP(first paint) 和 FCP(first contentful paint)"></a>FP(first paint) 和 FCP(first contentful paint)</h3><p>FP：首次绘制，首次向屏幕传输像素（比如非默认颜色的背景）<br>FCP：首次内容绘制，首次向屏幕传输内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;style&gt;</span><br><span class="line">        body &#123;</span><br><span class="line">            background-color: yellow;</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        setTimeout(() =&gt; &#123;</span><br><span class="line">            document.write(&quot;123&quot;)</span><br><span class="line">        &#125;, 200)</span><br><span class="line">    &lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br></pre></td></tr></table></figure>
+<p>performance 已经标准化：<br><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/1/%E5%89%8D%E7%AB%AF%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E6%8C%87%E6%A0%87%E4%B8%8E%E5%AE%9E%E7%8E%B02.jpg" alt="img"><br>可见 FCP 要比 FP 晚一些（与 <code>document.write</code> 执行的时间相关），两者也可能相同。</p>
+<p>此外：</p>
+<ul>
+<li><code>domContentLoadedEventEnd - fetchStart</code> 可以较好表现<strong>首屏</strong>时间</li>
+<li><code>domInteractive | domLoading - fetchStart</code> 可以较好表现<strong>白屏</strong>时间</li>
+</ul>
+<h3 id="TTI-time-to-intercative"><a href="#TTI-time-to-intercative" class="headerlink" title="TTI(time to intercative)"></a>TTI(time to intercative)</h3><p>首次交互时间<br>Google 定义的指标，不能完全由 performance api 得出，需要满足在 FCP 之后有5秒的时间内没有长任务（超过 50ms 的任务）、不超过两个正在处理的 GET 请求等</p>
+<h2 id="异常监控"><a href="#异常监控" class="headerlink" title="异常监控"></a>异常监控</h2><h3 id="语言层面"><a href="#语言层面" class="headerlink" title="语言层面"></a>语言层面</h3><p>同步异常：try catch 语法<br>异步异常：遵循 Promise 的最佳实践，写好 reject 和 catch 函数</p>
+<h3 id="框架层面"><a href="#框架层面" class="headerlink" title="框架层面"></a>框架层面</h3><p>React: Error Boundaries<br>class component: componentDidCatch 方法<br>hooks component: 目前还没有等价写法，官方说「plan to add them soon」</p>
+<h3 id="浏览器层面"><a href="#浏览器层面" class="headerlink" title="浏览器层面"></a>浏览器层面</h3><table>
+<thead>
+<tr>
+<th>api</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>window.onerror</code></td>
+<td>可以捕获（<strong>同步和异步的</strong>）JS 运行时错误</td>
+</tr>
+<tr>
+<td><code>window.addEventListener(&#39;error&#39;)</code></td>
+<td>可以捕获（<strong>同步和异步的</strong>）JS 运行时错误，以及（全局的 img、script）资源加载失败</td>
+</tr>
+<tr>
+<td><code>window.addEventListener(&#39;unhandledrejection&#39;)</code></td>
+<td>可以监听 Promise 抛出的没有被 catch 的错误</td>
+</tr>
+<tr>
+<td><code>element.onerror</code></td>
+<td>捕获单个元素的资源加载错误</td>
+</tr>
+</tbody></table>
+<h3 id="js-error"><a href="#js-error" class="headerlink" title="js error"></a>js error</h3><p>window.onerror </p>
+<h3 id="Promise-reject"><a href="#Promise-reject" class="headerlink" title="Promise reject"></a>Promise reject</h3><p>unhandledrejection 事件</p>
+<h3 id="资源加载失败"><a href="#资源加载失败" class="headerlink" title="资源加载失败"></a>资源加载失败</h3><p>window.addEventListener(‘error’)</p>
+<h2 id="上报方式-TODO"><a href="#上报方式-TODO" class="headerlink" title="上报方式 TODO:"></a>上报方式 TODO:</h2><ul>
+<li>image beacon: GET 1px gif（文件体积最小、跨域友好）</li>
+<li>navigator.sendBeacon（异步请求，不影响页面 unload 和加载下一页性能）</li>
+</ul>
+<h2 id="性能优化方向"><a href="#性能优化方向" class="headerlink" title="性能优化方向"></a>性能优化方向</h2><p>TODO:</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://www.infoq.cn/article/dxa8am44oz*lukk5ufhy">蚂蚁金服如何把前端性能监控做到极致?</a><br><a target="_blank" rel="noopener" href="https://github.com/LightXJ/blog/issues/24">浏览器渲染机制（二）CSS/JS 阻塞 DOM 解析和渲染</a><br><a target="_blank" rel="noopener" href="http://www.alloyteam.com/2020/01/14184/">如何进行 web 性能监控</a><br><a target="_blank" rel="noopener" href="https://web.dev/vitals/">Web 指标</a></p>
+</div><div class="tags"><a href="/blog/tags/JS/"><i class="fa fa-tag"></i>JS</a><a href="/blog/tags/%E6%B5%8F%E8%A7%88%E5%99%A8/"><i class="fa fa-tag"></i>浏览器</a></div><div class="post-nav"><a class="pre" href="/blog/2021/10/02/ES6%20%E5%90%88%E9%9B%86/">ES6 合集</a><a class="next" href="/blog/2021/07/20/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E8%B7%A8%E5%88%86%E5%8C%85%E5%A4%8D%E7%94%A8%E4%BB%A3%E7%A0%81%E6%96%B9%E6%A1%88/">小程序跨分包复用代码方案</a></div><div class="giscus"></div><script src="https://giscus.app/client.js" data-repo="imbant/blog" data-repo-id="MDEwOlJlcG9zaXRvcnkyNDkzOTc0NDM=" data-category="General" data-category-id="DIC_kwDODt2Aw84Ch79K" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://imbant.github.io/blog"/></form></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer"><span id="footer-copyright">Copyright © </span><a href="/blog/." rel="nofollow">imbAnt's blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><script>const tag = document.getElementById('footer-copyright');const year = new Date().getFullYear();tag.innerText += year + ' ';</script></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/blog/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/blog/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/blog/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/gifFavIcon.js"></script></div></body></html>
