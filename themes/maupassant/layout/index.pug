@@ -67,9 +67,9 @@ block content
         else
           .post-content
             != post.content.substring(0, br)
+      hr
       p(class='readmore')
         a(href=url_for(post.path))= __('Readmore')
-      hr
 
   include _partial/paginator.pug
   if theme.disqus.enable == true
