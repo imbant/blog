@@ -99,6 +99,8 @@ go test -c -tags test -o ./unittest.exe ../unittest
 ./unittest.exe "-test.v" "-test.failfast"
 ```
 
+那么这个 `"mode": "test"`，也就是 test 模式，是怎么来的呢？Go 插件[贡献了 debugger 功能](https://code.visualstudio.com/api/references/contribution-points#contributes.debuggers)，向 VS Code 声明了[test 模式](https://github.com/golang/vscode-go/blob/5e506ea7347210ea5003a87f929394b299102962/extension/package.json#L632)
+
 ## 报错 `flag provided but not defined: -test`
 
 执行单元测试可执行文件时，有一些命令行参数可以用，例如 `-test.v` 将每个 case 的结果打印出来，而不只是 PASS 和 FAIL。在 powershell 中，执行 `./unittest.exe -test.v`，会有上边这个报错。原因是 flag 中的点号 `.` 需要额外的转义。因此用双引号包裹参数即可解决：
