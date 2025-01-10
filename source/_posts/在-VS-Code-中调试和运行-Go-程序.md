@@ -125,3 +125,24 @@ go test -c -tags test -o ./unittest.exe ../unittest
   ]
 }
 ```
+
+## 需要标准输入？
+
+如果你需要执行这样的代码
+
+```go
+bufio.NewReader(os.Stdin)
+```
+
+比如需要用户手动在命令行输入一些内容，在调试时，可以在 launch.json 中加入 `"console": "internalConsole"` 或者 `"integratedTerminal"`，这样 VS Code 会在内部打开一个控制台，可以手动输入标准输入。
+
+```diff
+{
+  "type": "go",
+  "request": "launch",
+  "mode": "debug",
+++  "console": "internalConsole"
+}
+```
+
+参考 [Stack Overflow](https://stackoverflow.com/questions/64786161/use-input-stdin-in-debug-console-vscode)，也可以在 args 中配置标准输入重定向。
