@@ -7,19 +7,64 @@ gtag('config', 'G-ZM9NGRYKWS');
 <p>因此语言服务器需要编译源码，构建语义模型，以为客户端提供<em>智能编程服务</em>。</p>
 <p>所谓的 <code>编译</code> 是怎么回事？它和更常见的编译器是什么关系？本章会和大学里的编译原理知识有些关系，但保证比课本上的更有趣、更好玩！</p>
 <h2 id="语言服务器与编译器的关系"><a href="#语言服务器与编译器的关系" class="headerlink" title="语言服务器与编译器的关系"></a>语言服务器与编译器的关系</h2><p>先回顾一下编译原理的基本流程：<br><code>词法分析</code> -&gt; <code>语法分析</code> -&gt; <code>语义分析</code> -&gt; <code>中间代码生成</code> -&gt; <code>代码优化</code> -&gt; <code>目标代码生成</code> -&gt; <code>...</code></p>
-<h2 id="前端相似"><a href="#前端相似" class="headerlink" title="前端相似"></a>前端相似</h2><p>具体各流程的作用就不赘述了，大学课本里那些长篇大论介绍 LL(1) 文法过于乏味。<br>我们基本可以把编译器的工作分为<code>前端</code>、（<code>中端</code>）、<code>后端</code>几个流程，先说结论，编译器和语言服务器在编译的过程中，<code>前端</code>的过程是非常相似的。也就是 <code>词法分析</code>、<code>语法分析</code>、<code>语义分析</code> 几个阶段。</p>
+<h3 id="前端相似"><a href="#前端相似" class="headerlink" title="前端相似"></a>前端相似</h3><p>具体各流程的作用就不赘述了，大学课本里那些长篇大论介绍 LL(1) 文法过于乏味。<br>我们基本可以把编译器的工作分为<code>前端</code>、（<code>中端</code>）、<code>后端</code>几个流程，先说结论，编译器和语言服务器在编译的过程中，<code>前端</code>的过程是非常相似的。也就是 <code>词法分析</code>、<code>语法分析</code>、<code>语义分析</code> 几个阶段。</p>
 <p>通过这三个阶段，从源码中获取语义信息后，语言服务器等待客户端请求，为编程体验服务，而编译器则是继续中端、后端，为生成目标代码服务。在这之后，两种做的事情就大相径庭了。</p>
 <p>换句话说，对于 <code>console.log</code> 这一行代码，两者都经历了这样的阶段：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IDENTIFIER DOT IDENTIFIER // 词法分析，得知输入是两个符号中间有个点号</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DomainDotAccess // 语法分析，合并 token 得知这是通过点号访问域的语法</span><br></pre></td></tr></table></figure>
-
-<p>最终在语义上，就知道 <code>console</code> 这个符号的语义是接口 (interface)，<code>log</code> 符号是其中的一个方法 (method)</p>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>进度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>源码</td>
+<td><code>console.log</code></td>
+</tr>
+<tr>
+<td>词法分析</td>
+<td><code>IDENTIFIER</code> <code>DOT</code> <code>IDENTIFIER</code></td>
+</tr>
+<tr>
+<td>语法分析</td>
+<td>规约为 <code>DomainDotAccess</code>，是通过点号访问域的语法</td>
+</tr>
+<tr>
+<td>语义分析</td>
+<td><code>console</code> 符号是一个接口，<code>log</code> 符号是其中一个方法</td>
+</tr>
+</tbody></table>
+<p>这里的 <code>DomainDotAccess</code> 是个示意，实际上可能是 <code>MemberExpression</code> 或者 <code>PropertyAccessExpression</code> 之类的，只是一个命名问题。</p>
 <h3 id="容错"><a href="#容错" class="headerlink" title="容错"></a>容错</h3><p>此外，两者的容错处理也是不一样的。当源码中出现了错误：<br>编译器会停止编译，通过标准输出等方式抛出<code>编译错误</code>，自然也没有目标产物的输出了，当然，一行代码的改动可能引起数个文件的错误，如果只遇到一个错误就停止编译，也不利于 debug，往往会尝试尽可能多的抛出错误；<br>而用户会持续不断的编码，你可以想一下，输入编写一行代码时，可能只有输入了最后一个分号 <code>;</code> 后，编译才会通过，而这期间语言服务器则会持续工作，进程不会停止，而是收集 <a target="_blank" rel="noopener" href="https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnostic"><code>Diagnostic</code></a>，也就是诊断信息，客户端根据这些信息，在代码编辑器上显示<font color="red">红色</font>或者<font color="orange">橙色</font>的波浪线。</p>
-<p>通常来说，编译器能顺利编译通过的工程，语言服务器也不应有诊断的出现。反过来，代码编辑器中没有波浪线，理论上编译也是能过的。<br>碰到代码编辑器中标红，但能编译通过的情况倒是还好，如果代码编辑器没问题，但编译时报错，那就痛苦了。这种一般都是由于编译器和语言服务器没有统一编译标准导致的，例如两种的编译配置不同，同样一段代码，语言服务器认为是 warning，但编译器认为是 error，甚至是两者的语言版本不同（比如 python2 和 python3）。<br>另外，像 VS Code 这样的编辑器都支持插件，可能除了语言官方的语言服务器，还有别的（例如 lint 工具）在同时工作，这也会导致代码编辑器里看到的诊断比编译输出的多。</p>
-<p>总的来说，编译器在构建时一次性执行，要求“严谨”，而语言服务器在用户编码时持续服务，要求“健壮”</p>
-<h3 id="使用同一种语言构建"><a href="#使用同一种语言构建" class="headerlink" title="使用同一种语言构建"></a>使用同一种语言构建</h3><p>上一章提到，语言服务器与编译器往往是同一种编程语言构建的程序。现在你应该更理解了，在编译原理前端，两种的逻辑高度相似，往后才开始异化。使用同一种语言，甚至在同一个工程中，能最大的复用代码，减少维护成本。<br>事实上很多语言的编译器是自带语言服务器的，例如 <a target="_blank" rel="noopener" href="https://docs.deno.com/runtime/reference/lsp_integration/">Deno</a>、<a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/wiki/Standalone-Server-%28tsserver%29">TypeScript</a> 等。</p>
+<!-- TODO: 补一张编译器的错误和编辑器的波浪线图片 -->
+
+<p>通常来说，编译器能顺利编译通过的工程，语言服务器也不应有诊断的出现。反过来，代码编辑器中没有波浪线，理论上编译也是能过的。<br>碰到代码编辑器中标红，但能编译通过的情况倒是还好，如果代码编辑器没问题，但编译时报错，那就痛苦了。这种一般都是由于编译器和语言服务器没有统一编译标准导致的，例如两种的编译配置不同，同样一段代码，语言服务器认为是 warning，但编译器认为是 error，甚至是两者的语言版本不同（比如 python2 和 python3）。<br>另外，像 VS Code 这样的编辑器都支持插件，可能除了语言官方的语言服务器，还有别的（例如 lint 工具）在同时工作，这也会导致代码编辑器里看到的诊断比编译输出的多。从这个角度上，编译器和语言服务器的一致性也是工程化的一个重要问题。</p>
+<p>总的来说，编译器在构建时一次性执行，要求最终正确性和可执行性，而语言服务器在用户编码时持续服务，要求及时性和友好性。</p>
+<h3 id="使用同一种语言构建"><a href="#使用同一种语言构建" class="headerlink" title="使用同一种语言构建"></a>使用同一种语言构建</h3><p>上一章提到，语言服务器与编译器往往是同一种编程语言构建的程序。现在你应该更理解了，在编译原理前端，两者的逻辑高度相似，往后才开始异化。使用同一种语言，甚至在同一个工程中，能最大的复用代码，减少维护成本。这也是促成语言服务器架构的原因之一。<br>事实上很多语言或是编译器内置语言服务器，例如 <a target="_blank" rel="noopener" href="https://docs.deno.com/runtime/reference/lsp_integration/">Deno</a>、<a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/wiki/Standalone-Server-%28tsserver%29">TypeScript</a> ，或是在内置工具链中就有语言服务器，例如 Go 和 Gopls、Rust 和 RLS。</p>
 <p>当然，语言服务器的实现也并不仅是官方一种，VS Code 就<a target="_blank" rel="noopener" href="https://code.visualstudio.com/api/language-extensions/language-server-extension-guide#error-tolerant-parser-for-language-server">受不了</a> PHP 解析器不能容错，直接新写了一个语言服务器</p>
-<h2 id="语法错误与语义错误"><a href="#语法错误与语义错误" class="headerlink" title="语法错误与语义错误"></a>语法错误与语义错误</h2><p>语言服务器的编译和编译器的编译的区别：语言服务器服务语言客户端，语言客户端数据驱动，语言服务器只提供智能编程数据。而编译器则需要输出目标代码。编译前端是相似的，词法分析、语法分析、语义分析，这之后两者做的事情就不一样了。<br>（因此，实现语言服务器和编译器的往往是同一种编程语言。这也是促成语言服务器架构的原因之一）</p>
-<p>容错：有语法错误：靠词法工具容错。有语义错误：靠语言服务器自身容错。</p>
+<!-- TODO: 补一张受不了的截图 -->
+
+<h2 id="语法错误与语义错误"><a href="#语法错误与语义错误" class="headerlink" title="语法错误与语义错误"></a>语法错误与语义错误</h2><p>刚才提到了语法分析和语义分析，这里从诊断的角度再详细说明下。</p>
+<p>例子1. hex颜色的格式， <code>#</code> + 多个十六进制数。井号后的数字必须是 0-9 或者 a-f，否则是<strong>语法</strong>错误。而井号后只能有3个(rgb)、4个(rgba)、6个(rrggbb)或者8个(rrggbbaa)数字，否则是<strong>语义</strong>错误。语法上定义了hex颜色字面量的语法，但到语义层面，要根据 runtime 决定这个值是否合法</p>
+<!-- TODO: 补 color 的语法错误和语义错误截图 -->
+
+<p>例子2</p>
+<p>语法错误的影响更严重，例如少了半个括号，会影响后续也许是整个文件的代码的作用域。相比来说，语义错误更好容错，蝴蝶效应较小。</p>
+<!-- TODO: 补后括号没写的语法错误，和 int 赋值给 bool 的语法错误 -->
+
+<hr>
+<p>草稿</p>
+<h2 id="Volar、Vue-和-Astro"><a href="#Volar、Vue-和-Astro" class="headerlink" title="Volar、Vue 和 Astro"></a>Volar、Vue 和 Astro</h2><h2 id="如何调试-ts-语言服务器"><a href="#如何调试-ts-语言服务器" class="headerlink" title="如何调试 ts 语言服务器"></a>如何调试 ts 语言服务器</h2><ul>
+<li>打开 log</li>
+<li>TODO: 见语雀</li>
+</ul>
+<h2 id="编译：从文本到结构化数据"><a href="#编译：从文本到结构化数据" class="headerlink" title="编译：从文本到结构化数据"></a>编译：从文本到结构化数据</h2><ul>
+<li>词法分析、语法分析工具</li>
+<li>语义分析</li>
+<li>从语义转为智能编程</li>
+</ul>
+<h2 id="LSP-实践"><a href="#LSP-实践" class="headerlink" title="LSP 实践"></a>LSP 实践</h2><ul>
+<li>如何读 LSP 文档</li>
+<li>具体的智能编程功能的实现和踩坑</li>
+</ul>
 </div><div class="tags"><a href="/blog/tags/LSP/"><i class="fa fa-tag"></i>LSP</a><a href="/blog/tags/VS-Code/"><i class="fa fa-tag"></i>VS Code</a><a href="/blog/tags/%E8%AF%AD%E8%A8%80%E6%9C%8D%E5%8A%A1%E5%99%A8/"><i class="fa fa-tag"></i>语言服务器</a></div><div class="post-nav"><a class="next" href="/blog/2024/11/12/%E5%9C%A8-VS-Code-%E4%B8%AD%E8%B0%83%E8%AF%95%E5%92%8C%E8%BF%90%E8%A1%8C-Go-%E7%A8%8B%E5%BA%8F/">在 VS Code 中调试和运行 Go 程序</a></div><div class="giscus"></div><script src="https://giscus.app/client.js" data-repo="imbant/blog" data-repo-id="MDEwOlJlcG9zaXRvcnkyNDkzOTc0NDM=" data-category="General" data-category-id="DIC_kwDODt2Aw84Ch79K" data-mapping="pathname" data-strict="0" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="https://imbant.github.io/blog"/></form></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer"><span id="footer-copyright">Copyright © </span><a href="/blog/." rel="nofollow">imbAnt's blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a><script>const tag = document.getElementById('footer-copyright');const year = new Date().getFullYear();tag.innerText += year + ' ';</script></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/blog/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/blog/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/blog/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/blog/js/gifFavIcon.js"></script></div></body></html>
