@@ -1,5 +1,5 @@
 ---
-title: LSP 与 VS Code 插件开发 第一章
+title: LSP 与 VS Code 插件开发（一）语言服务器架构
 date: 2024-8-24
 tags: [LSP, VS Code, 语言服务器]
 ---
@@ -84,9 +84,9 @@ Vue 插件做了哪些事情，才让你的编程体验变得如此美好呢？�
 - 查看启动性能：VS Code 指令 `Show Running Extensions` 可以列出插件的启动时间，也有 Profile 能力，用来查看运行缓慢的插件。
 - 二分法检查问题：当 VS Code 用起来总是有问题，还有个[二分查找法](https://code.visualstudio.com/blogs/2021/02/16/extension-bisect)功能，用来关闭一半的插件，看看问题是否解决。持续二分，直到找到问题插件。
 
-#### 相关文档
+<!-- #### 相关文档
 
-这里就不堆砌官方的文档教程了。我只是想告诉你 Why and How。如果想尝试写一个使用 VS Code API 的插件，可以从[这个教程](https://code.visualstudio.com/api/get-started/your-first-extension)看起。相信等你看完全部教程，已经能成为插件高手，可以尝试动手解决一些日常开发中碰到的痛点了。
+这里就不堆砌官方的文档教程了。我只是想告诉你 Why and How。如果想尝试写一个使用 VS Code API 的插件，可以从[这个教程](https://code.visualstudio.com/api/get-started/your-first-extension)看起。相信等你看完全部教程，已经能成为插件高手，可以尝试动手解决一些日常开发中碰到的痛点了。 -->
 
 ## 语言服务器 —— 服务任何代码编辑器
 
@@ -133,4 +133,4 @@ Vue 插件做了哪些事情，才让你的编程体验变得如此美好呢？�
 
 我在播客 [`Web Worker`](https://www.xiaoyuzhoufm.com/episode/66a1197533ddcbb53cd7a063) 上和几位 Vue 生态的大佬、团队成员们聊过 Vue 插件，欢迎收听。
 
-我也会在[即刻](https://okjk.co/OUqto1)分享语言服务器相关的开发心得，计划将它们整理成系列文章，欢迎关注。 
+我也会在[即刻](https://okjk.co/OUqto1)分享语言服务器相关的开发心得，计划将它们整理成系列文章，欢迎关注。
