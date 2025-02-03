@@ -4,15 +4,13 @@ date: 2020-03-23 17:52:05
 layout: page
 ---
 
-前端开发者。VS Code 插件、语言服务器开发者。
+和我聊聊 LSP、前端开发、游戏开发还有 Go！
 
-就职于一家上海的游戏公司，我的主要工作是开发 UGC 业务的游戏编辑器，这是一个基于 Electron 的桌面应用；同时我还负责开发这款[插件](https://marketplace.visualstudio.com/items?itemName=craftLandstudio.ffugclanguage)。它集成了一个基于 `LSP` 的语言服务器，可以为自研编程语言提供智能编程功能。
+我是前端开发者，VS Code 插件、语言服务器开发者，也是半个游戏开发者。我希望通过这个博客记录技术知识，提升影响力。
 
-工作中我还参与 Sentry 维护的工作，负责从前期调研、落地接入到长期维护全流程。此外主导项目 Electron 的升级工作，从 14.0 版本逐步升级到 23.0+，跟进稳定版本。
+毕业于同济大学，就职于一家上海的游戏公司，我的主要工作是开发 UGC 业务的游戏编辑器，这是一个基于 Electron 的大型桌面应用；我还负责内部自研的编程语言，包括由 Go 实现的编译器，以及由 Node 实现的[VS Code 语言插件](https://marketplace.visualstudio.com/items?itemName=craftLandstudio.ffugclanguage)。它集成了基于 `LSP` 的语言服务器，提供智能编程服务。
 
 平时会把学习笔记写到本[博客](https://imbant.github.io/blog)。参与了一些简单的翻译工作，例如 [MDN](https://github.com/mdn/translated-content/pulls?q=is%3Apr+author%3Aimbant+) 和 [Astro](https://astro.badg.es/contributor/imbant/)。
-
-毕业于同济大学软件学院，本科学历。
 
 我在各个平台的昵称为：imbAnt，前缀取自 imbalance，在游戏领域意为 awesome。后缀取自高中绰号「蚂蚁」。
 
