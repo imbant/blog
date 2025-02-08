@@ -1,5 +1,5 @@
 ---
-title: 提高 ANTLR 的编译性能
+title: 提高 Antlr 的编译性能
 date: 2025-2-8
 tags: [antlr4, antlr, compiler]
 ---
