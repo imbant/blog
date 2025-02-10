@@ -47,7 +47,7 @@ tags: [LSP, VS Code, 语言服务器]
 再次正式介绍一下，LSP 是指 Language Server Protocol，语言服务器协议。
 
 所谓协议，是规定了两端通信的数据格式、交互方式。
-其核心是 LSP 消息。客户端向服务器请求自动补全列表时的消息大概长这样：
+其核心是 LSP 消息。客户端向服务器请求代码补全列表时的消息大概长这样：
 
 ```
 Content-Length: ...\r\n
@@ -83,7 +83,7 @@ LSP 使用 `JSON-RPC` 格式描述消息内容，包括请求和相应。简单�
 我碰到的情况是，客户端仅支持 3.16，而服务器使用了 3.17 新增的 `Inlay Hints` 能力，两端都能非常顺利的启动、运行，但代码编辑器中就是不渲染服务器发过来的 hits。原因就是客户端静默处理了自己不认识的 `Inlay Hints` 能力，服务器哼哧哼哧编译好算出数据发给客户端，客户端直接丢掉不用了。解决方法就是升级客户端代码，让它支持更新的协议版本。
 
 在这之后初始化已完成，就可以交换数据了。客户端会有几个关键的事件，来推进整个通信流程，比如打开、编辑、关闭、删除、新增、重命名文档等等。
-虽然初始化已完成，但服务器还有更多事情要做：通常要先从工程范围编译或者预编译（仅编译一个文件中的签名信息，不编译实现）所有代码文件，记录好基础的语义信息、工程结构等（这通常是在内存中，当然从性能角度也可以在磁盘中加一些缓存）。接着，客户端打开一个文件，语言服务器会返回这个文件的[高亮](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_semanticTokens)、[诊断](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnostic)、[悬浮提示](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_hover)信息等等，这样编辑器里就从白纸黑字升级了。接下来，用户按下键盘输入代码，在编辑过程中服务器会提供[自动补全](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_completion)、[签名提示](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_signatureHelp)等服务，用户输入完成后，防抖式的重新编译当前文件，更新高亮、诊断等。
+虽然初始化已完成，但服务器还有更多事情要做：通常要先从工程范围编译或者预编译（仅编译一个文件中的签名信息，不编译实现）所有代码文件，记录好基础的语义信息、工程结构等（这通常是在内存中，当然从性能角度也可以在磁盘中加一些缓存）。接着，客户端打开一个文件，语言服务器会返回这个文件的[高亮](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_semanticTokens)、[诊断](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnostic)、[悬浮提示](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_hover)信息等等，这样编辑器里就从白纸黑字升级了。接下来，用户按下键盘输入代码，在编辑过程中服务器会提供[代码补全](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_completion)、[签名提示](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_signatureHelp)等服务，用户输入完成后，防抖式的重新编译当前文件，更新高亮、诊断等。
 随着用户不断编码，语言服务器不断编译，更新语义模型，持续提供语言服务。这也是语言服务器和编译器工作方式的不同之处。
 
 语言服务器是不是可以仅完整编译打开了的文件，而只预编译其他没打开的文件呢？答案是否定的。
@@ -93,15 +93,20 @@ LSP 使用 `JSON-RPC` 格式描述消息内容，包括请求和相应。简单�
 
 ### 处理用户输入
 
-处理频繁的、无征兆的用户输入是实现语言服务器的一大难点。在用户按键输入的时候，一方面，用户希望立即得到自动补全提示，其中可能包括当前作用域的变量、函数、类等；另一方面，一行代码也许得等到用户输入到最后一个分号 `;` 时才是没有语法错误的。前者需要快速响应，后者需要容错，这往往是矛盾的。
+处理频繁的、无征兆的用户输入是实现语言服务器的一大难点。在用户按键输入的时候，一方面，用户希望立即得到代码补全提示，其中可能包括当前作用域的变量、函数、类等；另一方面，一行代码也许得等到用户输入到最后一个分号 `;` 时才是没有语法错误的。前者需要快速响应，后者需要容错，这往往是矛盾的。
 
-为了性能，语言服务器往往通过防抖的方式，在用户输入完一段时间（例如 200ms）后再编译，更新语义模型。这些智能编程功能中，用户对延迟的敏感度是不一样的。想象一下，你在输入一行代码时，高亮更新慢一些、报错信息晚一点出现，似乎都还可以接受。但如果自动补全的列表迟迟不出现，那就非常痛苦了。没有人想一个一个字母的输入一个冗长的变量名对吧，你想手动打出 `ThisIsAVeryLooongVariableName` 吗？更多的时候是希望输入 `This` 之后一个 `Tab` 就把剩下的 25 个（数完我也吃了一惊）字母都补全了对吧。这是自动补全功能的最大挑战：如何在容错的前提下快速响应用户输入。后边会在具体的功能中详细说明。
+为了性能，语言服务器往往通过防抖的方式，在用户输入完一段时间（例如 200ms）后再编译，更新语义模型。这些智能编程功能中，用户对延迟的敏感度是不一样的。想象一下，你在输入一行代码时，高亮更新慢一些、报错信息晚一点出现，似乎都还可以接受。但如果代码补全的列表迟迟不出现，那就非常痛苦了。没有人想一个一个字母的输入一个冗长的变量名对吧，你想手动打出 `This_Is_A_Very_Looong_Variable_Name` 吗？更多的时候是希望输入 `This` 之后一个 `Tab` 就把剩下的 **31** 个字母都补全了对吧。这是代码补全功能的最大挑战：如何在容错的前提下快速响应用户输入。后边会在具体的功能中详细说明。
 
 另外，为了加速编译，语言服务器可以实现一个高级特性，就是“增量编译”，只更新用户输入改变了的语义模型。可能的实现方式是，如果用户输入只改了一个代码块里的代码，就只更新这一部分的语义模型，而不是完全重新编译。
 
 ## 具体的请求
 
-### 自动补全
+好了，接下来会聊聊生动有趣的部分，也是最干的部分：具体的请求和我踩过的坑。
+
+### 代码补全 `textDocument/completion`
+
+编码时
+
 
 容错和快速响应的矛盾：基于语法的补全、基于语义的补全
 用户代码还没写完整，解析不出语义怎么办？
@@ -120,9 +125,11 @@ TODO:
 
 ### 诊断
 
+TODO: vscode 中没有在[文档里](https://code.visualstudio.com/api/references/commands)列出来的 command，例如 补全时的触发 signature help。以及通过检查快捷键绑定的方式找到的 command
+
 ---
 
-插件进程主要的功能应该是和 VS Code 主体通信。就像 Electron 主进程一样，应该避免执行很重的任务。VS Code 通知插件，现在需要一个自动补全的列表，虽然插件可以返回一个 promise 异步处理，但如果等太久，VS Code 就不要这个结果了（不提供补全）。这也是 VS Code 的用户交互指南之一，插件不能影响 UI 响应速度
+插件进程主要的功能应该是和 VS Code 主体通信。就像 Electron 主进程一样，应该避免执行很重的任务。VS Code 通知插件，现在需要一个代码补全的列表，虽然插件可以返回一个 promise 异步处理，但如果等太久，VS Code 就不要这个结果了（不提供补全）。这也是 VS Code 的用户交互指南之一，插件不能影响 UI 响应速度
 
 ---
 
@@ -132,5 +139,5 @@ TODO:
 
 ---
 
-拿自动补全举例，在 console 后输入一个点，这时候语法结构是不完整的，有错的，怎么根据不完整的语法结构和当前光标的位置，推断出当前上下文适用哪些补全，是很难的。
+拿代码补全举例，在 console 后输入一个点，这时候语法结构是不完整的，有错的，怎么根据不完整的语法结构和当前光标的位置，推断出当前上下文适用哪些补全，是很难的。
 现在理解尤雨溪为什么资助 Volar 作者全职开发这个插件了，它就是 DX 的基础之一，没有这种插件，开发者写 .vue 文件就和白纸写代码一样，是完全写不了的

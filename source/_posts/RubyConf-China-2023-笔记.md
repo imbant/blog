@@ -14,7 +14,7 @@ tags: [Ruby]
 
 AST 除了会用于编译器（静态语言）、解释器（动态语言），也会用在 lint 工具、格式化工具中，例如 Prettier。格式化工具通过遍历 AST，在感兴趣的节点插入或者减少空格，来统一缩进。
 
-作者实现了一个 [DSL](https://github.com/xinminlabs/node-query-ruby)，作为在 AST 中查找节点的查询语句，类似 SQL。在树结构中按照一定条件查询节点确实是一个难题。能想到的场景是，在 language server 中，自动补全或者悬浮提示功能，就需要根据鼠标或者光标的位置，查询 AST 中具体对应哪个节点。
+作者实现了一个 [DSL](https://github.com/xinminlabs/node-query-ruby)，作为在 AST 中查找节点的查询语句，类似 SQL。在树结构中按照一定条件查询节点确实是一个难题。能想到的场景是，在 language server 中，代码补全或者悬浮提示功能，就需要根据鼠标或者光标的位置，查询 AST 中具体对应哪个节点。
 
 ## Rails 应用安全与 rack - security
 
