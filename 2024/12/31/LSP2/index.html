@@ -95,7 +95,7 @@ gtag('config', 'G-ZM9NGRYKWS');
 <li>右值是个整数字面量，和左值的类型相同，可以赋值</li>
 <li>…</li>
 </ol>
-<p><code>shadow</code> 机制对于自动补全也有积极意义：在 if 代码块中，输入 <code>fo</code>，语言服务器应该仅列出一个 <code>foo</code> 变量，忽略外层的两个。让我们给最外层的 <code>foo</code> 改名叫 <code>foo001</code></p>
+<p><code>shadow</code> 机制对于代码补全也有积极意义：在 if 代码块中，输入 <code>fo</code>，语言服务器应该仅列出一个 <code>foo</code> 变量，忽略外层的两个。让我们给最外层的 <code>foo</code> 改名叫 <code>foo001</code></p>
 <figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func A() &#123;</span><br><span class="line"><span class="deletion">--  var foo = 0</span></span><br><span class="line"><span class="addition">++  var foo001 = 0</span></span><br><span class="line">    while (true) &#123;</span><br><span class="line">        var foo = 1</span><br><span class="line">        if true &#123;</span><br><span class="line">            var foo = 2</span><br><span class="line"></span><br><span class="line">            foo += 10</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这时候就会补全 if 中的 <code>foo</code> 和外层的 <code>foo001</code>，而不会再出现 while 中的 <code>foo</code>。</p>

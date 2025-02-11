@@ -18,7 +18,7 @@ gtag('config', 'G-ZM9NGRYKWS');
 <ul>
 <li>语法高亮</li>
 <li>语义高亮</li>
-<li>自动补全</li>
+<li>代码补全</li>
 <li>错误提示</li>
 </ul>
 <p>当你深入使用 VS Code 编码后，会发现更多智能编程功能，比如</p>
@@ -37,7 +37,7 @@ gtag('config', 'G-ZM9NGRYKWS');
 <h2 id="VS-Code-插件-——-能用-js-实现的，最终都会用-js-实现"><a href="#VS-Code-插件-——-能用-js-实现的，最终都会用-js-实现" class="headerlink" title="VS Code 插件 —— 能用 js 实现的，最终都会用 js 实现"></a>VS Code 插件 —— 能用 js 实现的，最终都会用 js 实现</h2><blockquote>
 <p>Any application that can be written in JavaScript, will eventually be written in JavaScript - Jeff Atwood</p>
 </blockquote>
-<p>我们先从 VS Code 入手，看看它是如何设计，使得开发者能接入新语言的：它通过出色的插件系统，将内部代码封装成接口暴露出来，供插件调用。这些 API 就包括了高亮、自动补全、错误提示等等功能。这些功能都是数据驱动的，换句话说，这些智能编程功能，具体是由 VS Code 开发者一行一行代码实现的，将输入数据转化为 DOM 操作；而插件开发者无需关注细节，只需要提供符合格式的数据即可。</p>
+<p>我们先从 VS Code 入手，看看它是如何设计，使得开发者能接入新语言的：它通过出色的插件系统，将内部代码封装成接口暴露出来，供插件调用。这些 API 就包括了高亮、代码补全、错误提示等等功能。这些功能都是数据驱动的，换句话说，这些智能编程功能，具体是由 VS Code 开发者一行一行代码实现的，将输入数据转化为 DOM 操作；而插件开发者无需关注细节，只需要提供符合格式的数据即可。</p>
 <p>例如，你可以写一个简单的插件，让注释里的 <code>TODO</code> 高亮显示：逻辑非常简单，匹配文本中的 TODO 字符，记录它的行列号，给出高亮的颜色。事实上这个简单的插件已经<a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=wayou.vscode-todo-highlight">有人写了</a>，并且有 400w+ 的下载量。</p>
 <p>从技术栈来说，VS Code 是一个 Electron 应用，由 <code>HTML</code>、<code>CSS</code> 和 <code>JS</code> 构建。这意味着那些强大的智能编程功能，都可以由前端技术栈实现，只需要学习一些 VS Code API，你就能开发出自己语言的插件。</p>
 <h4 id="HTML、CSS、JS-的内置支持"><a href="#HTML、CSS、JS-的内置支持" class="headerlink" title="HTML、CSS、JS 的内置支持"></a>HTML、CSS、JS 的内置支持</h4><p>回答刚才的问题，为什么 VS Code 认识 HTML 文件？同样是前端技术构建的应用，VS Code 已经对常见的代码文件有了内置的支持——内置了 <a target="_blank" rel="noopener" href="https://github.com/microsoft/vscode/tree/main/extensions/typescript-language-features"><code>ts</code></a>、<a target="_blank" rel="noopener" href="https://github.com/microsoft/vscode/tree/main/extensions/css-language-features"><code>css</code></a>、<a target="_blank" rel="noopener" href="https://github.com/microsoft/vscode/tree/main/extensions/html-language-features"><code>html</code></a> 的插件，天然支持这些语言的智能编程功能。你可以在 VS Code 内按 <code>F1</code>，输入<code>Show Built-in Extensions</code>，查看全部内置插件。</p>
@@ -47,7 +47,7 @@ gtag('config', 'G-ZM9NGRYKWS');
 <p><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/extensionCount.png"></p>
 <p>事实上，这 73 个插件都运行在<strong>同一个</strong>进程，也就是 <code>Extension Host</code> 里。这意味着</p>
 <ol>
-<li>插件行为与渲染进程独立，插件通过 IPC 影响页面表现，插件 crash 不会影响到用户正常编码（只是智能编程功能可能就挂了，例如写 TS 时偶尔会遇到悬浮提示、自动补全都一直 loading）。</li>
+<li>插件行为与渲染进程独立，插件通过 IPC 影响页面表现，插件 crash 不会影响到用户正常编码（只是智能编程功能可能就挂了，例如写 TS 时偶尔会遇到悬浮提示、代码补全都一直 loading）。</li>
 <li>各个插件之间共享上下文。碰到过很有意思的情况是，我在自己的插件中部署了 Sentry，而它捕获到了 json 插件的报错。</li>
 <li>运行缓慢的插件，虽然不会拖慢渲染进行的速度，但由于提高了整体插件进程的开销，会拖累其他插件的速度。</li>
 <li>同样由于共享资源，单个插件处理 CPU 密集型任务时性能不好。</li>
