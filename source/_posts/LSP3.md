@@ -8,6 +8,7 @@ toc: true
 这是《LSP 与 VS Code 插件开发》系列文章的第三篇。
 第一篇：[语言服务器架构](/blog/2024/08/24/LSP1/)
 第二篇：[语义构建](/blog/2024/12/31/LSP2/)
+第三篇：[语言服务器协议](/blog/2025/01/17/LSP3/)
 
 现在我们知道，语言服务器是一个独立的进程，它接收文本，输出结构化数据，为代码编辑器提供智能编程服务。那么，这个结构化数据是什么样的呢？它是怎么和代码编辑器通信的呢？这些都由 LSP 规定。
 
@@ -24,7 +25,7 @@ toc: true
 
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/lspms.png)
 
-但是语言服务非常重交互，而协议本身数据驱动，只靠文字是很单薄的，难以描述出提供的用户交互体验，初学者只看干巴巴的接口定义肯定会头晕，不知道这些接口都能干什么。不过也不怪 LSP 官方，毕竟只负责设计协议，具体的实现还得靠客户端（各大代码编辑器）。
+但是语言服务非常重交互，而协议本身数据驱动，只靠文字是很单薄的，难以描述出提供的用户交互体验，初学者只看干巴巴的接口定义肯定会头晕，不知道这些接口都能干什么。不过也不怪 LSP 官方，毕竟只负责设计协议，具体的实现还得靠客户端（各大编辑器）。
 
 这时候就推荐曲线救国了：先去看看 VS Code 内置 API 教程。作为来自客户端编写的教程，文档全面，内容生动。可以很轻量的快速实现小功能，验证想法。
 也就是说，在 VS Code 内实现智能编程，有两种方式，一种是通过内置 API，基于编辑器原生能力实现；另一种是通过语言服务器，基于 LSP 通信，数据驱动实现。前者的优势是架构简单，快速验证，不过只能在插件进程工作，只能用 Node.js 编程，并且在复杂场景会有性能问题。（可以参考[系列第一章](/blog/2024/08/24/LSP1/)了解语言服务器架构如何解决这些问题）
@@ -44,6 +45,15 @@ toc: true
 最后，一定要克隆[这个仓库](https://github.com/microsoft/vscode-extension-samples)，它覆盖了大部分使用原生 API 实现智能编程的例子。当你的代码没有正常工作，一定要来看看示例怎么写的。
 
 ## 介绍协议
+
+### 术语声明
+
+本文会多次提到“客户端”、“编辑器”、“VS Code”等词，事先澄清，避免混淆：
+
+在 VS Code 这个软件中，编辑器指负责用户交互，能显示、编辑代码的区域，也就是 [monaco 编辑器](https://microsoft.github.io/monaco-editor/)。
+而客户端指和语言服务器进程通信的进程，也就是语言客户端。在 VS Code 中，运行在 extension host 中的插件进程承担了这个角色，它会启动语言服务器并与它通信，调用 VS Code extension API，数据驱动地改变用户界面，实现智能编程服务。
+
+### LSP
 
 再次正式介绍一下，LSP 是指 Language Server Protocol，语言服务器协议。
 
@@ -71,17 +81,17 @@ Content-Length: ...\r\n
 
 ### LSP Body
 
-LSP 使用 `JSON-RPC` 格式描述消息内容，包括请求和相应。简单来说就是一段 `utf-8` 编码的 JSON 字符串。
+LSP 使用 `JSON-RPC` 格式描述消息内容，包括请求和响应。简单来说就是一段 `utf-8` 编码的 JSON 字符串,好处是简单和平台无关。
 
 ### 生命周期
 
 本质上，LSP 通信就是两个进程之间的通信。一个进程是语言客户端，对应到 VS Code 里，就是插件的进程（Extension Host），然后由它启动语言服务器进程。
-接着，两者会初始化，交换一些信息，主要是两端支持哪些能力。换句话说，不同的代码编辑器，对 LSP 能力的支持是不同的。我们在[语言服务器架构](/blog/2024/08/24/LSP1/)就讲过，BetBrains 仅支持部分功能。例如一个语言服务器提供了全量的语义高亮功能，以及（出于性能原因）按行号范围高亮的功能，后者对于成千上万行的用户文本非常重要，但一些代码编辑器就是不支持后者的，只支持语言服务器提供整个文件范围的高亮。
+接着，两者会初始化，交换一些信息，主要是两端支持哪些能力。换句话说，不同的编辑器，对 LSP 能力的支持是不同的。我们在[语言服务器架构](/blog/2024/08/24/LSP1/)就讲过，BetBrains 仅支持部分功能。例如一个语言服务器提供了全量的语义高亮功能，以及（出于性能原因）按行号范围高亮的功能，后者对于成千上万行的用户文本非常重要，但一些编辑器就是不支持后者的，只支持语言服务器提供整个文件范围的高亮。
 
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/lsp-lifecycle.png)
 
 这里会有一个**坑点**：协议规定了客户端如果收到服务器发来的，自己不理解的功能，可以[忽略它](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#messageDocumentation)。这本身没有问题，是为了客户端更健壮，至少此时不应该有 exception，但会增加开发者的调试难度。
-我碰到的情况是，客户端仅支持 3.16，而服务器使用了 3.17 新增的 `Inlay Hints` 能力，两端都能非常顺利的启动、运行，但代码编辑器中就是不渲染服务器发过来的 hits。原因就是客户端静默处理了自己不认识的 `Inlay Hints` 能力，服务器费力编译好算出数据发给客户端，客户端直接丢掉不用了。解决方法就是升级客户端代码，让它支持更新的协议版本。
+我碰到的情况是，客户端仅支持 3.16，而服务器使用了 3.17 新增的 `Inlay Hints` 能力，两端都能非常顺利的启动、运行，但无论如何编辑器中就是不渲染服务器发过来的 hints。原因就是客户端静默处理了自己不认识的 `Inlay Hints` 能力，服务器费力编译好算出数据发给客户端，客户端直接丢掉不用了。解决方法就是升级客户端代码，让它支持更新的协议版本。
 
 在这之后初始化已完成，就可以交换数据了。客户端会有几个关键的事件，来推进整个通信流程，比如打开、编辑、关闭、删除、新增、重命名文档等等。
 虽然初始化已完成，但服务器还有更多事情要做：通常要先从工程范围编译或者预编译（仅编译一个文件中的签名信息，不编译实现）所有代码文件，记录好基础的语义信息、工程结构等（这通常是在内存中，当然从性能角度也可以在磁盘中加一些缓存）。接着，客户端打开一个文件，语言服务器会返回这个文件的[高亮](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_semanticTokens)、[诊断](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnostic)、[悬浮提示](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_hover)信息等等，这样编辑器里就从白纸黑字升级了。接下来，用户按下键盘输入代码，在编辑过程中服务器会提供[代码补全](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_completion)、[签名提示](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_signatureHelp)等服务，用户输入完成后，防抖式的重新编译当前文件，更新高亮、诊断等。
@@ -111,8 +121,9 @@ LSP 使用 `JSON-RPC` 格式描述消息内容，包括请求和相应。简单�
 ```ts
 const result: InitializeResult = {
   capabilities: {
-    hoverProvider: true,
+    hoverProvider: true, // 悬浮提示
     semanticTokensProvider: {
+      // 语义高亮
       full: false,
       range: true,
       legend: {
@@ -121,13 +132,15 @@ const result: InitializeResult = {
       },
     },
     completionProvider: {
+      // 代码补全
       triggerCharacters: [".", '"', "<", "#"],
     },
     signatureHelpProvider: {
+      // 签名提示
       triggerCharacters: ["(", ","],
     },
-    definitionProvider: true,
-    inlayHintProvider: true,
+    definitionProvider: true, // 跳转到定义
+    inlayHintProvider: true, // 内联提示
   },
 };
 ```
@@ -144,7 +157,7 @@ didChange 请求还可以将（一个或多个）[具体改动](https://microsof
 
 ### 代码补全 `textDocument/completion`
 
-在 VS Code 中，随着用户键盘输入，客户端会向语言服务器发送代码补全请求，语言服务器会返回一个列表，供客户端列出。
+随着用户键盘输入，客户端会向语言服务器发送代码补全请求，获取信息后在光标旁渲染一个补全列表。
 
 ![](https://code.visualstudio.com/assets/api/language-extensions/language-support/code-completion.gif)
 
@@ -189,18 +202,21 @@ func A() {
 
 #### 优化语法
 
-从语法上，设计更宽容的语法结构，允许一些看上去“没有意义”的代码出现。例如，允许一个变量单独成行。
+从语法上，设计更宽容的语法结构，允许一些看上去“没有意义”的代码出现。例如，允许一个属性单独成行，没有读操作也没有写操作。
 
 ```js
 var x = {
   foo: 1,
-  bar: 2,
+  bar: {
+    bar1: true,
+    bar2: "",
+  },
 };
 
-x; // 这一行如果只有变量名，也不会有编译错误
+x.bar; //.bar1
 ```
 
-大多数情况下，变量名单独成行在运行时是没有什么意义的。但对于语言服务器，好处是在第六行输入 x 后，不会有语法错误，再输入点号 `.`，语言服务器能根据上次的编译结果（即还没有输入点时）得知左侧是一个对象，进而补全 `foo`、`bar` 两个属性。
+大多数情况下，`x.bar` 单独成行在运行时是没有什么意义的（除非 bar 是一个 getter 函数）。但对于语言服务器，好处是在最后一行输入 `x.bar` 后，不会有语法错误，再输入点号 `.`，语言服务器能根据上次的编译结果（即还没有输入点时）得知左侧是一个对象，进而补全 `bar1`、`bar1` 两个属性。
 但也有副作用，就是语法结构会被污染，不仅仅是出于编译来设计，要考虑更复杂的情况。
 
 #### 从词法推断
@@ -228,7 +244,7 @@ var a = x.
 这也是和客户端表现高度相关的功能，先讲讲 VS Code 的高亮系统。一行代码哪里显示蓝色，哪里显示黄色？
 首先 VS Code 将文本分段，每一段的渲染方式相同，包括颜色、背景色、字体等，这样的一段被称为一个 `token`。
 接着，`token` 会有类型 `type`，这一定程度上代表了它的语义，例如关键字、类、枚举等。`type` 是决定 `token` 颜色的核心。
-VS Code 的[颜色主题系统](https://code.visualstudio.com/api/extension-guides/color-theme)，可以通过 JSON 配置每个 `type` 的渲染颜色、样式。
+VS Code 的[颜色主题系统](https://code.visualstudio.com/api/extension-guides/color-theme)，可以通过 JSON 配置每个 `type` 的渲染颜色、样式，维护*数据*和*表现*的映射关系。
 
 ```json
 {
@@ -277,15 +293,14 @@ semanticTokensProvider: {
 
 这个配置有点复杂，如果配的有问题，客户端的高亮会无静默失效，服务器似乎不会收到报错。一行行解释：
 
-所谓的 `legend`，会声明 `token` 有哪些 `type`、`modifier`。他们实际上是两个字符串数组，例如 `type` 可能是 `["method","property","string", ...]` 。
-需要事先声明，是因为字符串用于通信太冗余了，需要做一些压缩。
-
+所谓的 `legend`，是用来**声明** `token` 有哪些 `type`、`modifier`。他们实际上是两个字符串数组，例如 `type` 可能是 `["method","property","string", ...]` 。
+需要事先声明，是因为字符串用于通信太冗余了，需要做一些压缩：
 想象一万行的文件，有多少个 `token`？如果完整的渲染每一行，浪费不说（用户一次只会看一些行），性能也有巨大的压力。
 另外 `token` 是一个有序的列表，在中间行改动就意味着它后边的所有 token 都得变化，在算法上也有挑战。
 
-为此 LSP 为数据通信做了简单的编码来降低通信的流量。具体的编码方式可以看官方的[文档](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_semanticTokens)，简单来说就是将位置、`type`、`modifier`编码为 5 个整数。
+为此 LSP 为数据通信做了简单的编码来降低通信的流量。具体的编码方式可以看官方的[文档](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_semanticTokens)，简单来说就是将位置、`type`、`modifier`编码为 5 个整数，通信时不再用明文的 `"method"` `"property"` 等。
 
-另外还提出两个优化，增量更新（full/delta）和范围渲染（range）。
+另外 LSP 还提出两个优化，增量更新（full/delta）和范围渲染（range）。
 增量更新是指针对大量 `token` 时，只在首次请求 `textDocument/semanticTokens/full` 中返回全量的 `token`，之后发送 `textDocument/semanticTokens/full/delta` 请求，语言服务器需要根据文件变化，计算出比起上一次返回的 `token` 有哪些差异，返回增量部分。
 范围渲染就简单了，客户端会根据用户能看到的文本范围，只请求部分范围的 `token`。请求是 `textDocument/semanticTokens/range`。因此，语言服务器最好按照文本字符流的顺序收集 `token`，这样每次请求无需遍历所有的 `token`，到范围外就可以截断了。
 
@@ -298,6 +313,7 @@ semanticTokensProvider: {
 
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/inlay_hints_example.png)
 
+这是用来快速浏览信息的功能，通常会用来显示函数定义时形式参数的名字等。否则这个信息需要悬浮提示或者跳转到定义才能拿到，不过也有人会觉得这个提示太干扰，所以最好做成用户可配置关闭的。
 这是一个比较新的请求，是 LSP 3.17 新增的。要注意客户端和服务端支持的协议版本都要大于等于 3.17，否则可能会[静默失败](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#messageDocumentation)，没有报错。
 
 ### 签名提示 `textDocument/signatureHelp`
@@ -309,7 +325,7 @@ semanticTokensProvider: {
 #### 时序问题
 
 麻烦在于输入左括号 `(` 时还会有一个请求，也就是文件改动 `textDocument/didChange`，引起防抖处理和重新编译。通常要等编译完成，才能正确的知道具体是针对哪个函数，来获取其签名信息。
-很重要的一点是明确 `didChange` 和 `signatureHelp` 的时序问题，因为由用户输入触发的签名提示的回调函数，依赖编译完成，而请求是由客户端发出的，具体哪个请求会先发出呢？
+很重要的一点是明确 `didChange` 和 `signatureHelp` 的时序问题，因为由用户输入触发的签名提示的相应，依赖编译完成，使用最新的语义信息（旧的状态是没有意义的）。而请求都是由客户端发出的，具体哪个请求会先发出呢？
 目前 LSP 协议（3.17）中似乎没有显式的规定这一点，通过[咨询官方](https://github.com/microsoft/language-server-protocol/issues/2011)，结论是用户键入后，客户端应该确保 `didChange` 先发送到服务器，然后再请求 `signatureHelp`，也就是说服务器处理 `signatureHelp` 请求时一定能获取到最新的客户端状态，以及最新的语义信息。
 
 #### 方向键
@@ -340,11 +356,12 @@ VS Code 有个指令是 `triggerParameterHints`，Go 的插件[确实是这么�
 
 但 css 中那种支持 rgba、十六进制甚至直接颜色名称 `red` 的语法，就不适合了。
 
-### 诊断
+### 诊断 `textDocument/publishDiagnostics`
 
 ![](https://code.visualstudio.com/assets/api/language-extensions/language-support/diagnostics.gif)
 
-在 VS Code 里，主要表现为红色、橙色的波浪线，分别是 error 和 warning。按理应该和编译器的编译错误的表现一致。
+这是指把编译错误和警告显示在编辑器里的功能。在 VS Code 里，主要表现为红色、橙色的波浪线。
+按理来说，语言服务器的诊断应该和编译器的编译错误的表现一致。当然，除了语言服务器，可能还有别的工具（比如定制化的 lint 等）也在输出诊断，这会导致编辑器里看到的诊断比编译器输出的多。
 
 除了波浪线，诊断还有两种额外的表现 `Unnecessary` 和 `Deprecated`，标记没有引用到的字段，和弃用的字段。
 
@@ -388,3 +405,9 @@ export enum SemanticTokenModifiers {
 
 实际上 VS Code 中很多删除线都是由诊断而不是高亮实现的。
 [官方说法](https://github.com/microsoft/language-server-protocol/issues/1865)是，语言服务器不会具体规定客户端的表现，而是由客户端自行决定渲染。对 VS Code 来说，`DiagnosticTag` 比 `SemanticTokenModifiers` 出现的更早，因此客户端支持更好。
+
+## 更多资料
+
+我在播客 [`Web Worker`](https://www.xiaoyuzhoufm.com/episode/66a1197533ddcbb53cd7a063) 上和几位 Vue 生态的大佬、团队成员们聊过 Vue 插件，欢迎收听。
+
+我也会在[即刻](https://okjk.co/OUqto1)分享语言服务器相关的开发心得，计划将它们整理成系列文章，欢迎关注。
