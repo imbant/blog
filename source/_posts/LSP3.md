@@ -8,7 +8,7 @@ tags: [LSP, VS Code, 语言服务器]
 第一篇：[语言服务器架构](/blog/2024/08/24/LSP1/)
 第二篇：[语义构建](/blog/2024/12/31/LSP2/)
 
-现在我们知道，语言服务器是一个独立的进程，它接收源码，输出结构化数据，为代码编辑器提供智能编程服务。那么，这个结构化数据是什么样的呢？它是怎么和代码编辑器通信的呢？这些都由 LSP 规定。
+现在我们知道，语言服务器是一个独立的进程，它接收文本，输出结构化数据，为代码编辑器提供智能编程服务。那么，这个结构化数据是什么样的呢？它是怎么和代码编辑器通信的呢？这些都由 LSP 规定。
 
 ## 自己动手？
 
@@ -75,7 +75,7 @@ LSP 使用 `JSON-RPC` 格式描述消息内容，包括请求和相应。简单�
 ### 生命周期
 
 本质上，LSP 通信就是两个进程之间的通信。一个进程是语言客户端，对应到 VS Code 里，就是插件的进程（Extension Host），然后由它启动语言服务器进程。
-接着，两者会初始化，交换一些信息，主要是两端支持哪些能力。换句话说，不同的代码编辑器，对 LSP 能力的支持是不同的。我们在[语言服务器架构](/blog/2024/08/24/LSP1/)就讲过，BetBrains 仅支持部分功能。例如一个语言服务器提供了全量的语义高亮功能，以及（出于性能原因）按行号范围高亮的功能，后者对于成千上万行的用户源码非常重要，但一些代码编辑器就是不支持后者的，只支持语言服务器提供整个文件范围的高亮。
+接着，两者会初始化，交换一些信息，主要是两端支持哪些能力。换句话说，不同的代码编辑器，对 LSP 能力的支持是不同的。我们在[语言服务器架构](/blog/2024/08/24/LSP1/)就讲过，BetBrains 仅支持部分功能。例如一个语言服务器提供了全量的语义高亮功能，以及（出于性能原因）按行号范围高亮的功能，后者对于成千上万行的用户文本非常重要，但一些代码编辑器就是不支持后者的，只支持语言服务器提供整个文件范围的高亮。
 
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/lsp-lifecycle.png)
 
@@ -103,13 +103,43 @@ LSP 使用 `JSON-RPC` 格式描述消息内容，包括请求和相应。简单�
 
 好了，接下来会聊聊生动有趣的部分，也是最干的部分：具体的请求和我踩过的坑。
 
+### 初始化 `initialize`
+
+这是第一个请求，由客户端发到服务器。服务器可以将自身信息（名字、版本号）还有支持的能力发给客户端。也可以声明每个功能的具体细节。
+
+```ts
+const result: InitializeResult = {
+  capabilities: {
+    hoverProvider: true,
+    semanticTokensProvider: {
+      full: false,
+      range: true,
+      legend: {
+        tokenTypes: [],
+        tokenModifiers: [],
+      },
+    },
+    completionProvider: {
+      triggerCharacters: [".", '"', "<", "#"],
+    },
+    signatureHelpProvider: {
+      triggerCharacters: ["(", ","],
+    },
+    definitionProvider: true,
+    inlayHintProvider: true,
+  },
+};
+```
+
+这里注意，这个请求是由客户端发向服务端的。服务端声明的，是**由客户端发起**的请求的支持情况，不包括服务器主动推给客户端的。
+例如，这个请求中无需声明 diagnostic 字段，语言服务器就可以主动推送诊断。而客户端需要输入 `"("` `","` 来触发 signature help。
+
 ### 打开文件 `textDocument/didOpen` 和改动文件 `textDocument/didChange`
 
 两个最基础的文件同步请求，客户端发起，服务端接收。
 服务端既能接收到文本内容，也能收到文档的版本号。这个版本号是自增的，随着文件改变而提高，因此可以缓存起来，用于判断文件内容有没有变化。
 
 didChange 请求还可以将（一个或多个）[具体改动](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocumentContentChangeEvent)也告知语言服务器，便于语义信息的增量更新等。比如只是删除了一个函数中的一行，也许就不用重新编译作用域内的其他函数。
-通常
 
 ### 代码补全 `textDocument/completion`
 
@@ -188,13 +218,86 @@ var a = x.
 
 这里推荐这个库 [antlr-c3](https://github.com/mike-lischke/antlr4-c3)，是专门针对基于 antlr4 的语法分析时，做自动补全的引擎。它会基于语法文件（parser.g4），尝试预测可能的语法节点是什么。
 
-### 高亮
+### 高亮 `textDocument/semanticTokens`
 
-TODO:
+高亮最好理解了，就是给白底黑字的代码上色。这是一个非常复杂、容易出现性能问题的功能。
+
+#### VS Code 的高亮
+
+这也是和客户端表现高度相关的功能，先讲讲 VS Code 的高亮系统。一行代码哪里显示蓝色，哪里显示黄色？
+首先 VS Code 将文本分段，每一段的渲染方式相同，包括颜色、背景色、字体等，这样的一段被称为一个 `token`。
+接着，`token` 会有类型 `type`，这一定程度上代表了它的语义，例如关键字、类、枚举等。`type` 是决定 `token` 颜色的核心。
+VS Code 的[颜色主题系统](https://code.visualstudio.com/api/extension-guides/color-theme)，可以通过 JSON 配置每个 `type` 的渲染颜色、样式。
+
+```json
+{
+  "scope": "keyword", // 关键字
+  "settings": {
+    "foreground": "#ff007f",
+    "fontStyle": "bold"
+  }
+}
+```
+
+这样即使用户切换颜色主题，只需要切换样式即可，比如从亮色模式转为深色模式，但无需重新解析 `token`。
+
+除了 `type`，还有一个 `modifier` 的概念，它也会影响 `token` 的渲染，但只是一种修饰，不是必要的。
+例如同样是函数，异步函数、静态函数、被弃用的函数、抽象函数，他们的渲染可以有细微的区别，通过 `modifier` 来实现，不过这就取决于具体的颜色设计了。
+
+#### 语法高亮
+
+脱离 LSP，VS Code 有一个轻量的无需编程的、基于正则的高亮系统，与语义无关，被称为[**语法**高亮](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide)。
+
+刚才说到 VS Code 的高亮首先要将文本分段为 `token`，这其实也是一个词法分析的过程（Tokenization）。方式就是正则表达式，通过正则匹配，基于词法和语法，做简单的高亮，具体的配置规则被称为 `tmLanguage`。
+比如注释、关键词、操作符、字面量（数字、布尔、字符串等），就很适合由此高亮。
+
+TypeScript 就有一个规模惊人的[配置文件](https://github.com/microsoft/TypeScript-TmLanguage/blob/master/TypeScript.tmLanguage)。这种文件实在是人类太不可读了，我的建议是要灵活借助 AI 的力量，让 LLM 根据需求生成配置还是比较顺利的。
+
+这就低成本实现了简单的高亮。
+
+#### 语义高亮
+
+有了 VS Code 的例子，理解 LSP 中的高亮就不困难了。客户端会在某些时机向语言服务器请求高亮数据，服务器返回一个个 `token`，包括位置、`type`、`modifier` 等，客户端自行决定如何渲染。
+
+这是客户端主动发起的请求，在 `initialize` 请求中，需要一些配置，例如下边这种。一点一点解释：
+
+```json
+semanticTokensProvider: {
+    full: {
+        delta: true,
+    },
+    range: true,
+    legend: {
+        tokenTypes: ["method","property","string", ...],
+        tokenModifiers: ["readonly","async","static", ...],
+    },
+}
+```
+
+这个配置有点复杂，如果配的有问题，客户端的高亮会无静默失效，服务器似乎不会收到报错。一行行解释：
+
+所谓的 `legend`，会声明 `token` 有哪些 `type`、`modifier`。他们实际上是两个字符串数组，例如 `type` 可能是 `["method","property","string", ...]` 。
+需要事先声明，是因为字符串用于通信太冗余了，需要做一些压缩。
+
+想象一万行的文件，有多少个 `token`？如果完整的渲染每一行，浪费不说（用户一次只会看一些行），性能也有巨大的压力。
+另外 `token` 是一个有序的列表，在中间行改动就意味着它后边的所有 token 都得变化，在算法上也有挑战。
+
+为此 LSP 为数据通信做了简单的编码来降低通信的流量。具体的编码方式可以看官方的[文档](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_semanticTokens)，简单来说就是将位置、`type`、`modifier`编码为 5 个整数。
+
+另外还提出两个优化，增量更新（full/delta）和范围渲染（range）。
+增量更新是指针对大量 `token` 时，只在首次请求 `textDocument/semanticTokens/full` 中返回全量的 `token`，之后发送 `textDocument/semanticTokens/full/delta` 请求，语言服务器需要根据文件变化，计算出比起上一次返回的 `token` 有哪些差异，返回增量部分。
+范围渲染就简单了，客户端会根据用户能看到的文本范围，只请求部分范围的 `token`。请求是 `textDocument/semanticTokens/range`。因此，语言服务器最好按照文本字符流的顺序收集 `token`，这样每次请求无需遍历所有的 `token`，到范围外就可以截断了。
+
+此外，这个请求由客户端发起，这意味着服务端不可控。打开文件、滚动屏幕、调整窗口大小，都会引起这个请求，这个相对好处理。
+困难在于用户输入引起的请求。这会引起编译，而高亮需要编译好的语义信息，这就遇到了和签名提示还有代码补全类似的困境：请求时序、防抖更新、等待编译完成等问题。
+
+[Vue 的语言服务器](https://github.com/volarjs/volar.js/blob/ab8c913b32cfe6dc5354b3044d7447fa839293fe/packages/language-server/src/common/utils/registerFeatures.ts#L64)使用了简单粗暴，但是非常有效的方式：仅支持范围高亮，并且收到请求后固定等待一段时间，比如 200ms 后再响应。
 
 ### 内联提示 `textDocument/inlayHint`
 
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/inlay_hints_example.png)
+
+这是一个比较新的请求，是 LSP 3.17 新增的。要注意客户端和服务端支持的协议版本都要大于等于 3.17，否则可能会[静默失败](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#messageDocumentation)，没有报错。
 
 ### 签名提示 `textDocument/signatureHelp`
 
@@ -217,7 +320,7 @@ TODO:
 这时候就不用等编译了，因为输入没有改变，只需要根据光标位于哪一个实际参数，高亮形式参数。
 不过 `didChange` 和 `signatureHelp` 是两个独立的请求，语言服务器怎么知道一次 `signatureHelp` 请求是由方向键响应的呢？
 
-还记得前面说 `didChange` 请求会提供源码的版本号吗，它可以作为输入是否改变的依据。记录每一次 `didChange` 的版本号，如果两次 `signatureHelp` 请求之间版本号没有变化（变大），那么输入就没有变化。
+还记得前面说 `didChange` 请求会提供文本的版本号吗，它可以作为输入是否改变的依据。记录每一次 `didChange` 的版本号，如果两次 `signatureHelp` 请求之间版本号没有变化（变大），那么输入就没有变化。
 
 #### 代码补全时触发
 
@@ -240,18 +343,47 @@ VS Code 有个指令是 `triggerParameterHints`，Go 的插件[确实是这么�
 
 ![](https://code.visualstudio.com/assets/api/language-extensions/language-support/diagnostics.gif)
 
-TODO:
+在 VS Code 里，主要表现为红色、橙色的波浪线，分别是 error 和 warning。按理应该和编译器的编译错误的表现一致。
 
----
+除了波浪线，诊断还有两种额外的表现 `Unnecessary` 和 `Deprecated`，标记没有引用到的字段，和弃用的字段。
 
-插件进程主要的功能应该是和 VS Code 主体通信。就像 Electron 主进程一样，应该避免执行很重的任务。VS Code 通知插件，现在需要一个代码补全的列表，虽然插件可以返回一个 promise 异步处理，但如果等太久，VS Code 就不要这个结果了（不提供补全）。这也是 VS Code 的用户交互指南之一，插件不能影响 UI 响应速度
+```ts
+export namespace DiagnosticTag {
+  /**
+   * Unused or unnecessary code.
+   *
+   * Clients are allowed to render diagnostics with this tag faded out
+   * instead of having an error squiggle.
+   */
+  export const Unnecessary: 1 = 1;
+  /**
+   * Deprecated or obsolete code.
+   *
+   * Clients are allowed to rendered diagnostics with this tag strike through.
+   */
+  export const Deprecated: 2 = 2;
+}
+```
 
----
+在 VS Code 里会表现为颜色变浅和删除线。
 
-插件本体、语言服务器、代码编辑器这三者分别是什么关系？
-插件本体就是个转发层，代码编辑器是真正发请求的，语言服务器是真正处理请求的。
-他们在三个进程，分别是 VS Code 的 extension host 进程、VS Code 的渲染进程、语言服务器进程。后两者通过 LSP 通信，前两者通过 Electron IPC 通信（TODO: 存疑）。
+![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/unnecessaryanddeprecated.png)
 
----
+如果代码里有个字段暂时没法删掉，但又不想有新代码用到，就可以标为废弃，这样同事写出这行代码就会出现删除线，吓他一跳。
 
-现在理解尤雨溪为什么资助 Volar 作者全职开发这个插件了，它就是 DX 的基础之一，没有这种插件，开发者写 .vue 文件就和白纸写代码一样，是完全写不了的
+#### 诊断还是高亮？
+
+`Unnecessary` 和 `Deprecated` 的表现其实很像是高亮的行为，影响了代码渲染。
+而高亮有个修饰符（modifier）也同样是 `deprecated`
+
+```ts
+export enum SemanticTokenModifiers {
+  readonly = "readonly",
+  static = "static",
+  deprecated = "deprecated",
+  //...
+}
+```
+
+实际上 VS Code 中很多删除线都是由诊断而不是高亮实现的。
+[官方说法](https://github.com/microsoft/language-server-protocol/issues/1865)是，语言服务器不会具体规定客户端的表现，而是由客户端自行决定渲染。对 VS Code 来说，`DiagnosticTag` 比 `SemanticTokenModifiers` 出现的更早，因此客户端支持更好。
