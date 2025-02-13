@@ -270,6 +270,12 @@ VS Code 的[颜色主题系统](https://code.visualstudio.com/api/extension-guid
 
 TypeScript 就有一个规模惊人的[配置文件](https://github.com/microsoft/TypeScript-TmLanguage/blob/master/TypeScript.tmLanguage)。这种文件实在是人类太不可读了，我的建议是要灵活借助 AI 的力量，让 LLM 根据需求生成配置还是比较顺利的。
 
+几个坑点是，`tmLanguage` 采用严格的 json 语法，不能有注释，否则，配置的任何高亮在 VS Code 中都不会生效。想存注释的话，可以手写一个自定义字段来实现。在调试时建议使用官方的[检查器](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide#scope-inspector)，来确认匹配结果。
+
+![](https://code.visualstudio.com/assets/api/language-extensions/syntax-highlighting/scope-inspector.png)
+
+如果配置文件格式正确，检查器也显示成功匹配（token type 符合预期），但依然没有高亮，那么可以切换颜色主题试试，可能是因为当前颜色主题的色彩太少了，很多 `token` 就是默认的颜色。
+
 这就低成本实现了简单的高亮。
 
 #### 语义高亮
