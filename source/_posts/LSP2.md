@@ -1,7 +1,7 @@
 ---
 title: LSP 与 VS Code 插件开发（二）语义构建
 date: 2024-12-31
-tags: [LSP, VS Code, 语言服务器]
+tags: [LSP, VS Code, 语言服务器协议]
 ---
 
 这是《LSP 与 VS Code 插件开发》系列文章的第二篇。

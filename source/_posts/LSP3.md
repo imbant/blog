@@ -1,7 +1,7 @@
 ---
 title: LSP 与 VS Code 插件开发（三）语言服务器协议
 date: 2025-1-17
-tags: [LSP, VS Code, 语言服务器]
+tags: [LSP, VS Code, 语言服务器协议]
 toc: true
 ---
 
