@@ -62,4 +62,6 @@ class MyClass {
 `class`、`number`、`1` 这样的关键字、字面量，都是有明确的语法规定的，可以通过正则匹配快速高亮。
 渲染这段 markdown 代码块，应该也是基于语法的，更轻量的高亮。
 
-详细内容，可以参考[官方文档](https://code.visualstudio.com/api/language-extensions/semantic-highlight-guide)
+## 深入语言服务器协议
+
+我写了[系列文章](/blog/2024/08/24/LSP1/)，记录开发语言服务器过程中的经验与知识，欢迎访问。
