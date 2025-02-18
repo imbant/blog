@@ -37,7 +37,7 @@ GoLand 打开项目时会自动初始化 `go mod tidy`，VS Code 不会，需要
 ```json
 // 注意，这份配置应该位于 launch.json 的 configurations 字段下
 {
-  "name": "Launch File", // 会显示在 VS Code 界面的人类可读的名字
+  "name": "Launch File", // 会显示在 VS Code debug 界面的人类可读的名字
   "type": "go", // 声明为 go 语言的配置
   "request": "launch",
   "mode": "debug", // 支持断点调试
@@ -146,3 +146,25 @@ bufio.NewReader(os.Stdin)
 ```
 
 参考 [Stack Overflow](https://stackoverflow.com/questions/64786161/use-input-stdin-in-debug-console-vscode)，也可以在 args 中配置标准输入重定向。
+
+## Benchmark
+
+除了基础的单元测试，也支持配置 go 内置的 benchmark。
+假设基准测试代码都在 `benchmark` 目录下。本质上也是 `go test -c` 然后执行构建的可执行文件。
+
+```json
+{
+  "name": "Benchmark",
+  "type": "go",
+  "request": "launch",
+  "mode": "test",
+  "program": "${workspaceFolder}\\benchmark",
+  "output": "${workspaceFolder}\\benchmark\\benchmark",
+  "args": [
+    "-test.bench=^Benchmark", // 只关注 Benchmark 开头的函数
+    "-test.v",
+    "-test.run=^$",
+    "-test.benchmem" // 查看内存分配信息
+  ]
+}
+```
