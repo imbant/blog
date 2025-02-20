@@ -269,18 +269,20 @@ VS Code 的[颜色主题系统](https://code.visualstudio.com/api/extension-guid
 
 脱离 LSP，VS Code 有一个轻量的无需编程的、基于正则的高亮系统，与语义无关，被称为[**语法**高亮](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide)。
 
-刚才说到 VS Code 的高亮首先要将文本分段为 `token`，这其实也是一个词法分析的过程（Tokenization）。方式就是正则表达式，通过正则匹配，基于词法和语法，做简单的高亮，具体的配置规则被称为 `tmLanguage`。
+刚才说到 VS Code 的高亮首先要将文本分段为 `token`，这其实也是一个词法分析的过程（Tokenization）。方式就是正则表达式，通过正则匹配，基于词法和语法，做简单的高亮，具体的配置规则被称为 `tmLanguage` 或者 `Textmate grammars`。
 比如注释、关键词、操作符、字面量（数字、布尔、字符串等），就很适合由此高亮。
 
 TypeScript 就有一个规模惊人的[配置文件](https://github.com/microsoft/TypeScript-TmLanguage/blob/master/TypeScript.tmLanguage)。这种文件实在是人类太不可读了，我的建议是要灵活借助 AI 的力量，让 LLM 根据需求生成配置还是比较顺利的。
 
-几个坑点是，`tmLanguage` 采用严格的 json 语法，不能有注释，否则，配置的任何高亮在 VS Code 中都不会生效。想存注释的话，可以手写一个自定义字段来实现。在调试时建议使用官方的[检查器](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide#scope-inspector)，来确认匹配结果。
+几个坑点是，`tmLanguage.json` 采用严格的 json 语法，不能有注释，否则，配置的任何高亮在 VS Code 中都不会生效。想存注释的话，可以手写一个自定义字段来实现。在调试时建议使用官方的[检查器](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide#scope-inspector)，来确认匹配结果。
 
 ![](https://code.visualstudio.com/assets/api/language-extensions/syntax-highlighting/scope-inspector.png)
 
 如果配置文件格式正确，检查器也显示成功匹配（token type 符合预期），但依然没有高亮，那么可以切换颜色主题试试，可能是因为当前颜色主题的色彩太少了，很多 `token` 就是默认的颜色。
 
 这就低成本实现了简单的高亮。
+
+> 在2025年的1月版本中（[1.97](https://code.visualstudio.com/updates/v1_97#_treesitter-based-syntax-highlighting-for-typescript)），VS Code 官方开始尝试用 [Tree-Sitter](https://tree-sitter.github.io/tree-sitter/) 代替 tmLanguage，用词法、语法分析替换单纯的正则匹配。理由是许多 tmLanguage 都不再维护了。
 
 #### 语义高亮
 
