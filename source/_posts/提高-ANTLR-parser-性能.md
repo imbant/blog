@@ -66,6 +66,8 @@ indexTypeClauseOpt:
 
 在大部分场景下，可选值 `?` 性能比分支 `|` 更好。例如，假设一门语言的 if 语句的条件可以带括号，也可以不带
 
+<!-- TODO: 例子不太好，括号应该成对出现 -->
+
 ```antlr
 ifStatement:
     'if' '(' expression ')'
@@ -79,9 +81,9 @@ ifStatement:
     'if' ('(')? expression (')')?
 ```
 
-### 谓词
+### 语义谓词（semantic predicates）
 
-谓词是值 .g4 文件中用 `{}` 花括号包括起来的部分。这些部分需要 antlr 生成目标代码后自行编写函数实现逻辑。
+语义谓词是指 .g4 文件中用 `{}` 花括号包括起来的部分。这些部分需要 antlr 生成目标代码后自行编写函数实现逻辑。
 语法分析文件中（parser.g4）谓词放到最前
 词法分析文件中（lexer.g4）谓词放到最后
 
@@ -100,3 +102,4 @@ antlr 是个比较活跃的项目，更新还是比较频繁的。
 
 https://tomassetti.me/improving-the-performance-of-an-antlr-parser/
 https://groups.google.com/g/antlr-discussion/c/PpgPQU5jA3Q/m/P4K6Y0BXBQAJ
+https://github.com/antlr/antlr4/issues/4613
