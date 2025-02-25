@@ -42,7 +42,7 @@ tags: [LSP, VS Code, 语言服务器协议]
 
 1. 前 7 个字母涂成红色；后三个字母涂成蓝色 `console.log` -> <font color="red">console</font>.<font color="blue">log</font>
 2. 鼠标悬停到后三个字母的位置，提示 `Prints to stdout with newline.`
-3. 调用此函数时，校验实际参数的数量、类型是否与函数签名相符、返回值类型是否正确
+3. 校验实际参数的数量、类型是否与函数签名相符、返回值类型是否正确
 4. ...
 
 而这些都是和编译器完全无关的事情。
