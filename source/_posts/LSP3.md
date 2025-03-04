@@ -85,7 +85,7 @@ LSP 使用 `JSON-RPC` 格式描述消息内容，包括请求和响应。简单�
 
 ### 通信方式
 
-本质上，语言服务器与客户端通信，是进程间通信。常见的方式有 stdio、ipc、pipe、socket 等。VS Code 插件承担了客户端的角色，在官方的 client SDK 中支持了全部这四种通信方式。具体可以见仓库里[这个位置](https://github.com/microsoft/vscode-languageserver-node/blob/a31c0d320f501efbce1ec29756b8961f080e1a61/client/src/node/main.ts#L28)。
+本质上，语言服务器与客户端通信，是进程间通信。常见的方式有 stdio、ipc、pipe、socket 等。VS Code 插件承担了客户端的角色，在官方的 client SDK 中支持了全部这四种通信方式。具体可以见[文档这里](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#implementationConsiderations)。
 
 ### 生命周期
 
