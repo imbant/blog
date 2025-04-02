@@ -504,7 +504,7 @@ Button.prototype.__proto__ === View.prototype // 子类实例的原型的原型�
 
 ## super
 
-super 用于在子类访问父类的方法
+super 用于在子类定义中访问父类的方法
 
 ### 构造函数中
 在子类的构造函数里 `super()` 可以调用父类的构造函数。
@@ -525,7 +525,7 @@ class B {
 ### 复写方法
 在子类的普通方法中，`super[key]` `super.key` 可以调用父类上的方法。
 
-即使不使用 `super`，子类通过 `this` 也同样可以访问到父类的方法（和属性）。
+即使不使用 `super`，子类通过 `this` 也同样可以访问到父类的方法。
 区别在于，`super.good` 直接调用父类的函数实现，而 `this.good` 会在函数作用域链上寻找 `good` 最近的实现，两者的函数实现可能不同。
 因此 `super` 常用在复写父类的**同名**方法上
 ```js
@@ -547,7 +547,118 @@ class B extends A {
 }
 ```
 
-`constructor` 本身也是一个复写的例子，想要调用父类的构造函数，不能直接 `this.constructor`，而是借助 `super`
+### 那属性呢？
+
+这里提到，`super` 可以访问父类的*方法*。那么，可以用 `super` 访问父类的*属性*吗？
+
+```js
+class A {
+  bar = 1
+  foo() {
+    console.log('from A')
+  }
+}
+
+class B extends A {
+  bar = 2
+  foo() {
+    super.foo()
+    console.log('from B')
+    console.log(this.bar) // 2
+    console.log(super.bar) // undefined
+  }
+}
+```
+
+可见，使用 `super` 访问父类的属性，这种写法会得到 `undefined`。怎么理解这件事情？
+
+实际上，`super` 访问的是父类的**原型**。class 中只有方法在**原型**上，而 class 中的属性，在它的**实例**上。
+
+```js
+A.prototype
+// { foo: ƒ, constructor: ƒ }
+// 并没有 bar 属性
+
+var a = new A()
+// { bar: 1 }
+
+a.__proto__
+// { foo: ƒ, constructor: ƒ }
+```
+
+更进一步，class 中属性的求值，是在实例化对象时进行的
+
+```js
+class C {
+    varC = console.log("varC")
+}
+// 没有输出
+
+new C() // 输出 varC
+```
+
+这里 `varC` 的值是一个函数调用，而真正调用这个函数的时机，是 `new` 操作符实例化时。
+
+回到前边 A 和 B 的例子：
+
+```js
+class A {
+  bar = 1
+  foo() {
+    console.log('from A')
+  }
+}
+
+class B extends A {
+  bar = 2
+  foo() {
+    super.foo()            // from A
+    console.log('from B')
+    console.log(this.bar)  // 2
+    console.log(super.bar) // undefined
+  }
+}
+```
+
+在 A 中，`bar` 属性存在于 A（以及 A 的子类）的实例上，在定义 class A 时还不存在。
+在 B 中，定义了一个重名属性 `bar`，这意味着会覆盖父类中的定义，B 实例化时，`bar` 的值会被赋值为 2，覆盖了父类的初始值。
+
+也就是说，`super.bar` 访问的是 `A.prototype` 上的 `bar` 属性。并没有一个地方在 A 的 `prototype` 上定义 `bar` 属性，所以是 `undefined`。
+
+而 B 中定义的方法 `foo`，并不会“覆盖”父类的 `foo` 方法。两者是不同的两个函数指针
+
+```js
+A.prototype.foo === B.prototype.foo // false
+```
+
+### 定义方法和定义函数类型的属性的区别
+
+```js
+class X {
+  foo() {
+    console.log('foo')
+  }
+  bar = () => {
+    console.log('bar')
+  }
+}
+```
+
+看上去，`foo` 和 `bar` 都是可以执行的函数。
+
+```js
+var x = new X()
+x.foo() // 'foo'
+x.bar() // 'bar'
+```
+
+但严格来说，只有 `foo` 是*方法*，`bar` 是*属性*。
+区别在于，foo 出现在 X 的原型上，**无需实例化**就可以访问到
+
+```js
+X.prototype.foo() // 'foo'
+X.prototype.bar() // TypeError: X.prototype.bar is not a function
+```
 
 ## class与普通函数的区别
 ### class 必须使用 new 操作符
