@@ -80,7 +80,7 @@ gtag('config', 'G-ZM9NGRYKWS');
 <p>除了 <code>type</code>，还有一个 <code>modifier</code> 的概念，它也会影响 <code>token</code> 的渲染，但只是一种修饰，不是必要的。<br>例如同样是函数，异步函数、静态函数、被弃用的函数、抽象函数，他们的渲染可以有细微的区别，通过 <code>modifier</code> 来实现，不过这就取决于具体的颜色设计了。</p>
 <h4 id="语法高亮"><a href="#语法高亮" class="headerlink" title="语法高亮"></a>语法高亮</h4><p>脱离 LSP，VS Code 有一个轻量的无需编程的、基于正则的高亮系统，与语义无关，被称为<a target="_blank" rel="noopener" href="https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide"><strong>语法</strong>高亮</a>。</p>
 <p>刚才说到 VS Code 的高亮首先要将文本分段为 <code>token</code>，这其实也是一个词法分析的过程（Tokenization）。方式就是正则表达式，通过正则匹配，基于词法和语法，做简单的高亮，具体的配置规则被称为 <code>tmLanguage</code> 或者 <code>Textmate grammars</code>。<br>比如注释、关键词、操作符、字面量（数字、布尔、字符串等），就很适合由此高亮。</p>
-<p>TypeScript 就有一个规模惊人的<a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript-TmLanguage/blob/master/TypeScript.tmLanguage">配置文件</a>。这种文件实在是人类太不可读了，我的建议是要灵活借助 AI 的力量，让 LLM 根据需求生成配置还是比较顺利的。</p>
+<p>TypeScript 就有一个规模惊人的<a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript-TmLanguage/blob/48f608692aa6d6ad7bd65b478187906c798234a8/TypeScript.tmLanguage">配置文件</a>。这种文件实在是人类太不可读了，我的建议是要灵活借助 AI 的力量，让 LLM 根据需求生成配置还是比较顺利的。</p>
 <p>几个坑点是，<code>tmLanguage.json</code> 采用严格的 json 语法，不能有注释，否则，配置的任何高亮在 VS Code 中都不会生效。想存注释的话，可以手写一个自定义字段来实现。在调试时建议使用官方的<a target="_blank" rel="noopener" href="https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide#scope-inspector">检查器</a>，来确认匹配结果。</p>
 <p><img src="https://code.visualstudio.com/assets/api/language-extensions/syntax-highlighting/scope-inspector.png"></p>
 <p>如果配置文件格式正确，检查器也显示成功匹配（token type 符合预期），但依然没有高亮，那么可以切换颜色主题试试，可能是因为当前颜色主题的色彩太少了，很多 <code>token</code> 就是默认的颜色。</p>
@@ -109,7 +109,7 @@ gtag('config', 'G-ZM9NGRYKWS');
 <p>还记得前面说 <code>didChange</code> 请求会提供文本的版本号吗，它可以作为输入是否改变的依据。记录每一次 <code>didChange</code> 的版本号，如果两次 <code>signatureHelp</code> 请求之间版本号没有变化（变大），那么输入就没有变化。</p>
 <h4 id="代码补全时触发"><a href="#代码补全时触发" class="headerlink" title="代码补全时触发"></a>代码补全时触发</h4><p>代码补全时，如果用户选择（resolve）了一个函数，一些语言的服务器会将调括号 <code>()</code> 一起补全，例如 Go。</p>
 <p><img src="https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/golandparamhint.gif"></p>
-<p>最好的体验是补全后立即触发 signature help，因为这个时候用户就是想要填实际参数，想知道参数数量和类型。<br>VS Code 有个指令是 <code>triggerParameterHints</code>，Go 的插件<a target="_blank" rel="noopener" href="https://github.com/golang/vscode-go/blob/master/extension/src/language/goLanguageServer.ts#L714">确实是这么做的</a></p>
+<p>最好的体验是补全后立即触发 signature help，因为这个时候用户就是想要填实际参数，想知道参数数量和类型。<br>VS Code 有个指令是 <code>triggerParameterHints</code>，Go 的插件<a target="_blank" rel="noopener" href="https://github.com/golang/vscode-go/blob/7a2c83556ae55ea1067e44c4569faae8b5d71712/extension/src/language/goLanguageServer.ts#L718">确实是这么做的</a></p>
 <h3 id="Color"><a href="#Color" class="headerlink" title="Color"></a>Color</h3><p><img src="https://code.visualstudio.com/assets/api/language-extensions/language-support/color-decorators.png"></p>
 <p>如果语法简单，非常适合在前一章提到的语法的（而非语义的）服务器上解析。例如仅支持井号 <code>#</code> 加十六进制这种语法。</p>
 <p>但 css 中那种支持 rgba、十六进制甚至直接颜色名称 <code>red</code> 的语法，就不适合了。</p>
