@@ -273,7 +273,7 @@ VS Code 的[颜色主题系统](https://code.visualstudio.com/api/extension-guid
 刚才说到 VS Code 的高亮首先要将文本分段为 `token`，这其实也是一个词法分析的过程（Tokenization）。方式就是正则表达式，通过正则匹配，基于词法和语法，做简单的高亮，具体的配置规则被称为 `tmLanguage` 或者 `Textmate grammars`。
 比如注释、关键词、操作符、字面量（数字、布尔、字符串等），就很适合由此高亮。
 
-TypeScript 就有一个规模惊人的[配置文件](https://github.com/microsoft/TypeScript-TmLanguage/blob/master/TypeScript.tmLanguage)。这种文件实在是人类太不可读了，我的建议是要灵活借助 AI 的力量，让 LLM 根据需求生成配置还是比较顺利的。
+TypeScript 就有一个规模惊人的[配置文件](https://github.com/microsoft/TypeScript-TmLanguage/blob/48f608692aa6d6ad7bd65b478187906c798234a8/TypeScript.tmLanguage)。这种文件实在是人类太不可读了，我的建议是要灵活借助 AI 的力量，让 LLM 根据需求生成配置还是比较顺利的。
 
 几个坑点是，`tmLanguage.json` 采用严格的 json 语法，不能有注释，否则，配置的任何高亮在 VS Code 中都不会生效。想存注释的话，可以手写一个自定义字段来实现。在调试时建议使用官方的[检查器](https://code.visualstudio.com/api/language-extensions/syntax-highlight-guide#scope-inspector)，来确认匹配结果。
 
@@ -359,7 +359,7 @@ semanticTokensProvider: {
 ![](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/lsp-vscode/golandparamhint.gif)
 
 最好的体验是补全后立即触发 signature help，因为这个时候用户就是想要填实际参数，想知道参数数量和类型。
-VS Code 有个指令是 `triggerParameterHints`，Go 的插件[确实是这么做的](https://github.com/golang/vscode-go/blob/master/extension/src/language/goLanguageServer.ts#L714)
+VS Code 有个指令是 `triggerParameterHints`，Go 的插件[确实是这么做的](https://github.com/golang/vscode-go/blob/7a2c83556ae55ea1067e44c4569faae8b5d71712/extension/src/language/goLanguageServer.ts#L718)
 
 ### Color
 

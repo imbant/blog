@@ -84,7 +84,7 @@ bug 的直接原因找到了。这次从 Vue 源码的角度，看看为什么�
 由于现在（2023 年）Vue2 快要不维护了，[仓库](https://github.com/vuejs/vue)改动会小一些，因此用 2 版本，直接贴源码看看：
 
 ```typescript
-// https://github.com/vuejs/vue/blob/main/src/core/instance/events.ts
+// https://github.com/vuejs/vue/blob/d6bdff890322bc87792094a1690bcd16373cf82d/src/core/instance/events.ts
 
 Vue.prototype.$emit = function (event: string): Component {
   const vm: Component = this;
@@ -153,7 +153,7 @@ export default {
 ![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/vue-emit-sourcecode/vuedestroy.png)
 
 ```typescript
-// https://github.com/vuejs/vue/blob/main/src/core/instance/lifecycle.ts
+// https://github.com/vuejs/vue/blob/74ca5a13ba12a31580f1567e7c6d789e96730e46/src/core/instance/lifecycle.ts
 Vue.prototype.$destroy = function () {
   const vm: Component = this;
 

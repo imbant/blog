@@ -29,9 +29,9 @@ VS Code 内置了很多强大的指令，可以在[官方文档](https://code.vi
 刚才提到，LSP 支持指令，而 VS Code 也有一个强大的指令系统，两者实际上是不相通的，例如在 VS Code 生效的指令，到其他代码编辑器几乎肯定是没意义的，毕竟，各个编辑器的设计不相通。
 
 换句话说，语言服务器应当返回和客户端无关的信息。
-如果想针对某个编辑器做特定的行为要怎么做？客户端在收到服务器返回后，可以二次加工，再真正渲染到代码编辑器里。例如 vscode-languageclinet 就有个 [middleware](https://github.com/microsoft/vscode-languageserver-node/blob/main/client/src/common/client.ts#L364)。
+如果想针对某个编辑器做特定的行为要怎么做？客户端在收到服务器返回后，可以二次加工，再真正渲染到代码编辑器里。例如 vscode-languageclinet 就有个 [middleware](https://github.com/microsoft/vscode-languageserver-node/blob/df05883f34b39255d40d68cef55caf2e93cff35f/client/src/common/client.ts#L364)。
 
-Go 的 vscode 插件就是通过劫持 gopls 的信息，做一些针对 vscode 的处理后，才真正返回。例如代码补全 completion 中，选择函数或者方法后，触发 vscode 特有的 command，来[唤起 signature help](https://github.com/golang/vscode-go/blob/master/extension/src/language/goLanguageServer.ts#L714)
+Go 的 vscode 插件就是通过劫持 gopls 的信息，做一些针对 vscode 的处理后，才真正返回。例如代码补全 completion 中，选择函数或者方法后，触发 vscode 特有的 command，来[唤起 signature help](https://github.com/golang/vscode-go/blob/7a2c83556ae55ea1067e44c4569faae8b5d71712/extension/src/language/goLanguageServer.ts#L715)
 
 ## 卸载插件的回调
 
