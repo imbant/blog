@@ -141,7 +141,7 @@ bufio.NewReader(os.Stdin)
   "type": "go",
   "request": "launch",
   "mode": "debug",
-++  "console": "internalConsole"
+++"console": "integratedTerminal"
 }
 ```
 
