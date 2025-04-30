@@ -5,7 +5,7 @@
 # Site
 title: imbAnt's blog
 subtitle: ''
-description: 'imbant 前端工程师技术博客'
+description: '技术博客，记录语言服务器(LSP)开发、VS Code/Cursor 插件开发、生成式 AI 与 Agent 技术、前端开发和 golang'
 keywords: 前端,imbant,技术博客,浏览器,Electron,React,Vue,Node,Webpack,Vite,Chrome
 author: imbant
 language: zh-CN
