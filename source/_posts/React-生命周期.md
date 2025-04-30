@@ -4,11 +4,11 @@ date: 2020-03-9 15:17:50
 tags: React
 ---
 
-# React 16.3 之前（不包括 16.3）已弃用
+## React 16.3 之前（不包括 16.3）已弃用
 
 ![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F1.png)
 
-# React ^16.4
+## React ^16.4
 
 ![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F2.png)
 分三个阶段，mount、update 和 unmount
@@ -21,7 +21,7 @@ tags: React
 - **不要**在 render 前使用含副作用（网络请求，订阅比如 setInterval 等）的操作。
 - 在启用 React Fiber 后，render 前的函数（比如各个被弃用的 带 Will 的函数 ）都有可能被多次执行，因此导致预期之外的多次执行 Ajax 请求等操作。
 
-# with hooks
+## with hooks
 
 ![img](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/9/React-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F3.png)
 注意点：

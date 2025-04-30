@@ -4,7 +4,7 @@ date: 2020-04-20 17:13:43
 tags: [JS]
 ---
 
-# 原型链
+`原型链`
 
 ## 目的
 
@@ -165,7 +165,9 @@ typeof Function // 'function'
 
 在原型链中查找属性对性能有副作用；有两个方法**不会**遍历原型链：`Object.prototype.hasOwnProperty()`和`Object.keys`
 
-# this
+---
+
+`this`
 
 `this`是一个大坑，在各个语境下的值都可能不同，在浏览器环境或者 Node 运行时中也不一样，因此会分情况讨论。
 总的来说`this`大都出现在函数内部，
@@ -391,7 +393,10 @@ let fn2 = function () {
 
 需要注意的是，执行 fn2()() 已经不是对象内调用方法了（与 obj 无关），是全局环境的直接调用，所以 fn2()() 指向全局对象。
 
-# Class
+---
+
+`class`
+
 类是特殊的函数。类的声明`class A {}`或表达式`const A = class {}`不会变量提升。类内部的代码都是在严格模式下运行的
 
 ## constructor
@@ -697,8 +702,9 @@ new B.call(a) // error: B.call is not a constructor
 B.bind(a) // TODO: 这句不会报错，能顺利执行...
 ```
 
+---
 
-# 参考资料
+## 参考资料
 [static properties methods](https://javascript.info/static-properties-methods)
 [mdn](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Inheritance_and_the_prototype_chain)
 [JavaScript深入之执行上下文栈](https://github.com/mqyqingfeng/Blog/issues/4)

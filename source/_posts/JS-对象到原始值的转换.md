@@ -16,7 +16,7 @@ interface Long {
 
 用对象去存数值，自然就涉及到怎么用基本数据类型表示它的问题，也就是说需要把对象转换为 `number` 或者 `string` 等类型
 
-# ES6 的现代方案
+## ES6 的现代方案
 ### Symbol.toPrimitive
 ES6 为对象新增了许多内置方法，`Symbol.toPrimitive` 是其中之一。当对象转为原始值时，会调用这个方法。
 
