@@ -1,10 +1,10 @@
 ---
-title: 在 VS Code 中调试和运行 Go 程序
+title: 在 VS Code/Cursor 中调试和运行 Go 程序
 date: 2024-11-12
 tags: [Go, VS Code, 单元测试]
 ---
 
-习惯了 VS Code，使用 GoLand 总是不顺手。这里总结一些在 VS Code 中调试和运行 Go 程序的方法。
+这里总结一些在 VS Code 中调试和运行 Go 程序的方法，对 Cursor 同样适用。
 
 ## 准备工作
 
