@@ -4,57 +4,94 @@ date: 2025-05-07
 tags: [GitHub Copilot, Go, TypeScript, LSP, MCP]
 ---
 
-三月有个大新闻，官方要[用 Go 重写 TypeScript](https://devblogs.microsoft.com/typescript/typescript-native-port/)。号称是 10x 性能提升。
+三月有个大新闻，官方要[用 Go 移植 TypeScript](https://devblogs.microsoft.com/typescript/typescript-native-port/)，号称性能提升 10 倍。
 
-我想从语言服务器开发者的角度聊聊，这个计划的几个作用。
+我想从语言服务器开发者的角度聊聊，这个项目的重要影响，以及它将如何影响 AI 辅助编程。
 
 ## TypeScript 用户：更流畅的编程体验和构建速度
 
 社区有很多选择什么语言的争论，有人说微软应该选择自家的 C#，有人说应该选择更贴近前端新时代生态的 Rust。这之中有官方对移植和维护成本的考量，但不论具体选什么，只要是原生语言，性能都好过 JavaScript。
 
-编译性能的提升自不必说，在构建 Web 前端应用、Node.js 应用时，都需要把 TypeScript 编译为 JavaScript。这也是官方博文最先提出的：编译 VS Code 源码的速度有了 10.4 倍的提升。
+编译性能的提升自不必说，在构建 Web 前端应用、Node.js 应用时，都需要把 TypeScript 编译为 JavaScript。这也是官方博文中最先提出的：编译 VS Code 源码的速度提升了 10.4 倍。
 
-另外，在 VS Code、Cursor 这样的代码编辑器中编码时，TypeScript 也在工作，提供语言服务，具体来说是一个被称为 tsserver 的语言服务器。
+![10 faster ts](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/ts-go/10xts.png)
 
-> 如果你对语言服务不熟悉，可以参考我写的[语言服务器系列教程](/blog/2024/08/24/LSP1/)
+另外，在 VS Code、Cursor 这样的代码编辑器中编码时，TypeScript 也在基于 LSP 提供语言服务，具体来说是通过一个被称为 tsserver 的语言服务器实现的。
+
+> 如果你对 LSP、智能编程不熟悉，可以参考我写的[语言服务器系列教程](/blog/2024/08/24/LSP1/)
 
 在每次按键时的代码补全、跳转到定义、错误提示等等，都需要 tsserver 编译和分析，并提供实时反馈。
 
-受限于 JavaScript 动态语言的性能，在巨石应用中，语言服务器会有性能瓶颈，这也就是在写代码时，有时补全要很慢才能出来的原因。而利用原生语言，加上 ts 自身的优秀架构和设计，这一点会有很大改善。
+受限于 JavaScript 动态语言的性能，在大型应用中，语言服务器会有性能瓶颈，这也是在写代码时，有时补全很慢才能出来的原因。而利用原生语言，加上 ts 自身的优秀架构和设计，这一点会有很大改善。
 
 语言服务器的终极产品体验应该是流畅、无感、符合直觉的，性能提升会是重要一环。
 
-## LSP 的实现
+## TypeScript 到 LSP 的标准化
 
-TypeScript 和 LSP 都是微软家的技术。事实上，作为一个语言服务器，tsserver 并没有严格兼容 LSP。原因是 tsserver 的出现早于 LSP，而 LSP 正是受到了 tsserver 的启发。
+TypeScript 和 LSP 都是微软家的技术。事实上，作为一个语言服务器，tsserver 并没有严格兼容 LSP。原因是 tsserver 的出现早于 LSP，而 LSP 正是受到了 tsserver 的启发：与编辑器的 UI 进程分离，在独立的进程中提供智能编程服务。
 
-然而，官方提到，希望借助这次移植，完成 LSP 的兼容。这意味着，未来的 tsserver 将会是一个 LSP 语言服务器。
+然而，官方提到，希望借助这次移植，完成兼容 LSP 的愿景。这意味着，未来的 tsserver 将会是一个标准的 LSP 语言服务器。
 
-没能兼容 LSP，会是 TypeScript 的短板。也就意味着难以发挥 LSP 跨代码编辑器的优势。
-另外，我想兼容 LSP 后，tsserver 还有一个重要的作用，就是与 *AI 辅助编程*结合。
+没能兼容 LSP，是 TypeScript 的短板。也就意味着难以发挥 LSP 跨代码编辑器的优势。
+另外，我认为兼容 LSP 后，tsserver 还有一个重要的作用，就是与 _AI 辅助编程_ 结合。
 
-## AI 辅助编程
+## 强化 AI 辅助编程
 
-## 另外：对 tsserver 插件开发者：如何适配
+以 GitHub Copilot 为例，看看现在（2025 年 5 月）AI 辅助编程的功能：
 
-已有的 Node 代码，如何与原生构建的 ts 适配
+1. 内联代码补全(inline completion)
+2. 聊天(chat)/编辑(edit)
+3. 代理(agent)
 
-## 另外：wasm 的可能性
+其中，内联补全是最早惊艳到用户的功能。本质上，它的原理是利用 LLM 生成建议的代码。
+核心在于构建 prompt，让 LLM 生成用户真正想要的补全。
 
-ts 本质上是一个 Node 应用，也就意味着无法在浏览器运行。
-Go 移植后也会支持 wasm，这意味着编译器、语言服务器都可以在浏览器中运行。有利于 playground 等应用
+![life of a completion](<https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/ts-go/Life%20of%20a%20(inline)%20Completion.png>)
 
-## 展望
+Copilot 做了很多努力来让 prompt 更精准。所谓的更精准，一个方面就是要贴近用户正在输入的代码的**语义**。例如，收集光标附近的代码、引用的依赖、打开过的文件、相关函数的签名、注释等等信息，将最有效的信息提炼出来，生成 prompt。
 
-26 年到 27 年起，借助原生移植、与 AI 结合，编写 TypeScript 的最佳编辑器会是 VS Code，不是 Cursor，也不是 WebStorm。
+我有一个想法，其实语言服务器非常擅长为 prompt builder 提供这些语义信息：
 
-- 性能瓶颈：重点不在于选了 Go 还是别的语言，而是原生语言的巨大性能提升
-- MCP 与 LSP 结合：已有的 MCP 语言服务器，将 function calling 和语言服务粘合起来
-- AI 辅助编程产品：例如 Copilot，想要拿到 context，依然需要文本识别。这某种程度上只到编译的词法分析阶段。让 copilot 编译源码是不现实的。而语言服务器和 copilot 声明周期相近，并且有 copilot 最需要的，精准的语义信息
-- tsserver 适配 LSP 的推进：官方一直以来的愿景，希望借这次移植完成
-- 总体还在很早期的阶段，官方还在施工中。期待 26 年借助 copilot 编写 ts 的跃升体验
-- 对于 tsserver API 用户，例如，volar、Angular、Svelte，如何适配也是个重要的问题
-- mcp lsp:为什么要问 llm 一个变量的定义、引用，这是 lsp 更擅长的，ls 可以借助 mcp 封装 lsp 请求为 function calling 供 llm 调用，语义精准，而无需靠片段文本推测，这受限于 token、算力、工程结构等，也没有必要重复编译
-- tsserver 与 AI 结合的几种方式
-  - mcp
-  - VS Code extension tools
+### 收集全量的语义信息
+
+由于 token 数量、性能等的限制，Copilot 难以完整的分析本地的巨石应用（build local workspace index），即使有 remote index，也有各种各样的限制，例如要上传到 GitHub 等；
+而和编译器一样，语言服务器需要编译工程，收集*整个*工程的语义信息，来提供智能编程服务。
+
+### 处理用户交互
+
+语言服务器比起编译器的一大区别就是擅长处理用户持续不断的编码。借助增量更新技术（Incremental build），语言服务器可以按需编译，仅计算有变化的数据，高效地动态构建语义信息，确保及时更新。例如 tsserver 就支持[增量编译](https://github.com/microsoft/Typescript/wiki/Performance#incremental-project-emit)。
+
+举个简单的例子，当用户删除了某个函数中的一行，这个函数本身的签名并没有变化，那么，只需要更新这个函数内部的语义信息即可。
+
+这个能力对于 Copilot 来说也是非常重要的：随着用户编码，要补全的代码也要及时变化。
+
+### function calling 和 MCP 支持
+
+除了内联补全，Agent 模式也是最近的热点，借助 function calling，LLM 能更精准的获取上下文信息。
+
+![tool-calling](https://code.visualstudio.com/assets/api/extension-guides/tools/copilot-tool-calling-flow.png)
+
+例如，VS Code 自带一个 `Find Usages`（tool、function calling...随便怎么叫），可以是让 LLM 查找某个符号的定义、引用等等位置。
+
+这听着是不是非常耳熟？这不就是 LSP 中的跳转到定义(`textDocument/definition`)和查找引用(`textDocument/reference`)吗？
+换句话说，语言服务器提供 function calling 的能力，供 LLM 查询语义信息，是一件非常自然的事情。事实上，社区已经有一些这样的尝试，例如 [mcp-language-server](https://github.com/isaacphi/mcp-language-server)，借助 MCP 标准化语言服务器和 LLM 的通信方式，让语言服务器进程也同样成为 MCP 服务器。
+
+当然，除了借助 MCP 的通用方式，在 VS Code 内也有个轻量的方法，来提供 function calling 能力，也就是由 VS Code 插件[自行实现](https://code.visualstudio.com/api/extension-guides/tools)，插件直接通过配置文件（json）描述能提供哪些 tool。
+
+不过考虑到 tsserver 要兼容 LSP 的雄心壮志，我觉得官方会更倾向实现 MCP 服务器的方式，让更多编辑器都可以使用这个能力，而不仅是 VS Code，当然，作为微软的产品，VS Code 的适配还会是首选。
+
+不论是 MCP，还是 Go 移植，都还在非常早期的阶段，我非常看好这个项目，我认为到 2026 年，借助原生移植、与 AI 结合，编写 TypeScript 的最佳编辑器会是 VS Code，不是 Cursor，更不是 WebStorm。
+
+## 其他方面
+
+还有两点值得一提，不过由于整体还在早期阶段，未来也许会有更多变化：
+
+### wasm 的可能性
+
+TypeScript 本质上是一个 Node 应用，也就意味着无法在浏览器运行。这意味着在浏览器里的游乐场（playground）、在线预览编译等应用无法*直接*调用 TypeScript。而 Go 移植后也会 [支持 wasm](https://github.com/microsoft/typescript-go/discussions/458)，在浏览器里运行 TypeScript 会有一些发挥的空间。
+
+### 对下游的 tsserver 插件开发者：如何适配
+
+tsserver 实现了[插件系统](https://github.com/microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin)，使得第三方开发者可以编写 Node 代码，扩展 TypeScript 的语言服务。例如，Vue、Astro、Svelte 语言服务器就是这么做的，它们都需要在 `.ts` 之外的文件里编写 ts 代码。
+
+已有的 Node 代码，如何与原生构建的 tsserver 交互，这是一个问题。
