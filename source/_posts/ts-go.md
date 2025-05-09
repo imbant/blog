@@ -2,6 +2,7 @@
 title: 用 Go 移植 TypeScript 的重要影响
 date: 2025-05-07
 tags: [GitHub Copilot, Go, TypeScript, LSP, MCP]
+toc: true
 ---
 
 三月有个大新闻，官方要[用 Go 移植 TypeScript](https://devblogs.microsoft.com/typescript/typescript-native-port/)，号称性能提升 10 倍。
