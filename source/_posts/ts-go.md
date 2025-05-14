@@ -1,7 +1,7 @@
 ---
 title: 用 Go 移植 TypeScript 的重要影响
 date: 2025-05-07
-tags: [GitHub Copilot, Go, TypeScript, LSP, MCP]
+tags: [GitHub Copilot, Go, TypeScript, LSP, MCP, tsc]
 toc: true
 ---
 
@@ -13,7 +13,7 @@ toc: true
 
 社区有很多选择什么语言的争论，有人说微软应该选择自家的 C#，有人说应该选择更贴近前端新时代生态的 Rust。这之中有官方对移植和维护成本的考量，但不论具体选什么，只要是原生语言，性能都好过 JavaScript。
 
-编译性能的提升自不必说，在构建 Web 前端应用、Node.js 应用时，都需要把 TypeScript 编译为 JavaScript。这也是官方博文中最先提出的：编译 VS Code 源码的速度提升了 10.4 倍。
+tsc 编译性能的提升自不必说，在构建 Web 前端应用、Node.js 应用时，都需要把 TypeScript 编译为 JavaScript。这也是官方博文中最先提出的：编译 VS Code 源码的速度提升了 10.4 倍。
 
 ![10 faster ts](https://imbant-blog.oss-cn-shanghai.aliyuncs.com/blog-img/ts-go/10xts.png)
 
@@ -81,7 +81,7 @@ Copilot 做了很多努力来让 prompt 更精准。所谓的更精准，一个�
 
 不过考虑到 tsserver 要兼容 LSP 的雄心壮志，我觉得官方会更倾向实现 MCP 服务器的方式，让更多编辑器都可以使用这个能力，而不仅是 VS Code，当然，作为微软的产品，VS Code 的适配还会是首选。
 
-不论是 MCP，还是 Go 移植，都还在非常早期的阶段，我非常看好这个项目，我认为到 2026 年，借助原生移植、与 AI 结合，编写 TypeScript 的最佳编辑器会是 VS Code，不是 Cursor，更不是 WebStorm。
+不论是 MCP，还是 Go 移植，都还在非常早期的阶段，我非常看好这个项目，我认为到 2026 年，借助原生移植、与 AI 结合，编写 TypeScript 的最佳方案是 VS Code + GitHub Copilot，不是 Cursor，更不是 WebStorm。
 
 ## 其他方面
 
@@ -89,10 +89,11 @@ Copilot 做了很多努力来让 prompt 更精准。所谓的更精准，一个�
 
 ### wasm 的可能性
 
-TypeScript 本质上是一个 Node 应用，也就意味着无法在浏览器运行。这意味着在浏览器里的游乐场（playground）、在线预览编译等应用无法*直接*调用 TypeScript。而 Go 移植后也会 [支持 wasm](https://github.com/microsoft/typescript-go/discussions/458)，在浏览器里运行 TypeScript 会有一些发挥的空间。
+TypeScript 编译器本质上是一个 Node 应用，也就意味着无法在浏览器运行。这意味着在浏览器里的游乐场（playground）、在线预览编译等应用无法*直接*调用 TypeScript。而 Go 移植后也会 [支持 wasm](https://github.com/microsoft/typescript-go/discussions/458)，在浏览器里运行 TypeScript 会有一些发挥的空间。
 
 ### 对下游的 tsserver 插件开发者：如何适配
 
-tsserver 实现了[插件系统](https://github.com/microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin)，使得第三方开发者可以编写 Node 代码，扩展 TypeScript 的语言服务。例如，Vue、Astro、Svelte 语言服务器就是这么做的，它们都需要在 `.ts` 之外的文件里编写 ts 代码。
+tsserver 实现了[插件系统](https://github.com/microsoft/TypeScript/wiki/Writing-a-Language-Service-Plugin)，使得第三方开发者可以编写 Node 代码，扩展 TypeScript 的语言服务。
+例如，Vue、Astro、Svelte 语言服务器就是这么做的，它们都需要在 `.ts` 之外的文件里编写 ts 代码。这就需要借助这个插件系统，在自己的文件里为 ts 代码提供语言服务。
 
-已有的 Node 代码，如何与原生构建的 tsserver 交互，这是一个问题。
+这些插件已有的 Node 代码，如何与原生构建的 tsserver 交互，这会是一个问题。不过考虑到官方说 Node 版本的 tsserver 会和 Go 版本的长期共存，也许并不是一个完全无法解决的问题。
