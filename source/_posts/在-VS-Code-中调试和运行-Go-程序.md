@@ -149,22 +149,17 @@ bufio.NewReader(os.Stdin)
 
 ## Benchmark
 
-除了基础的单元测试，也支持配置 go 内置的 benchmark。
-假设基准测试代码都在 `benchmark` 目录下。本质上也是 `go test -c` 然后执行构建的可执行文件。
+**千万不要**在 VS Code 自带的 debug 功能（按 F5）里跑 benchmark，会变得不幸！
 
-```json
-{
-  "name": "Benchmark",
-  "type": "go",
-  "request": "launch",
-  "mode": "test",
-  "program": "${workspaceFolder}\\benchmark",
-  "output": "${workspaceFolder}\\benchmark\\benchmark",
-  "args": [
-    "-test.bench=^Benchmark", // 只关注 Benchmark 开头的函数
-    "-test.v",
-    "-test.run=^$",
-    "-test.benchmem" // 查看内存分配信息
-  ]
-}
-```
+VS Code 的 debug，实际上会启动一个 debugger，然后插件通过 DA（debug adapter），和 debugger 基于 DAP（debug adapter protocol）通信。
+
+而 debugger 的存在一定会污染性能敏感的 benchmark 的测算结果。
+我踩到的坑是，同样一段代码，在 VS Code 中 debug benchmark，比起正经在命令行 go test -bench，耗时增加了 100%。
+
+其实 VS Code 有一个指令叫 `Debug: Start Without Debugging`，或者 Ctrl + F5 触发。我粗略看了下，go 的 debugger `Delve` 支持一个 `noDebug` 参数，可以让程序运行，但不触发断点。
+
+这种方式可以避免 debugger 对 benchmark 性能的影响吗？答案是不行，[这个 issue](https://github.com/golang/vscode-go/issues/1111)提到：
+
+> The "noDebug" feature is an optional hint to the debugger to run the program without hitting breakpoints and breaking on exceptions. It is not necessarily meant to run the program "outside of the debugger" with "full speed".
+
+也就是说，只要通过 debugger，一定影响性能，benchmark 坚决不应该在 VS Code 内执行。
