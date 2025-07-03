@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://imbant.github.io/blog/sitemap-index.xml

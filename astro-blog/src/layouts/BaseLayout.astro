@@ -1,0 +1,101 @@
+---
+// src/layouts/BaseLayout.astro
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content={description || "imbAnt's blog"}>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/blog/favicon.svg">
+  <meta name="generator" content={Astro.generator}>
+  <title>{title}</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description || "imbAnt's blog"}>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={Astro.url}>
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description || "imbAnt's blog"}>
+</head>
+<body>
+  <header>
+    <nav class="nav">
+      <a href="/blog/" class="nav-home">imbAnt's blog</a>
+      <div class="nav-links">
+        <a href="/blog/">首页</a>
+        <a href="/blog/archives/">归档</a>
+        <a href="/blog/about/">关于</a>
+      </div>
+    </nav>
+  </header>
+  
+  <slot />
+  
+  <footer>
+    <p>&copy; 2025 imbant. All rights reserved.</p>
+  </footer>
+</body>
+</html>
+
+<style is:global>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #fff;
+  }
+  
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .nav-home {
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: #666;
+    padding: 0.5rem;
+  }
+  
+  .nav-links a:hover {
+    color: #333;
+  }
+  
+  footer {
+    margin-top: 4rem;
+    padding: 2rem;
+    text-align: center;
+    border-top: 1px solid #eee;
+    color: #666;
+  }
+</style>

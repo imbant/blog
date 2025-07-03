@@ -1,0 +1,21 @@
+{
+  "name": "astro-blog",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev", 
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "keywords": [],
+  "author": "imbant",
+  "license": "ISC",
+  "description": "imbAnt's blog migrated from Hexo to Astro",
+  "dependencies": {
+    "@astrojs/rss": "^4.0.12",
+    "@astrojs/sitemap": "^3.4.1",
+    "astro": "^5.10.2"
+  }
+}

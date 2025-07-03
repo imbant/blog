@@ -1,0 +1,62 @@
+---
+// src/pages/index.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allBlogPosts = await getCollection('blog');
+const sortedPosts = allBlogPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const latestPosts = sortedPosts.slice(0, 10);
+---
+
+<BaseLayout title="imbAnt's blog" description="技术博客，记录语言服务器(LSP)开发、VS Code/Cursor 插件开发、生成式 AI 与 Agent 技术、前端开发和 golang">
+  <main class="container">
+    <h1>imbAnt's blog</h1>
+    <p>技术博客，记录语言服务器(LSP)开发、VS Code/Cursor 插件开发、生成式 AI 与 Agent 技术、前端开发和 golang</p>
+    
+    <section class="posts">
+      {latestPosts.map((post) => (
+        <article class="post-preview">
+          <h2><a href={`/blog/${post.data.date.getFullYear()}/${String(post.data.date.getMonth() + 1).padStart(2, '0')}/${String(post.data.date.getDate()).padStart(2, '0')}/${post.slug}/`}>{post.data.title}</a></h2>
+          <time>{post.data.date.toISOString().split('T')[0]}</time>
+          {post.data.description && <p>{post.data.description}</p>}
+        </article>
+      ))}
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .posts {
+    margin-top: 2rem;
+  }
+  
+  .post-preview {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .post-preview h2 {
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .post-preview a {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .post-preview a:hover {
+    text-decoration: underline;
+  }
+  
+  .post-preview time {
+    color: #666;
+    font-size: 0.9rem;
+  }
+</style>
