@@ -1,9 +1,10 @@
 ---
-title: ChatGPT 的流式对话是怎么实现的
-date: 2023-03-20
-tags: [HTTP]
-description: 了解 ChatGPT 流式对话的实现原理，包括 Server-Sent Events (SSE) 技术详解
+title: "ChatGPT 的流式对话是怎么实现的"
+date: "2023-03-20"
+tags: ["HTTP"]
+description: "网页里 ChatGPT 是逐字输出文字的，很像人类在一个一个打字："
 ---
+
 
 ## 背景
 

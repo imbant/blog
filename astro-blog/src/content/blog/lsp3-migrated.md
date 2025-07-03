@@ -1,9 +1,9 @@
 ---
-title: LSP 与 VS Code 插件开发（三）语言服务器协议
-date: 2025-01-17
-tags: [LSP, VS Code, 语言服务器协议]
+title: "LSP 与 VS Code 插件开发（三）语言服务器协议"
+date: "2025-01-17"
+tags: ["LSP", "VS Code", "语言服务器协议"]
 toc: true
-description: 深入了解语言服务器协议(LSP)的工作原理和通信机制
+description: "深入了解语言服务器协议(LSP)的工作原理和通信机制"
 ---
 
 这是《LSP 与 VS Code 插件开发》系列文章的第三篇。
