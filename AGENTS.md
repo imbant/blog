@@ -48,17 +48,22 @@ Post files are Markdown with YAML front matter. Existing posts generally use:
 ```yaml
 ---
 title: Post Title
-date: YYYY-M-D HH:mm
+date: YYYY-M-D
 tags: [tag]
 ---
 ```
+
+New drafts should use this same minimal front matter shape: `title`, `date`,
+and `tags`. Dates should include only year, month, and day, with no time of day.
 
 Keep published posts in `source/_posts/` and unfinished work in
 `source/_drafts/`. Draft rendering is disabled in `_config.yml`
 (`render_drafts: false`), so drafts should not appear in normal builds.
 
-Many file names and titles are Chinese. Preserve existing naming style and avoid
-renaming posts unless the permalink impact is intentional.
+Post titles may be Chinese, but new post and draft file names must be short,
+semantic English slugs because Hexo uses the file name in the final URL. Do not
+create new Chinese file names; encoded URLs are noisy and harder to read. For
+example, use `future-of-lsp.md` instead of `LSP-的未来.md`.
 
 ## Theme And UI Changes
 
